@@ -1,0 +1,19 @@
+# Build artifacts
+build/
+*.o
+*.elf
+*.bin
+*.map
+*.d
+*.hex
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dependency directories (managed by submodules)
+# libDaisy/
+# DaisySP/
