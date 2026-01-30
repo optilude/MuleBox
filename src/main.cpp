@@ -34,11 +34,11 @@ Parameter irSelectorParam;  // For resistor ladder IR selection
 /**
  * Fixed constants
  */
-constexpr int SETTINGS_VERSION = 2;  // Bumped for IR selection
+constexpr int SETTINGS_VERSION = 3;  // Bumped for IR bypass flag
 constexpr float SAMPLE_RATE = 48000.0f;  // Audio sample rate in Hz
 static const float BASS_BOOST_FREQ = 110.0f;  // Center frequency in Hz
 static const float BASS_BOOST_Q = 0.7f;       // Q factor (bandwidth)
-constexpr int MAX_IR_COUNT = 12;              // Maximum number of IRs supported
+constexpr int MAX_IR_POSITIONS = 12;          // Rotary positions supported by hardware
 
 /**
  * DSP Globals
@@ -46,6 +46,7 @@ constexpr int MAX_IR_COUNT = 12;              // Maximum number of IRs supported
 Svf bassBoost;
 ImpulseResponse ir;
 int currentIrIndex = 0;  // Currently loaded IR
+volatile bool irBypass = false;  // When true, skip IR convolution
 
 // RAM buffer for active IR (copied from QSPI flash)
 // Max size is 8,192 samples as defined in ImpulseResponse
@@ -55,6 +56,11 @@ static float irRamBuffer[MAX_IR_BUFFER_SIZE];
 // Load IR from QSPI flash to RAM buffer
 void loadIrToRam(int irIndex) {
     using namespace ImpulseResponseData;
+
+    // If no IRs are compiled in, nothing to load.
+    if (IR_COUNT == 0) {
+        return;
+    }
 
     // Validate index
     if (irIndex < 0 || irIndex >= (int)IR_COUNT) {
@@ -80,12 +86,14 @@ void loadIrToRam(int irIndex) {
 
 struct Settings {
     int version;
-    int irIndex;  // Selected IR index (0-11)
+    int irIndex;   // Last selected IR index (0-11)
+    bool bypass;   // True when selector points beyond available IRs
 
     bool operator!=(const Settings& a) const {
         return !(
             a.version == version &&
-            a.irIndex == irIndex
+            a.irIndex == irIndex &&
+            a.bypass == bypass
         );
     }
 };
@@ -110,6 +118,15 @@ void loadSettings() {
     // Load IR index and copy from QSPI to RAM
     int irIndex = localSettings.irIndex;
 
+    // Restore bypass mode (if any)
+    irBypass = localSettings.bypass;
+
+    // If no IRs exist in this build, force bypass.
+    if (ImpulseResponseData::IR_COUNT == 0) {
+        irBypass = true;
+        return;
+    }
+
     // Clamp to valid range
     if (irIndex < 0 || irIndex >= (int)ImpulseResponseData::IR_COUNT) {
         irIndex = 0;
@@ -125,6 +142,7 @@ void saveSettings() {
 
     localSettings.version = SETTINGS_VERSION;
     localSettings.irIndex = currentIrIndex;
+    localSettings.bypass = irBypass;
 
     triggerSettingsSave = true;
 }
@@ -157,12 +175,15 @@ void AudioCallback(AudioHandle::InputBuffer in,
         // Blend dry signal with boosted peak output
         float boosted = monoInput + (peakOutput * wetGain);
 
-        // Process through impulse response (cabinet simulation)
-        float irOutput = ir.Process(boosted);
+        // If selector points beyond available IRs, bypass convolution.
+        float output = boosted;
+        if (!irBypass) {
+            output = ir.Process(boosted);
+        }
 
         // Output to both stereo channels (dual mono)
-        out[0][i] = irOutput;  // Left channel
-        out[1][i] = irOutput;  // Right channel
+        out[0][i] = output;  // Left channel
+        out[1][i] = output;  // Right channel
     }
 }
 
@@ -183,7 +204,7 @@ int main(void) {
     // Initialize IR selector (resistor ladder on KNOB_2)
     irSelectorParam.Init(hw.knobs[Hothouse::KNOB_2],
                          0.0f,     // Min value
-                         11.0f,    // Max value (12 positions: 0-11)
+                         (float)(MAX_IR_POSITIONS - 1),    // Max value (12 positions: 0-11)
                          Parameter::LINEAR);
 
     // Initialize bass boost EQ
@@ -195,7 +216,8 @@ int main(void) {
     // Update settings
     Settings defaultSettings = {
         SETTINGS_VERSION, // version
-        0                  // irIndex (default to first IR)
+        0,                 // irIndex (default to first IR)
+        false              // bypass
     };
     savedSettings.Init(defaultSettings);
     loadSettings();  // Load saved settings and initialize IR
@@ -219,17 +241,24 @@ int main(void) {
         // Check IR selection from resistor ladder (KNOB_2)
         // Resistor ladder provides 12 discrete voltage levels
         float rawValue = irSelectorParam.Process();
-        int selectedIrIndex = (int)(rawValue + 0.5f);  // Round to nearest integer
+        int selectedPosition = (int)(rawValue + 0.5f);  // Round to nearest integer
 
-        // Clamp to valid range
-        if (selectedIrIndex < 0) selectedIrIndex = 0;
-        if (selectedIrIndex >= (int)ImpulseResponseData::IR_COUNT) {
-            selectedIrIndex = ImpulseResponseData::IR_COUNT - 1;
+        // Clamp to selector's physical range (0..11)
+        if (selectedPosition < 0) selectedPosition = 0;
+        if (selectedPosition >= MAX_IR_POSITIONS) selectedPosition = MAX_IR_POSITIONS - 1;
+
+        // Bypass if selector position exceeds compiled IR count.
+        bool shouldBypass = (selectedPosition >= (int)ImpulseResponseData::IR_COUNT);
+
+        // Apply selection changes
+        if (shouldBypass != irBypass) {
+            irBypass = shouldBypass;
+            saveSettings();
         }
 
-        // If IR selection changed, load new IR from QSPI to RAM
-        if (selectedIrIndex != currentIrIndex) {
-            loadIrToRam(selectedIrIndex);
+        // If not bypassed and IR selection changed, load new IR from QSPI to RAM
+        if (!shouldBypass && selectedPosition != currentIrIndex) {
+            loadIrToRam(selectedPosition);
             saveSettings();  // Persist the new selection
         }
 
