@@ -113,9 +113,9 @@ def trim_or_pad_ir(samples, target_length=MAX_IR_SAMPLES):
         return samples
 
 
-def format_cpp_array(samples, name, indent=0):
+def format_cpp_raw_array(samples, name, indent=0):
     """
-    Format samples as C++ std::vector<float> initialization.
+    Format samples as C raw array with QSPI section attribute.
 
     Args:
         samples: List of float samples
@@ -126,7 +126,11 @@ def format_cpp_array(samples, name, indent=0):
         str: Formatted C++ code
     """
     indent_str = ' ' * indent
-    lines = [f"{indent_str}std::vector<float> {name} = {{"]
+    lines = [
+        f"{indent_str}// Stored in QSPI flash",
+        f'{indent_str}__attribute__((section(".qspiflash_data"))) __attribute__((aligned(4)))',
+        f"{indent_str}const float {name}[{len(samples)}] = {{"
+    ]
 
     # Format samples with 8 values per line
     values_per_line = 8
@@ -156,7 +160,7 @@ def sanitize_name(filepath):
 
 def generate_header(ir_data, output_path):
     """
-    Generate C++ header file with IR data.
+    Generate C++ header file with IR data stored in QSPI flash.
 
     Args:
         ir_data: List of (name, samples) tuples
@@ -167,37 +171,44 @@ def generate_header(ir_data, output_path):
     lines = [
         "// Auto-generated IR data header",
         "// Do not edit manually - regenerate using wav_to_ir_header.py",
+        "//",
+        "// IR data is stored in QSPI flash and must be copied to RAM before use.",
         "",
         f"#ifndef {guard_name}",
         f"#define {guard_name}",
         "",
-        "#include <vector>",
+        "#include <cstddef>",
         "",
         "namespace ImpulseResponseData {",
         "",
     ]
 
-    # Add individual IR arrays
-    ir_names = []
-    for name, samples in ir_data:
-        lines.append(f"// IR: {name} ({len(samples)} samples, {len(samples)/SAMPLE_RATE*1000:.1f}ms)")
-        lines.append(format_cpp_array(samples, name, indent=0))
-        lines.append("")
-        ir_names.append(name)
-
-    # Add collection array
-    lines.append("// Collection of all IRs for indexing")
-    lines.append("std::vector<std::vector<float>> ir_collection = {")
-    for name in ir_names:
-        lines.append(f"    {name},")
+    # Add IR metadata structure
+    lines.append("// IR metadata")
+    lines.append("struct IRInfo {")
+    lines.append("    const char* name;")
+    lines.append("    const float* data;  // Pointer to QSPI data")
+    lines.append("    size_t length;      // Sample count")
     lines.append("};")
     lines.append("")
 
-    # Add names array for debugging/UI
-    lines.append("// IR names for reference")
-    lines.append("std::vector<const char*> ir_names = {")
-    for name in ir_names:
-        lines.append(f'    "{name}",')
+    # Add individual IR arrays with QSPI attribute
+    ir_names = []
+    ir_lengths = []
+    for name, samples in ir_data:
+        lines.append(f"// IR: {name} ({len(samples)} samples, {len(samples)/SAMPLE_RATE*1000:.1f}ms)")
+        lines.append(format_cpp_raw_array(samples, name, indent=0))
+        lines.append("")
+        ir_names.append(name)
+        ir_lengths.append(len(samples))
+
+    # Add collection array (array of IRInfo structs)
+    lines.append(f"// Collection of all IRs for indexing ({len(ir_names)} total)")
+    lines.append(f"constexpr size_t IR_COUNT = {len(ir_names)};")
+    lines.append("")
+    lines.append("const IRInfo ir_collection[IR_COUNT] = {")
+    for name, length in zip(ir_names, ir_lengths):
+        lines.append(f'    {{"{name}", {name}, {length}}},')
     lines.append("};")
     lines.append("")
 
@@ -212,10 +223,12 @@ def generate_header(ir_data, output_path):
     with open(output_path, 'w') as f:
         f.write('\n'.join(lines))
 
+    total_samples = sum(len(samples) for _, samples in ir_data)
     print(f"\nGenerated header: {output_path}")
     print(f"  Total IRs: {len(ir_data)}")
-    print(f"  Total samples: {sum(len(samples) for _, samples in ir_data)}")
-    print(f"  Estimated size: ~{sum(len(samples) for _, samples in ir_data) * 4 / 1024:.1f} KB")
+    print(f"  Total samples: {total_samples}")
+    print(f"  Estimated QSPI size: ~{total_samples * 4 / 1024:.1f} KB")
+    print(f"  Estimated RAM per IR: ~{max(ir_lengths) * 4 / 1024:.1f} KB")
 
 
 def main():

@@ -22,9 +22,10 @@ ImpulseResponse::~ImpulseResponse()
 }
 
 
-void ImpulseResponse::Init(std::vector<float> irData)
+void ImpulseResponse::Init(const float* irData, size_t irLength)
 {
   mRawAudio = irData;
+  mRawAudioLength = irLength;
   _SetWeights();
 }
 
@@ -45,7 +46,7 @@ float ImpulseResponse::Process(float inputs)
 void ImpulseResponse::_SetWeights()
 {
 
-  const size_t irLength = std::min(mRawAudio.size(), mMaxLength);
+  const size_t irLength = std::min(mRawAudioLength, mMaxLength);
   mWeight.resize(irLength);
   // Gain reduction.
   // https://github.com/sdatkinson/NeuralAmpModelerPlugin/issues/100#issuecomment-1455273839

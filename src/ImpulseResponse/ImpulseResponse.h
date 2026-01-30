@@ -22,7 +22,7 @@ public:
   ImpulseResponse();
   ~ImpulseResponse();
 
-  void Init(std::vector<float> irData);
+  void Init(const float* irData, size_t irLength);
   float Process(float inputs);
 
 
@@ -32,8 +32,9 @@ private:
   void _SetWeights();
 
   // State of audio
-  // Keep a copy of the raw audio that was loaded so that it can be resampled
-  std::vector<float> mRawAudio;
+  // Raw pointer to IR data (owned externally, e.g., RAM buffer)
+  const float* mRawAudio;
+  size_t mRawAudioLength;
   float mRawAudioSampleRate;
   float mSampleRate;
 

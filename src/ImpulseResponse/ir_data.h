@@ -1,15 +1,26 @@
 // Auto-generated IR data header
 // Do not edit manually - regenerate using wav_to_ir_header.py
+//
+// IR data is stored in QSPI flash and must be copied to RAM before use.
 
 #ifndef IR_DATA_H
 #define IR_DATA_H
 
-#include <vector>
+#include <cstddef>
 
 namespace ImpulseResponseData {
 
+// IR metadata
+struct IRInfo {
+    const char* name;
+    const float* data;  // Pointer to QSPI data
+    size_t length;      // Sample count
+};
+
 // IR: v30 (8160 samples, 170.0ms)
-std::vector<float> v30 = {
+// Stored in QSPI flash
+__attribute__((section(".qspiflash_data"))) __attribute__((aligned(4)))
+const float v30[8160] = {
     0.00040448f, 0.00036263f, 0.00512683f, 0.00783813f, 0.01512051f, 0.02670467f, 0.06139362f, 0.13686979f,
     0.28482592f, 0.50676191f, 0.80344725f, 0.97999990f, 0.96870708f, 0.72450781f, 0.31733072f, -0.08954692f,
     -0.37616253f, -0.51128578f, -0.44207621f, -0.21147478f, -0.01019347f, 0.18734884f, 0.24319315f, 0.18525636f,
@@ -1032,14 +1043,11 @@ std::vector<float> v30 = {
     -0.00023663f, 0.00015497f, 0.00053346f, 0.00082934f, 0.00098443f, 0.00101972f, 0.00098789f, 0.00090897f
 };
 
-// Collection of all IRs for indexing
-std::vector<std::vector<float>> ir_collection = {
-    v30,
-};
+// Collection of all IRs for indexing (1 total)
+constexpr size_t IR_COUNT = 1;
 
-// IR names for reference
-std::vector<const char*> ir_names = {
-    "v30",
+const IRInfo ir_collection[IR_COUNT] = {
+    {"v30", v30, 8160},
 };
 
 }  // namespace ImpulseResponseData

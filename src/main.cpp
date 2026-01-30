@@ -47,6 +47,33 @@ Svf bassBoost;
 ImpulseResponse ir;
 int currentIrIndex = 0;  // Currently loaded IR
 
+// RAM buffer for active IR (copied from QSPI flash)
+// Max size is 8,192 samples as defined in ImpulseResponse
+constexpr size_t MAX_IR_BUFFER_SIZE = 8192;
+static float irRamBuffer[MAX_IR_BUFFER_SIZE];
+
+// Load IR from QSPI flash to RAM buffer
+void loadIrToRam(int irIndex) {
+    using namespace ImpulseResponseData;
+
+    // Validate index
+    if (irIndex < 0 || irIndex >= (int)IR_COUNT) {
+        irIndex = 0;
+    }
+
+    const IRInfo& irInfo = ir_collection[irIndex];
+
+    // Copy from QSPI to RAM
+    // Note: memcpy would be faster but this is safer for QSPI access
+    for (size_t i = 0; i < irInfo.length; i++) {
+        irRamBuffer[i] = irInfo.data[i];
+    }
+
+    // Initialize IR processor with RAM buffer
+    ir.Init(irRamBuffer, irInfo.length);
+    currentIrIndex = irIndex;
+}
+
 /**
  * Persistent storage of settings
  */ 
@@ -80,16 +107,16 @@ void loadSettings() {
         return;
     }
 
-    // Load IR index and initialize the IR
-    currentIrIndex = localSettings.irIndex;
+    // Load IR index and copy from QSPI to RAM
+    int irIndex = localSettings.irIndex;
 
     // Clamp to valid range
-    if (currentIrIndex < 0 || currentIrIndex >= (int)ImpulseResponseData::ir_collection.size()) {
-        currentIrIndex = 0;
+    if (irIndex < 0 || irIndex >= (int)ImpulseResponseData::IR_COUNT) {
+        irIndex = 0;
     }
 
-    // Initialize IR with selected data
-    ir.Init(ImpulseResponseData::ir_collection[currentIrIndex]);
+    // Load IR from QSPI flash to RAM and initialize processor
+    loadIrToRam(irIndex);
 }
 
 void saveSettings() {
@@ -196,14 +223,13 @@ int main(void) {
 
         // Clamp to valid range
         if (selectedIrIndex < 0) selectedIrIndex = 0;
-        if (selectedIrIndex >= (int)ImpulseResponseData::ir_collection.size()) {
-            selectedIrIndex = ImpulseResponseData::ir_collection.size() - 1;
+        if (selectedIrIndex >= (int)ImpulseResponseData::IR_COUNT) {
+            selectedIrIndex = ImpulseResponseData::IR_COUNT - 1;
         }
 
-        // If IR selection changed, switch to new IR
+        // If IR selection changed, load new IR from QSPI to RAM
         if (selectedIrIndex != currentIrIndex) {
-            currentIrIndex = selectedIrIndex;
-            ir.Init(ImpulseResponseData::ir_collection[currentIrIndex]);
+            loadIrToRam(selectedIrIndex);
             saveSettings();  // Persist the new selection
         }
 
