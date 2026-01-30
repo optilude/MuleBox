@@ -157,10 +157,16 @@ MuleBox/
 
 ## License
 
-- Main application code: TBD
+- Project license: GPL-3.0 (see `LICENSE`)
+- Main application code: GPL-3.0, unless otherwise noted
 - Hothouse abstraction layer: GPL-3.0 (Copyright 2024 Cleveland Music Co.)
+- Impulse Response loader (`src/ImpulseResponse/`): MIT License
+  - Original code from [NeuralAmpModeler Plugin](https://github.com/sdatkinson/NeuralAmpModelerPlugin) by Steven Atkinson
+  - Modified by Keith Bloemer for the [Mars effect in FunBox](https://github.com/GuitarML/FunBox/tree/main/software/Mars)
+  - Further adapted for MuleBox
 - libDaisy: MIT License
 - DaisySP: MIT License
+- Eigen: MPL2 License
 
 ## Resources
 
