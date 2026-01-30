@@ -34,7 +34,7 @@ Parameter irSelectorParam;  // For resistor ladder IR selection
 /**
  * Fixed constants
  */
-constexpr int SETTINGS_VERSION = 3;  // Bumped for IR bypass flag
+constexpr int SETTINGS_VERSION = 4;  // Bumped for IR bypass flag removal
 constexpr float SAMPLE_RATE = 48000.0f;  // Audio sample rate in Hz
 static const float BASS_BOOST_FREQ = 110.0f;  // Center frequency in Hz
 static const float BASS_BOOST_Q = 0.7f;       // Q factor (bandwidth)
@@ -59,6 +59,7 @@ void loadIrToRam(int irIndex) {
 
     // If no IRs are compiled in, nothing to load.
     if (IR_COUNT == 0) {
+        irBypass = true;
         return;
     }
 
@@ -78,6 +79,7 @@ void loadIrToRam(int irIndex) {
     // Initialize IR processor with RAM buffer
     ir.Init(irRamBuffer, irInfo.length);
     currentIrIndex = irIndex;
+    irBypass = false;
 }
 
 /**
@@ -87,13 +89,11 @@ void loadIrToRam(int irIndex) {
 struct Settings {
     int version;
     int irIndex;   // Last selected IR index (0-11)
-    bool bypass;   // True when selector points beyond available IRs
 
     bool operator!=(const Settings& a) const {
         return !(
             a.version == version &&
-            a.irIndex == irIndex &&
-            a.bypass == bypass
+            a.irIndex == irIndex
         );
     }
 };
@@ -118,21 +118,19 @@ void loadSettings() {
     // Load IR index and copy from QSPI to RAM
     int irIndex = localSettings.irIndex;
 
-    // Restore bypass mode (if any)
-    irBypass = localSettings.bypass;
-
     // If no IRs exist in this build, force bypass.
     if (ImpulseResponseData::IR_COUNT == 0) {
         irBypass = true;
         return;
     }
 
-    // Clamp to valid range
+    // Clamp to valid range to ensure safety if IR list changed
     if (irIndex < 0 || irIndex >= (int)ImpulseResponseData::IR_COUNT) {
         irIndex = 0;
     }
 
     // Load IR from QSPI flash to RAM and initialize processor
+    // This will also un-bypass
     loadIrToRam(irIndex);
 }
 
@@ -142,7 +140,6 @@ void saveSettings() {
 
     localSettings.version = SETTINGS_VERSION;
     localSettings.irIndex = currentIrIndex;
-    localSettings.bypass = irBypass;
 
     triggerSettingsSave = true;
 }
@@ -216,8 +213,7 @@ int main(void) {
     // Update settings
     Settings defaultSettings = {
         SETTINGS_VERSION, // version
-        0,                 // irIndex (default to first IR)
-        false              // bypass
+        0                 // irIndex (default to first IR)
     };
     savedSettings.Init(defaultSettings);
     loadSettings();  // Load saved settings and initialize IR
