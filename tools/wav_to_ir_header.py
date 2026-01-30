@@ -1,0 +1,300 @@
+#!/usr/bin/env python3
+"""
+WAV to IR Header Converter for MuleBox
+
+Converts WAV files (impulse responses) to C++ header format for embedding
+in firmware. Supports up to 12 IRs for cabinet simulation.
+
+Usage:
+    python3 wav_to_ir_header.py [wav_files...] -o output.h
+
+Example:
+    python3 wav_to_ir_header.py irs/*.wav -o src/ImpulseResponse/ir_data.h
+"""
+
+import argparse
+import wave
+import struct
+import os
+import sys
+from pathlib import Path
+
+# Constants
+SAMPLE_RATE = 48000
+MAX_IR_LENGTH_MS = 170  # Maximum IR length in milliseconds
+MAX_IR_SAMPLES = int((MAX_IR_LENGTH_MS / 1000.0) * SAMPLE_RATE)  # 8,160 samples
+MAX_IR_COUNT = 12
+
+
+def read_wav_file(filepath):
+    """
+    Read a WAV file and return normalized float samples.
+
+    Args:
+        filepath: Path to WAV file
+
+    Returns:
+        tuple: (sample_rate, samples_list)
+
+    Raises:
+        ValueError: If WAV format is unsupported
+    """
+    with wave.open(str(filepath), 'rb') as wav:
+        # Get WAV parameters
+        channels = wav.getnchannels()
+        sample_width = wav.getsampwidth()
+        framerate = wav.getframerate()
+        n_frames = wav.getnframes()
+
+        print(f"  Format: {channels}ch, {sample_width*8}-bit, {framerate}Hz, {n_frames} samples ({n_frames/framerate:.1f}ms)")
+
+        # Read raw audio data
+        raw_data = wav.readframes(n_frames)
+
+        # Parse based on bit depth
+        if sample_width == 2:  # 16-bit
+            samples = struct.unpack(f'<{n_frames * channels}h', raw_data)
+            max_val = 32768.0
+        elif sample_width == 3:  # 24-bit
+            # 24-bit samples are packed as 3 bytes each
+            samples = []
+            for i in range(0, len(raw_data), 3 * channels):
+                # Read first channel only (mono or left channel)
+                b1, b2, b3 = raw_data[i:i+3]
+                # Combine bytes (little-endian, signed 24-bit)
+                val = b1 | (b2 << 8) | (b3 << 16)
+                # Sign extend from 24-bit to 32-bit
+                if val & 0x800000:
+                    val |= 0xFF000000
+                # Convert to signed int32
+                val = struct.unpack('<i', struct.pack('<I', val & 0xFFFFFFFF))[0]
+                samples.append(val)
+            max_val = 8388608.0  # 2^23
+        elif sample_width == 4:  # 32-bit
+            samples = struct.unpack(f'<{n_frames * channels}i', raw_data)
+            max_val = 2147483648.0
+        else:
+            raise ValueError(f"Unsupported bit depth: {sample_width * 8}")
+
+        # If stereo, extract only left channel
+        if channels == 2:
+            samples = samples[::2]
+        elif channels > 2:
+            raise ValueError(f"Only mono and stereo WAV files supported (got {channels} channels)")
+
+        # Normalize to float [-1.0, 1.0]
+        normalized = [s / max_val for s in samples]
+
+        return framerate, normalized
+
+
+def trim_or_pad_ir(samples, target_length=MAX_IR_SAMPLES):
+    """
+    Trim or pad IR to target length.
+
+    Args:
+        samples: List of float samples
+        target_length: Desired sample count
+
+    Returns:
+        list: Trimmed/padded samples
+    """
+    current_length = len(samples)
+
+    if current_length > target_length:
+        # Trim from the end
+        print(f"  Trimming from {current_length} to {target_length} samples")
+        return samples[:target_length]
+    elif current_length < target_length:
+        # Pad with zeros
+        print(f"  Padding from {current_length} to {target_length} samples")
+        return samples + [0.0] * (target_length - current_length)
+    else:
+        return samples
+
+
+def format_cpp_array(samples, name, indent=0):
+    """
+    Format samples as C++ std::vector<float> initialization.
+
+    Args:
+        samples: List of float samples
+        name: Variable name
+        indent: Indentation level
+
+    Returns:
+        str: Formatted C++ code
+    """
+    indent_str = ' ' * indent
+    lines = [f"{indent_str}std::vector<float> {name} = {{"]
+
+    # Format samples with 8 values per line
+    values_per_line = 8
+    for i in range(0, len(samples), values_per_line):
+        chunk = samples[i:i + values_per_line]
+        formatted_values = ', '.join(f'{v:.8f}f' for v in chunk)
+        lines.append(f"{indent_str}    {formatted_values},")
+
+    # Remove trailing comma from last line
+    lines[-1] = lines[-1].rstrip(',')
+
+    lines.append(f"{indent_str}}};")
+
+    return '\n'.join(lines)
+
+
+def sanitize_name(filepath):
+    """Convert filepath to valid C++ identifier."""
+    name = Path(filepath).stem  # Get filename without extension
+    # Replace non-alphanumeric chars with underscore
+    name = ''.join(c if c.isalnum() else '_' for c in name)
+    # Ensure it doesn't start with a digit
+    if name[0].isdigit():
+        name = 'ir_' + name
+    return name.lower()
+
+
+def generate_header(ir_data, output_path):
+    """
+    Generate C++ header file with IR data.
+
+    Args:
+        ir_data: List of (name, samples) tuples
+        output_path: Output header file path
+    """
+    guard_name = "IR_DATA_H"
+
+    lines = [
+        "// Auto-generated IR data header",
+        "// Do not edit manually - regenerate using wav_to_ir_header.py",
+        "",
+        f"#ifndef {guard_name}",
+        f"#define {guard_name}",
+        "",
+        "#include <vector>",
+        "",
+        "namespace ImpulseResponseData {",
+        "",
+    ]
+
+    # Add individual IR arrays
+    ir_names = []
+    for name, samples in ir_data:
+        lines.append(f"// IR: {name} ({len(samples)} samples, {len(samples)/SAMPLE_RATE*1000:.1f}ms)")
+        lines.append(format_cpp_array(samples, name, indent=0))
+        lines.append("")
+        ir_names.append(name)
+
+    # Add collection array
+    lines.append("// Collection of all IRs for indexing")
+    lines.append("std::vector<std::vector<float>> ir_collection = {")
+    for name in ir_names:
+        lines.append(f"    {name},")
+    lines.append("};")
+    lines.append("")
+
+    # Add names array for debugging/UI
+    lines.append("// IR names for reference")
+    lines.append("std::vector<const char*> ir_names = {")
+    for name in ir_names:
+        lines.append(f'    "{name}",')
+    lines.append("};")
+    lines.append("")
+
+    lines.extend([
+        "}  // namespace ImpulseResponseData",
+        "",
+        f"#endif  // {guard_name}",
+        ""
+    ])
+
+    # Write to file
+    with open(output_path, 'w') as f:
+        f.write('\n'.join(lines))
+
+    print(f"\nGenerated header: {output_path}")
+    print(f"  Total IRs: {len(ir_data)}")
+    print(f"  Total samples: {sum(len(samples) for _, samples in ir_data)}")
+    print(f"  Estimated size: ~{sum(len(samples) for _, samples in ir_data) * 4 / 1024:.1f} KB")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Convert WAV files to C++ IR header for MuleBox',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Convert single IR
+  python3 wav_to_ir_header.py irs/v30.wav -o src/ImpulseResponse/ir_data.h
+
+  # Convert multiple IRs
+  python3 wav_to_ir_header.py irs/*.wav -o src/ImpulseResponse/ir_data.h
+        """
+    )
+
+    parser.add_argument('wav_files', nargs='+', help='Input WAV file(s)')
+    parser.add_argument('-o', '--output', required=True, help='Output header file path')
+    parser.add_argument('--max-length', type=int, default=MAX_IR_LENGTH_MS,
+                        help=f'Maximum IR length in ms (default: {MAX_IR_LENGTH_MS})')
+
+    args = parser.parse_args()
+
+    # Validate input files
+    wav_files = []
+    for pattern in args.wav_files:
+        path = Path(pattern)
+        if path.exists() and path.is_file():
+            wav_files.append(path)
+        else:
+            print(f"Warning: File not found: {pattern}", file=sys.stderr)
+
+    if not wav_files:
+        print("Error: No valid WAV files found", file=sys.stderr)
+        return 1
+
+    if len(wav_files) > MAX_IR_COUNT:
+        print(f"Warning: Found {len(wav_files)} files, but only {MAX_IR_COUNT} IRs supported. Using first {MAX_IR_COUNT}.")
+        wav_files = wav_files[:MAX_IR_COUNT]
+
+    # Process each WAV file
+    ir_data = []
+    max_samples = int((args.max_length / 1000.0) * SAMPLE_RATE)
+
+    for wav_path in wav_files:
+        print(f"\nProcessing: {wav_path}")
+        try:
+            sample_rate, samples = read_wav_file(wav_path)
+
+            # Validate sample rate
+            if sample_rate != SAMPLE_RATE:
+                print(f"  Warning: Sample rate is {sample_rate}Hz, expected {SAMPLE_RATE}Hz")
+                print(f"  Resampling not implemented - IR may sound incorrect!")
+
+            # Trim or pad to target length
+            samples = trim_or_pad_ir(samples, max_samples)
+
+            # Generate C++ variable name
+            var_name = sanitize_name(wav_path)
+            print(f"  Variable name: {var_name}")
+
+            ir_data.append((var_name, samples))
+
+        except Exception as e:
+            print(f"  Error processing {wav_path}: {e}", file=sys.stderr)
+            continue
+
+    if not ir_data:
+        print("\nError: No IRs successfully processed", file=sys.stderr)
+        return 1
+
+    # Generate header file
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    generate_header(ir_data, output_path)
+
+    print("\nDone!")
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

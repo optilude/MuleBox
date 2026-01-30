@@ -5,10 +5,13 @@
 TARGET = MuleBox
 
 # Sources
-CPP_SOURCES = src/main.cpp src/hothouse.cpp
+CPP_SOURCES = src/main.cpp \
+              src/hothouse.cpp \
+              src/ImpulseResponse/dsp.cpp \
+              src/ImpulseResponse/ImpulseResponse.cpp
 
 # Include paths
-C_INCLUDES = -Isrc
+C_INCLUDES = -Isrc -IEigen
 
 # Library Locations
 LIBDAISY_DIR = libDaisy

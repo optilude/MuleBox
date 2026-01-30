@@ -8,6 +8,8 @@
 #include "hothouse.h"
 #include "daisysp.h"
 #include "hid/parameter.h"
+#include "ImpulseResponse/ImpulseResponse.h"
+#include "ImpulseResponse/ir_data.h"
 
 using clevelandmusicco::Hothouse;
 
@@ -26,15 +28,24 @@ using daisysp::Svf;
 Hothouse hw;
 Led ledLeft, ledRight;
 Parameter boostGainParam;
+Parameter irSelectorParam;  // For resistor ladder IR selection
 
 
 /**
  * Fixed constants
  */
-constexpr int SETTINGS_VERSION = 1;
+constexpr int SETTINGS_VERSION = 2;  // Bumped for IR selection
 constexpr float SAMPLE_RATE = 48000.0f;  // Audio sample rate in Hz
 static const float BASS_BOOST_FREQ = 110.0f;  // Center frequency in Hz
 static const float BASS_BOOST_Q = 0.7f;       // Q factor (bandwidth)
+constexpr int MAX_IR_COUNT = 12;              // Maximum number of IRs supported
+
+/**
+ * DSP Globals
+ */
+Svf bassBoost;
+ImpulseResponse ir;
+int currentIrIndex = 0;  // Currently loaded IR
 
 /**
  * Persistent storage of settings
@@ -42,10 +53,12 @@ static const float BASS_BOOST_Q = 0.7f;       // Q factor (bandwidth)
 
 struct Settings {
     int version;
-  
+    int irIndex;  // Selected IR index (0-11)
+
     bool operator!=(const Settings& a) const {
         return !(
-            a.version == version
+            a.version == version &&
+            a.irIndex == irIndex
         );
     }
 };
@@ -66,6 +79,17 @@ void loadSettings() {
         loadSettings();
         return;
     }
+
+    // Load IR index and initialize the IR
+    currentIrIndex = localSettings.irIndex;
+
+    // Clamp to valid range
+    if (currentIrIndex < 0 || currentIrIndex >= (int)ImpulseResponseData::ir_collection.size()) {
+        currentIrIndex = 0;
+    }
+
+    // Initialize IR with selected data
+    ir.Init(ImpulseResponseData::ir_collection[currentIrIndex]);
 }
 
 void saveSettings() {
@@ -73,16 +97,13 @@ void saveSettings() {
     Settings &localSettings = savedSettings.GetSettings();
 
     localSettings.version = SETTINGS_VERSION;
+    localSettings.irIndex = currentIrIndex;
 
     triggerSettingsSave = true;
 }
 
 
 
-/**
- * Globals
- */
-Svf bassBoost;
 
 
 
@@ -91,7 +112,7 @@ Svf bassBoost;
 void AudioCallback(AudioHandle::InputBuffer in,
                    AudioHandle::OutputBuffer out,
                    size_t size) {
-    
+
     ledLeft.Update();
     ledRight.Update();
 
@@ -107,11 +128,14 @@ void AudioCallback(AudioHandle::InputBuffer in,
         float peakOutput = bassBoost.Peak();
 
         // Blend dry signal with boosted peak output
-        float processed = monoInput + (peakOutput * wetGain);
+        float boosted = monoInput + (peakOutput * wetGain);
+
+        // Process through impulse response (cabinet simulation)
+        float irOutput = ir.Process(boosted);
 
         // Output to both stereo channels (dual mono)
-        out[0][i] = processed;  // Left channel
-        out[1][i] = processed;  // Right channel
+        out[0][i] = irOutput;  // Left channel
+        out[1][i] = irOutput;  // Right channel
     }
 }
 
@@ -129,6 +153,12 @@ int main(void) {
                         3.0f,      // Max: ~12dB boost (10^(12/20) ≈ 3.98)
                         Parameter::LOGARITHMIC);
 
+    // Initialize IR selector (resistor ladder on KNOB_2)
+    irSelectorParam.Init(hw.knobs[Hothouse::KNOB_2],
+                         0.0f,     // Min value
+                         11.0f,    // Max value (12 positions: 0-11)
+                         Parameter::LINEAR);
+
     // Initialize bass boost EQ
     bassBoost.Init(hw.AudioSampleRate());  // Initialize with actual sample rate
     bassBoost.SetFreq(BASS_BOOST_FREQ);    // Center frequency
@@ -137,9 +167,11 @@ int main(void) {
 
     // Update settings
     Settings defaultSettings = {
-        SETTINGS_VERSION // version
+        SETTINGS_VERSION, // version
+        0                  // irIndex (default to first IR)
     };
     savedSettings.Init(defaultSettings);
+    loadSettings();  // Load saved settings and initialize IR
 
     // Start audio processing with our callback
     hw.StartAdc();
@@ -156,6 +188,24 @@ int main(void) {
 
         // Process all hardware controls (knobs, switches)
         hw.ProcessAllControls();
+
+        // Check IR selection from resistor ladder (KNOB_2)
+        // Resistor ladder provides 12 discrete voltage levels
+        float rawValue = irSelectorParam.Process();
+        int selectedIrIndex = (int)(rawValue + 0.5f);  // Round to nearest integer
+
+        // Clamp to valid range
+        if (selectedIrIndex < 0) selectedIrIndex = 0;
+        if (selectedIrIndex >= (int)ImpulseResponseData::ir_collection.size()) {
+            selectedIrIndex = ImpulseResponseData::ir_collection.size() - 1;
+        }
+
+        // If IR selection changed, switch to new IR
+        if (selectedIrIndex != currentIrIndex) {
+            currentIrIndex = selectedIrIndex;
+            ir.Init(ImpulseResponseData::ir_collection[currentIrIndex]);
+            saveSettings();  // Persist the new selection
+        }
 
         // Check if footswitch 1 is held for reset to bootloader mode
         hw.CheckResetToBootloader();

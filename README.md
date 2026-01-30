@@ -13,9 +13,68 @@ A hardware guitar processing unit built with the Electrosmith Daisy Seed DSP mod
   - 2 footswitches with LEDs
   - 9V power input
 
+## Hardware Wiring
+
+### IR Selection - 12-Position Rotary Switch
+
+The cabinet impulse response is selected using a 12-position rotary switch connected via resistor ladder to **KNOB_2** (potentiometer 2).
+
+**Resistor Ladder Wiring:**
+```
+                    +3.3V (from Hothouse)
+                      |
+    Position 0  ------+
+                      |
+                     1kΩ
+                      |
+    Position 1  ------+
+                      |
+                     1kΩ
+                      |
+    Position 2  ------+
+                      |
+                      ...
+                      |
+                     1kΩ
+                      |
+    Position 11 ------+
+                      |
+                     1kΩ
+                      |
+                    To KNOB_2 ADC input
+                      |
+                    GND
+```
+
+**Component Values:**
+- **Resistors**: 12× 1kΩ ±1% (metal film recommended for accuracy)
+- **Total Resistance**: 12kΩ
+- **Current Draw**: ~0.275mA (negligible)
+
+**Expected Voltages per Position:**
+| Position | IR Name | Voltage | Normalized ADC |
+|----------|---------|---------|----------------|
+| 0        | Slot 1  | 0.00V   | 0.000          |
+| 1        | Slot 2  | 0.275V  | 0.083          |
+| 2        | Slot 3  | 0.55V   | 0.167          |
+| 3        | Slot 4  | 0.825V  | 0.250          |
+| 4        | Slot 5  | 1.10V   | 0.333          |
+| 5        | Slot 6  | 1.375V  | 0.417          |
+| 6        | Slot 7  | 1.65V   | 0.500          |
+| 7        | Slot 8  | 1.925V  | 0.583          |
+| 8        | Slot 9  | 2.20V   | 0.667          |
+| 9        | Slot 10 | 2.475V  | 0.750          |
+| 10       | Slot 11 | 2.75V   | 0.833          |
+| 11       | Slot 12 | 3.025V  | 0.917          |
+
+**Note**: The firmware applies hysteresis to prevent jitter between adjacent positions. IR selection is saved to flash memory and restored on power-up.
+
 ## Current Status
 
-The project currently implements a **simple audio passthrough** - input is passed directly to output without processing. This serves as a foundation for implementing guitar effects.
+The project implements cabinet simulation using impulse response convolution:
+- **Bass boost EQ** on mono input (adjustable via KNOB_1)
+- **IR convolution** for cabinet simulation (12 selectable via rotary switch on KNOB_2)
+- **Dual mono stereo output**
 
 ## Building
 
