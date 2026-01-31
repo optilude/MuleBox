@@ -21,11 +21,61 @@ using daisy::AudioHandle;
 
 using daisysp::Svf;
 
+// Helper class to debounce discrete selections from analog controls
+class DebouncedAnalogSwitch {
+  public:
+    void Init(uint32_t debounceMs) {
+        debounceMs_ = debounceMs;
+        lastChangeTime_ = 0;
+        stableValue_ = -1; // -1 indicates not yet initialized
+        pendingValue_ = -1;
+    }
+
+    int Process(int rawValue) {
+        uint32_t now = daisy::System::GetNow();
+
+        // First run initialization
+        if (stableValue_ == -1) {
+            stableValue_ = rawValue;
+            pendingValue_ = -1;
+            return stableValue_;
+        }
+
+        if (rawValue != stableValue_) {
+            if (rawValue != pendingValue_) {
+                // Value has changed to something new
+                pendingValue_ = rawValue;
+                lastChangeTime_ = now;
+            } else {
+                // Value is holding at pendingValue_
+                if (now - lastChangeTime_ > debounceMs_) {
+                    // It has been stable long enough. Commit it.
+                    stableValue_ = rawValue;
+                    pendingValue_ = -1;
+                }
+            }
+        } else {
+            // We are back at the stable position
+            pendingValue_ = -1;
+        }
+        return stableValue_;
+    }
+
+    int Value() const { return stableValue_; }
+
+  private:
+    uint32_t debounceMs_;
+    uint32_t lastChangeTime_;
+    int stableValue_;
+    int pendingValue_;
+};
+
 /**
  * Hardware interface
  */
 
 Hothouse hw;
+DebouncedAnalogSwitch irSwitch;
 Led ledLeft, ledRight;
 Parameter boostGainParam;
 Parameter irSelectorParam;  // For resistor ladder IR selection
@@ -155,8 +205,7 @@ void AudioCallback(AudioHandle::InputBuffer in,
                    AudioHandle::OutputBuffer out,
                    size_t size) {
 
-    ledLeft.Update();
-    ledRight.Update();
+    
 
     // Process boost gain parameter (maps knob to 0-3.0x range)
     float wetGain = boostGainParam.Process();
@@ -199,10 +248,18 @@ int main(void) {
                         Parameter::LOGARITHMIC);
 
     // Initialize IR selector (resistor ladder on KNOB_2)
+    // We use a linear mapping. For a standard 12-position switch wired as a voltage divider
+    // (11 resistors, 0V to 3.3V), the voltages align with the integer steps 0..11.
+    // If the resistor ladder has 12 resistors (max < 3.3V), the top position might be hard to reach.
+    // If you find position 11 is unreachable, consider reducing the max value of the parameter logic slightly
+    // or ensuring 3.3V is applied across the full chain.
     irSelectorParam.Init(hw.knobs[Hothouse::KNOB_2],
                          0.0f,     // Min value
                          (float)(MAX_IR_POSITIONS - 1),    // Max value (12 positions: 0-11)
                          Parameter::LINEAR);
+
+    // Initialize debounce for IR switch (100ms)
+    irSwitch.Init(100);
 
     // Initialize bass boost EQ
     bassBoost.Init(hw.AudioSampleRate());  // Initialize with actual sample rate
@@ -231,17 +288,25 @@ int main(void) {
             triggerSettingsSave = false;
         }
 
+        // Update LEDs
+        ledLeft.Update();
+        ledRight.Update();
+
         // Process all hardware controls (knobs, switches)
         hw.ProcessAllControls();
 
         // Check IR selection from resistor ladder (KNOB_2)
         // Resistor ladder provides 12 discrete voltage levels
+        // We debounce the integer position to ensure we only load the IR when the knob stops moving.
         float rawValue = irSelectorParam.Process();
-        int selectedPosition = (int)(rawValue + 0.5f);  // Round to nearest integer
+        int rawPosition = (int)(rawValue + 0.5f);  // Round to nearest integer
 
         // Clamp to selector's physical range (0..11)
-        if (selectedPosition < 0) selectedPosition = 0;
-        if (selectedPosition >= MAX_IR_POSITIONS) selectedPosition = MAX_IR_POSITIONS - 1;
+        if (rawPosition < 0) rawPosition = 0;
+        if (rawPosition >= MAX_IR_POSITIONS) rawPosition = MAX_IR_POSITIONS - 1;
+
+        // Process through debouncer to get stable position
+        int selectedPosition = irSwitch.Process(rawPosition);
 
         // Bypass if selector position exceeds compiled IR count.
         bool shouldBypass = (selectedPosition >= (int)ImpulseResponseData::IR_COUNT);
