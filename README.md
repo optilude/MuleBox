@@ -59,6 +59,7 @@ You will need:
 - 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
 - Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
 - Plastic zipties for mounting the inductor coil
+- Thermal paste (only a tiny amount) for moutning the large resistors
 
 ## Assembly
 
