@@ -36,7 +36,24 @@ When selecting hardware components to use, it is important to consider not only 
 
 ### The Daisy Seed
 
+First, buy the [Daisy Seed](electro-smith.com/products/daisy-seed). The Hothouse does not come with it. You can buy it from Elecrosmith directly, or a third party seller close to you. It can be reprogrammed as many times as you like and used for other projects (e.g. using the Hothouse platform in its default pedal-sized enclosure).
+
 ### The Hothouse PCB and PCB mounts
+
+Next, you need the [Hothouse](https://clevelandmusicco.com/hothouse-diy-digital-signal-processing-platform-kit/), which is what the Daisy Seed will mount to to gain access to audio I/O, knobs (pots), and LEDs.
+
+Ideally, buy the Hothouse from Cleveland Music Co. They sell a version without an enclosure, which will save you a bit of money, whilst still supporting the developers of the Hothouse.
+
+However, the fine folks at Cleveland Music Co have made the PCB available as [open hardware](https://github.com/clevelandmusicco/open-source-pedals/tree/main/hothouse) which means that you can also manufacture your own from their "Gerber" files – probably using [JLCPCB](https://jlcpcb.com). In this case, you want the main PCB only (not the footswitch or I/O breakout boards), and you probably want to get JLCPCB (or whoever you use) to provide and solder the SMD components for you.
+
+There are several online tutorials that explain how to do this, but the basic idea is that you upload the Gerber (.zip) and Bill of Materials (.csv) file for the main PCB to the JLCPCB website, and choose their PCB assembly service. It's a very slick process. You will probably have to order at least five boards, but even then it's pretty affordable (plus you now have spares).
+
+If you go this route, you will also need to buy:
+
+1. Two single-row, 20-pin, 2.54mm pitch female square-pin headers, e.g. [SKU A-1310 from Tayda](https://www.taydaelectronics.com/20-pin-2-54-mm-single-row-female-pin-header.html).
+2. A 100uF low-ESR electrolytic capacitor, e.g. [SKU A-959 from Tayda](https://www.taydaelectronics.com/100uf-25v-105c-jrb-radial-electrolytic-capacitor-6-3x11mm.html).
+
+You will also need pots and LEDs but we'll detail those below as you'll need to get these regardless of whether you buy the Hothouse kit or manufacture your own PCBs.
 
 ### The indictor coil
 
