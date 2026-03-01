@@ -1,82 +1,70 @@
 # MuleBox
 
-A hardware guitar processing unit built with the Electrosmith Daisy Seed DSP module and Cleveland Audio Hothouse platform.
+A hardware guitar processing unit built with the Electrosmith Daisy Seed DSP module and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer. (It does not have a headphone amplifier built in).
 
-## Hardware
+This document provides guidance for how to build your own. Both software and hardware are open source. You can try to build it as described here, or use this as a starting point for your own build.
 
-- **Reactive Load Box**: Analog circuit producing line-level output
-- **DSP**: Electrosmith Daisy Seed (STM32-based)
-- **Platform**: Cleveland Audio Hothouse
-  - Stereo audio I/O
-  - 6 potentiometers
-  - 3 three-way toggle switches
-  - 2 footswitches with LEDs
-  - 9V power input
+**WARNING #1:** The basic function of this box is to replace the speaker in an amplifier. A tube amplifier, in particular, will be damaged if used without a suitable load. Do not turn the amp on without a speaker or a load (like the one inside the MuleBox). If connections are made incorrectly, become loose, or are poorly soldered inside the MuleBox, the load could be disconnected. In this case, you could damage your amplifier.
 
-## Hardware Wiring
+**WARNING #2:** The components described here are for an 8 Ohm speaker output. Only plug into an 8 Ohm speaker output from your amplifier. The maximum rated power is 50W. It is safe to use a lower-powered amp, but do not use a higher-powered amplifier.
 
-### IR Selection - 12-Position Rotary Switch
+**WARNING #3:** This is a very tight build. You need to take care selecting components that can handle the required power, including wires. You need to be familar with soldering, guitar electronics (e.g. you have built guitar amps or pedals before), and be capable of building the code for this software project using basic development tools.
 
-The cabinet impulse response is selected using a 12-position rotary switch connected via resistor ladder to **KNOB_2** (potentiometer 2).
+You will also need to supply your own IR files, e.g. ones you have bought yourself.
 
-**Resistor Ladder Wiring:**
-```
-                    +3.3V (from Hothouse)
-                      |
-    Position 0  ------+
-                      |
-                     1kΩ
-                      |
-    Position 1  ------+
-                      |
-                     1kΩ
-                      |
-    Position 2  ------+
-                      |
-                      ...
-                      |
-                     1kΩ
-                      |
-    Position 11 ------+
-                      |
-                     1kΩ
-                      |
-                    To KNOB_2 ADC input
-                      |
-                    GND
-```
+## Architecture
 
-**Component Values:**
-- **Resistors**: 12× 1kΩ ±1% (metal film recommended for accuracy)
-- **Total Resistance**: 12kΩ
-- **Current Draw**: ~0.275mA (negligible)
+Think of the MuleBox as as two separate devices hardwired together:
 
-**Expected Voltages per Position:**
-| Position | IR Name | Voltage | Normalized ADC |
-|----------|---------|---------|----------------|
-| 0        | Slot 1  | 0.00V   | 0.000          |
-| 1        | Slot 2  | 0.275V  | 0.083          |
-| 2        | Slot 3  | 0.55V   | 0.167          |
-| 3        | Slot 4  | 0.825V  | 0.250          |
-| 4        | Slot 5  | 1.10V   | 0.333          |
-| 5        | Slot 6  | 1.375V  | 0.417          |
-| 6        | Slot 7  | 1.65V   | 0.500          |
-| 7        | Slot 8  | 1.925V  | 0.583          |
-| 8        | Slot 9  | 2.20V   | 0.667          |
-| 9        | Slot 10 | 2.475V  | 0.750          |
-| 10       | Slot 11 | 2.75V   | 0.833          |
-| 11       | Slot 12 | 3.025V  | 0.917          |
+1. An attenuator, using a variant of the ["JohnH" Attenuator](https://marshallforum.com/threads/simple-attenuators-design-and-testing.98285/) design. This provides a reactive load that is both safe and provides a an impedance curve that is similar to a speaker cabinet, which will make a tube amp "react" more appropriately.
 
-**Note**: The firmware applies hysteresis to prevent jitter between adjacent positions. IR selection is saved to flash memory and restored on power-up.
+The JohnH design can be used to build an atteunator box that quietens an amp whilst passing output to a real speaker in a guitar cabinet, with selectable levels of attenuation. The MuleBox does *not* support pass-through to a guitar cabinet. Instead it takes a "line out" signal and sends it to the DSP module.
 
-## Current Status
+The attenutator absorbs all the energy of the audio signal (up to 50W) and turns it into heat. Therefore, the attenuator gets hot. An aluminium chassis acts as a heat sink, and is cut with with plenty of ventilation. There is also a small fan to provide airflow. This is important not only to ensure the passive attenuator components don't fail – we are running a DSP module in the same box and this has a narrower operating temperature range.
 
-The project implements cabinet simulation using impulse response convolution:
-- **Bass boost EQ** on mono input (adjustable via KNOB_1)
-- **IR convolution** for cabinet simulation (12 selectable via rotary switch on KNOB_2)
-- **Dual mono stereo output**
+2. A DSP processor that takes the raw amp sound and applies a selectable Impulse Response (IR) to it, emulating a guitar speaker cabinet, before passing the audio out as a stereo signal. This is based on the [Electrosmith Daisy Seed](https://electro-smith.com/products/daisy-seed) module, which can be programmed to perform a variety of audio-related functions (this is the source code repository for the MuleBox firmware, written in C++ for the Daisy platform).
 
-## Building
+The Daisy Seed needs to be connected to knobs and audio I/O. For that, we use the [Cleveland Music Co Hothouse](https://clevelandmusicco.com/hothouse/). This is a PCB that provides up six knobs, three switches, two footswitches, two LEDs, and stereo audio input and output, originally intended in a guitar pedal form factor. MuleBox uses the Hothouse PCB, but not the breakout boards for the jacks and footswitches and LEDs. This runs on 9V "pedal power".
+
+Note that the attenuator is entirely passive. This means that if you turn your amp on but leave the MuleBox unpowered (there is no on/off switch), your amp is still safe. However, the cooling fan will not run, so it is advisable to leave it powered on whenever the amp is in use.
+
+The MuleBox lives inside a "Hammond 1590DD" size enclosure – mainly because this is the largest enclosure one can order from Tayda Electronics and have them paint and drill. It is of course possible to use a different box, so long as it has the required cutouts and enough ventilation, but we provide Tayda drill and UV print templates below, which make it much easier to get a professional-looking enclosure.
+
+## Hardware components
+
+When selecting hardware components to use, it is important to consider not only their values (e.g. resistance and power rating/wattage for the resistors; inductance for the indctor coil), but also the physical dimensions of each. The Tayda drill template provided will need to be modified for any components with a different footprint from the ones suggested below. This is most important when it comes to the large, high-powered resistors. Since these are clamped to the bottom (technically the "lid") of the enclosure, it might be preferable to drill these manually.
+
+### The Daisy Seed
+
+### The Hothouse PCB and PCB mounts
+
+### The indictor coil
+
+### The large resistors
+
+### The cooling fan
+
+### Other components
+
+### The enclosure
+
+### Tools and consumables
+
+You will need:
+
+- A good quality soldering iron with both a pencil tip for PCB soldering and a lager tip for the large resistors, jacks, and so on.
+- Other soldering tools – high quality solder, an extractor fan and/or mask to avoid breathing in fumes, a solder sucker for rework, helping hands or clamps, etc.
+- Screwdrivers, pliers, wirecutters, wire strippers, spanners in various sizes to affix pots to the enclosure, etc.
+- A multimeter that can measure resistance and continuity (beep mode)
+- 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
+- Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
+- Plastic zipties for mounting the inductor coil
+
+## Assembly
+
+## Preparing your IRs
+
+## Building the software
 
 ### Prerequisites
 
@@ -136,24 +124,6 @@ make help           # Show all available targets
 
 **Tip**: You can also enter DFU mode by holding Footswitch 1 for 2 seconds when the device is running.
 
-## Development
-
-See [CLAUDE.md](CLAUDE.md) for detailed development documentation, API reference, and examples for AI-assisted development.
-
-## Project Structure
-
-```
-MuleBox/
-├── src/
-│   ├── main.cpp         - Main application
-│   ├── hothouse.h       - Hardware abstraction
-│   └── hothouse.cpp     - Hardware implementation
-├── libDaisy/            - Daisy hardware library (submodule)
-├── DaisySP/             - DSP algorithms library (submodule)
-├── Makefile             - Build configuration
-├── CLAUDE.md            - AI development context
-└── README.md            - This file
-```
 
 ## License
 
