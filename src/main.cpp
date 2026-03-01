@@ -1,15 +1,24 @@
-// MuleBox - Guitar Processing Unit
-// A simple passthrough audio application for the Electrosmith Daisy Seed
-// running on the Cleveland Audio Hothouse platform.
+// MuleBox - Guitar Cabinet IR Processing Unit
+// Electrosmith Daisy Seed on Cleveland Audio Hothouse platform
 //
-// This program passes input audio directly to output, serving as a
-// foundation for building guitar effects processing.
+// Mono input (left channel) -> IR convolution -> Stereo output
+//
+// Controls:
+//   KNOB_4: Output level (0 = silence, full CW = unity)
+//   KNOB_5: Bass boost/cut (noon = flat, CCW = cut, CW = boost)
+//   KNOB_6: IR selector (12-position rotary switch via resistor ladder)
+//
+// LEDs:
+//   LED_1 (red):  Always on. Blinks off on input/output clipping.
+//   LED_2 (blue): On when IR loaded. Off on empty slot. Blinks during IR switch.
 
 #include "hothouse.h"
 #include "daisysp.h"
 #include "hid/parameter.h"
-#include "ImpulseResponse/ImpulseResponse.h"
-#include "ImpulseResponse/ir_data.h"
+#include "Filters/fir.h"
+#include "ir_data.h"
+
+#include <cmath>
 
 using clevelandmusicco::Hothouse;
 
@@ -77,37 +86,50 @@ class DebouncedAnalogSwitch {
 Hothouse hw;
 DebouncedAnalogSwitch irSwitch;
 Led ledLeft, ledRight;
-Parameter boostGainParam;
-Parameter irSelectorParam;  // For resistor ladder IR selection
+Parameter outputLevelParam;   // KNOB_4: output level
+Parameter bassParam;          // KNOB_5: bass boost/cut
+Parameter irSelectorParam;   // KNOB_6: IR selector (resistor ladder)
 
 
 /**
  * Fixed constants
  */
-constexpr int SETTINGS_VERSION = 4;  // Bumped for IR bypass flag removal
-constexpr float SAMPLE_RATE = 48000.0f;  // Audio sample rate in Hz
-static const float BASS_BOOST_FREQ = 110.0f;  // Center frequency in Hz
-static const float BASS_BOOST_Q = 0.7f;       // Q factor (bandwidth)
-constexpr int MAX_IR_POSITIONS = 12;          // Rotary positions supported by hardware
+constexpr int SETTINGS_VERSION = 5;  // Bumped for control remap + FIR engine change
+constexpr float SAMPLE_RATE = 48000.0f;
+static const float BASS_FREQ = 110.0f;        // Bass EQ center frequency in Hz
+static const float BASS_Q = 0.7f;             // Q factor (bandwidth)
+constexpr int MAX_IR_POSITIONS = 12;           // Rotary positions supported by hardware
+constexpr size_t MAX_IR_LENGTH = 8192;         // Max IR samples (170ms @ 48kHz)
+constexpr size_t AUDIO_BLOCK_SIZE = 8;         // Samples per audio callback
+constexpr float CLIPPING_THRESHOLD = 0.95f;    // Clipping detection threshold
+constexpr uint32_t CLIPPING_BLINK_MS = 100;    // LED blink duration on clipping
 
 /**
  * DSP Globals
  */
-Svf bassBoost;
-ImpulseResponse ir;
-int currentIrIndex = 0;  // Currently loaded IR
+Svf bassFilter;
+daisysp::FIR<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> firFilter;
+int currentIrIndex = 0;         // Currently loaded IR
 volatile bool irBypass = false;  // When true, skip IR convolution
 
-// RAM buffer for active IR (copied from QSPI flash)
-// Max size is 8,192 samples as defined in ImpulseResponse
-constexpr size_t MAX_IR_BUFFER_SIZE = 8192;
-static float irRamBuffer[MAX_IR_BUFFER_SIZE];
+/**
+ * LED / status state
+ */
+volatile bool clippingDetected = false;
+uint32_t clippingBlinkStart = 0;
 
-// Load IR from QSPI flash to RAM buffer
-void loadIrToRam(int irIndex) {
+/**
+ * Load IR from QSPI flash into FIR filter
+ *
+ * Sets irBypass=true during reconfiguration for thread safety
+ * (audio callback checks irBypass before calling ProcessBlock).
+ *
+ * The FIR SetIR() reads coefficients directly from QSPI memory-mapped
+ * addresses, reverses them internally, and stores in its own buffer.
+ */
+void loadIr(int irIndex) {
     using namespace ImpulseResponseData;
 
-    // If no IRs are compiled in, nothing to load.
     if (IR_COUNT == 0) {
         irBypass = true;
         return;
@@ -118,23 +140,21 @@ void loadIrToRam(int irIndex) {
         irIndex = 0;
     }
 
+    // Bypass during reconfiguration to avoid audio glitches
+    irBypass = true;
+
     const IRInfo& irInfo = ir_collection[irIndex];
 
-    // Copy from QSPI to RAM
-    // Note: memcpy would be faster but this is safer for QSPI access
-    for (size_t i = 0; i < irInfo.length; i++) {
-        irRamBuffer[i] = irInfo.data[i];
-    }
+    // Load IR into FIR filter (reverse=true: IR is time-forward, FIR needs time-reversed)
+    firFilter.SetIR(irInfo.data, irInfo.length, true);
 
-    // Initialize IR processor with RAM buffer
-    ir.Init(irRamBuffer, irInfo.length);
     currentIrIndex = irIndex;
     irBypass = false;
 }
 
 /**
  * Persistent storage of settings
- */ 
+ */
 
 struct Settings {
     int version;
@@ -165,7 +185,7 @@ void loadSettings() {
         return;
     }
 
-    // Load IR index and copy from QSPI to RAM
+    // Load IR index
     int irIndex = localSettings.irIndex;
 
     // If no IRs exist in this build, force bypass.
@@ -179,13 +199,11 @@ void loadSettings() {
         irIndex = 0;
     }
 
-    // Load IR from QSPI flash to RAM and initialize processor
-    // This will also un-bypass
-    loadIrToRam(irIndex);
+    // Load IR from QSPI flash and initialize FIR processor
+    loadIr(irIndex);
 }
 
 void saveSettings() {
-    //Reference to local copy of settings stored in flash
     Settings &localSettings = savedSettings.GetSettings();
 
     localSettings.version = SETTINGS_VERSION;
@@ -195,91 +213,116 @@ void saveSettings() {
 }
 
 
-
-
-
-
-// Audio callback - processes audio samples
-// This is called at the audio rate (typically 48kHz / block size)
+// Audio callback - processes audio samples in blocks
+// Called at audio rate: 48kHz / 8 samples = 6kHz
 void AudioCallback(AudioHandle::InputBuffer in,
                    AudioHandle::OutputBuffer out,
                    size_t size) {
 
-    
+    // Read control parameters (smoothed)
+    float bassAmount = bassParam.Process();
+    float outputLevel = outputLevelParam.Process();
 
-    // Process boost gain parameter (maps knob to 0-3.0x range)
-    float wetGain = boostGainParam.Process();
-
+    // Pre-process: read mono input, apply bass boost/cut, check input clipping
+    float firIn[AUDIO_BLOCK_SIZE];
     for (size_t i = 0; i < size; i++) {
-        // Read mono input from left channel only
-        float monoInput = in[0][i];
+        float mono = in[0][i];
 
-        // Process through SVF bass boost filter
-        bassBoost.Process(monoInput);
-        float peakOutput = bassBoost.Peak();
-
-        // Blend dry signal with boosted peak output
-        float boosted = monoInput + (peakOutput * wetGain);
-
-        // If selector points beyond available IRs, bypass convolution.
-        float output = boosted;
-        if (!irBypass) {
-            output = ir.Process(boosted);
+        // Input clipping detection
+        if (fabsf(mono) > CLIPPING_THRESHOLD) {
+            clippingDetected = true;
         }
 
-        // Output to both stereo channels (dual mono)
-        out[0][i] = output;  // Left channel
-        out[1][i] = output;  // Right channel
+        // Bass boost/cut via SVF peak filter
+        // bassAmount: -3.0 (max cut) to +3.0 (max boost), 0.0 = flat
+        bassFilter.Process(mono);
+        firIn[i] = mono + (bassFilter.Peak() * bassAmount);
+    }
+
+    // IR convolution (ARM CMSIS-DSP optimized block processing) or bypass
+    float firOut[AUDIO_BLOCK_SIZE];
+    if (!irBypass) {
+        firFilter.ProcessBlock(firIn, firOut, size);
+    } else {
+        for (size_t i = 0; i < size; i++) {
+            firOut[i] = firIn[i];
+        }
+    }
+
+    // Apply output level, check output clipping, write stereo output
+    for (size_t i = 0; i < size; i++) {
+        float sample = firOut[i] * outputLevel;
+
+        // Output clipping detection
+        if (fabsf(sample) > CLIPPING_THRESHOLD) {
+            clippingDetected = true;
+        }
+
+        // Stereo output (dual mono)
+        out[0][i] = sample;
+        out[1][i] = sample;
     }
 }
 
 int main(void) {
     // Initialize the Hothouse hardware
     hw.Init(true); // max CPU speed
-    hw.SetAudioBlockSize(8);  // Process 8 samples at a time
+    hw.SetAudioBlockSize(AUDIO_BLOCK_SIZE);
     hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
 
+    // Initialize LEDs
     ledLeft.Init(hw.seed.GetPin(Hothouse::LED_1), false);
     ledRight.Init(hw.seed.GetPin(Hothouse::LED_2), false);
 
-    boostGainParam.Init(hw.knobs[Hothouse::KNOB_1],
-                        0.0f,      // Min: no boost
-                        3.0f,      // Max: ~12dB boost (10^(12/20) ≈ 3.98)
-                        Parameter::LOGARITHMIC);
+    // Turn on LED1 (red) immediately to indicate power-on
+    ledLeft.Set(1.0f);
+    ledLeft.Update();
 
-    // Initialize IR selector (resistor ladder on KNOB_2)
-    // We use a linear mapping. For a standard 12-position switch wired as a voltage divider
-    // (11 resistors, 0V to 3.3V), the voltages align with the integer steps 0..11.
-    // If the resistor ladder has 12 resistors (max < 3.3V), the top position might be hard to reach.
-    // If you find position 11 is unreachable, consider reducing the max value of the parameter logic slightly
-    // or ensuring 3.3V is applied across the full chain.
-    irSelectorParam.Init(hw.knobs[Hothouse::KNOB_2],
-                         0.0f,     // Min value
-                         (float)(MAX_IR_POSITIONS - 1),    // Max value (12 positions: 0-11)
+    // KNOB_4: Output level (0.0 = silence, 1.0 = unity gain)
+    outputLevelParam.Init(hw.knobs[Hothouse::KNOB_4],
+                          0.0f,
+                          1.0f,
+                          Parameter::LINEAR);
+
+    // KNOB_5: Bass boost/cut (-3.0 to +3.0, noon = 0.0 = flat)
+    bassParam.Init(hw.knobs[Hothouse::KNOB_5],
+                   -3.0f,
+                   3.0f,
+                   Parameter::LINEAR);
+
+    // KNOB_6: IR selector (12-position resistor ladder, 0-11)
+    // Resistor ladder: 12 positions with 1k resistors, 0 to 11k total.
+    // Wired in place of B10K pot; ADC reads 0.0-1.0 across 12 voltage steps.
+    irSelectorParam.Init(hw.knobs[Hothouse::KNOB_6],
+                         0.0f,
+                         (float)(MAX_IR_POSITIONS - 1),
                          Parameter::LINEAR);
 
     // Initialize debounce for IR switch (100ms)
     irSwitch.Init(100);
 
-    // Initialize bass boost EQ
-    bassBoost.Init(hw.AudioSampleRate());  // Initialize with actual sample rate
-    bassBoost.SetFreq(BASS_BOOST_FREQ);    // Center frequency
-    bassBoost.SetRes(BASS_BOOST_Q);        // Q factor for musical width
-    
+    // Initialize bass EQ filter
+    bassFilter.Init(hw.AudioSampleRate());
+    bassFilter.SetFreq(BASS_FREQ);
+    bassFilter.SetRes(BASS_Q);
 
-    // Update settings
+    // Load saved settings and initialize IR
     Settings defaultSettings = {
-        SETTINGS_VERSION, // version
+        SETTINGS_VERSION,
         0                 // irIndex (default to first IR)
     };
     savedSettings.Init(defaultSettings);
-    loadSettings();  // Load saved settings and initialize IR
+    loadSettings();
 
-    // Start audio processing with our callback
+    // Set initial LED2 state based on loaded IR
+    ledRight.Set(irBypass ? 0.0f : 1.0f);
+    ledRight.Update();
+
+    // Start audio processing
     hw.StartAdc();
     hw.StartAudio(AudioCallback);
 
-    // Main loop - runs continuously
+    // Main loop
     while(1) {
 
         // Save settings if triggered
@@ -288,16 +331,10 @@ int main(void) {
             triggerSettingsSave = false;
         }
 
-        // Update LEDs
-        ledLeft.Update();
-        ledRight.Update();
-
         // Process all hardware controls (knobs, switches)
         hw.ProcessAllControls();
 
-        // Check IR selection from resistor ladder (KNOB_2)
-        // Resistor ladder provides 12 discrete voltage levels
-        // We debounce the integer position to ensure we only load the IR when the knob stops moving.
+        // IR selection from resistor ladder (KNOB_6)
         float rawValue = irSelectorParam.Process();
         int rawPosition = (int)(rawValue + 0.5f);  // Round to nearest integer
 
@@ -308,20 +345,67 @@ int main(void) {
         // Process through debouncer to get stable position
         int selectedPosition = irSwitch.Process(rawPosition);
 
-        // Bypass if selector position exceeds compiled IR count.
+        // Bypass if selector position exceeds compiled IR count
         bool shouldBypass = (selectedPosition >= (int)ImpulseResponseData::IR_COUNT);
 
-        // Apply selection changes
+        // Handle bypass state change (empty slot selected/deselected)
         if (shouldBypass != irBypass) {
             irBypass = shouldBypass;
+
+            // LED2 blink on empty slot selection, then off
+            if (shouldBypass) {
+                ledRight.Set(1.0f);
+                ledRight.Update();
+                hw.DelayMs(50);
+                ledRight.Set(0.0f);
+                ledRight.Update();
+            }
+
             saveSettings();
         }
 
-        // If not bypassed and IR selection changed, load new IR from QSPI to RAM
+        // If not bypassed and IR selection changed, load new IR
         if (!shouldBypass && selectedPosition != currentIrIndex) {
-            loadIrToRam(selectedPosition);
-            saveSettings();  // Persist the new selection
+            // LED2 off during IR load (visible blink)
+            ledRight.Set(0.0f);
+            ledRight.Update();
+
+            loadIr(selectedPosition);
+
+            hw.DelayMs(50);  // Brief visible blink
+
+            // LED2 on when IR loaded
+            ledRight.Set(1.0f);
+            ledRight.Update();
+
+            saveSettings();
         }
+
+        // LED state machine
+        uint32_t now = daisy::System::GetNow();
+
+        // LED1 (red): always on, blink off briefly on clipping
+        float led1 = 1.0f;
+        if (clippingDetected) {
+            clippingBlinkStart = now;
+            clippingDetected = false;
+        }
+        if (clippingBlinkStart > 0 && (now - clippingBlinkStart) < CLIPPING_BLINK_MS) {
+            led1 = 0.0f;  // Off during clipping blink
+        } else {
+            clippingBlinkStart = 0;
+        }
+        ledLeft.Set(led1);
+
+        // LED2 (blue): steady state managed by IR load logic above
+        // Only update here if not in the middle of an IR load blink
+        if (!shouldBypass) {
+            ledRight.Set(irBypass ? 0.0f : 1.0f);
+        }
+
+        // Update LED hardware
+        ledLeft.Update();
+        ledRight.Update();
 
         // Check if footswitch 1 is held for reset to bootloader mode
         hw.CheckResetToBootloader();

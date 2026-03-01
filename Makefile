@@ -6,12 +6,17 @@ TARGET = MuleBox
 
 # Sources
 CPP_SOURCES = src/main.cpp \
-              src/hothouse.cpp \
-              src/ImpulseResponse/dsp.cpp \
-              src/ImpulseResponse/ImpulseResponse.cpp
+              src/hothouse.cpp
+
+# CMSIS-DSP FIR filtering (ARM-optimized convolution for IR processing)
+C_SOURCES = $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/FilteringFunctions/arm_fir_f32.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/FilteringFunctions/arm_fir_init_f32.c
 
 # Include paths
-C_INCLUDES = -Isrc -IEigen
+C_INCLUDES = -Isrc
+
+# Enable ARM DSP optimizations for DaisySP FIR filter
+C_DEFS = -DUSE_ARM_DSP
 
 # Library Locations
 LIBDAISY_DIR = libDaisy

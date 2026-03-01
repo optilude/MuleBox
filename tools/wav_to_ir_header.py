@@ -238,10 +238,10 @@ def main():
         epilog="""
 Examples:
   # Convert single IR
-  python3 wav_to_ir_header.py irs/v30.wav -o src/ImpulseResponse/ir_data.h
+  python3 wav_to_ir_header.py irs/v30.wav -o src/ir_data.h
 
-  # Convert multiple IRs
-  python3 wav_to_ir_header.py irs/*.wav -o src/ImpulseResponse/ir_data.h
+  # Convert multiple IRs (sorted alphabetically for rotary switch positions)
+  python3 wav_to_ir_header.py irs/*.wav -o src/ir_data.h
         """
     )
 
@@ -265,9 +265,17 @@ Examples:
         print("Error: No valid WAV files found", file=sys.stderr)
         return 1
 
+    # Sort alphabetically by filename (case-insensitive) for deterministic
+    # rotary switch position mapping: position 1 = first alphabetically, etc.
+    wav_files.sort(key=lambda p: p.name.lower())
+
     if len(wav_files) > MAX_IR_COUNT:
         print(f"Warning: Found {len(wav_files)} files, but only {MAX_IR_COUNT} IRs supported. Using first {MAX_IR_COUNT}.")
         wav_files = wav_files[:MAX_IR_COUNT]
+
+    print(f"\nIR order (sorted alphabetically, maps to rotary positions 1-{len(wav_files)}):")
+    for i, wf in enumerate(wav_files):
+        print(f"  Position {i+1}: {wf.name}")
 
     # Process each WAV file
     ir_data = []
