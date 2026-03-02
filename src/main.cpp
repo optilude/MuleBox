@@ -4,7 +4,7 @@
 // Mono input (left channel) -> IR convolution -> Stereo output
 //
 // Controls:
-//   KNOB_4: Output level (0 = silence, full CW = unity)
+//   KNOB_4: Output level (noon = unity, CCW = cut, CW = boost)
 //   KNOB_5: Bass boost/cut (noon = flat, CCW = cut, CW = boost)
 //   KNOB_6: IR selector (12-position rotary switch via resistor ladder)
 //
@@ -278,10 +278,10 @@ int main(void) {
     ledLeft.Set(1.0f);
     ledLeft.Update();
 
-    // KNOB_4: Output level (0.0 = silence, 1.0 = unity gain)
+    // KNOB_4: Output level (0.0 = silence, noon = unity, full CW = +6dB boost)
     outputLevelParam.Init(hw.knobs[Hothouse::KNOB_4],
                           0.0f,
-                          1.0f,
+                          2.0f,
                           Parameter::LINEAR);
 
     // KNOB_5: Bass boost/cut (-3.0 to +3.0, noon = 0.0 = flat)

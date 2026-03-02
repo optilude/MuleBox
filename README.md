@@ -87,6 +87,7 @@ Cheap fans are noisy. Quiet fans don't move a lot of air. The quality of the fan
 The fan needs to run off the 9V power supply. You can get fans that run natively on 9V, or e.g. 12V fans that will just run a bit slower at lower voltages. A lower-voltage fan (e.g. a 5V fan) will require additional components to step the 9V voltage down to 5V.
 
 **TODO**: Link to specific fan (once tested)
+
 **TODO**: Fan power details (once tested)
 
 ### The enclosure
@@ -149,6 +150,10 @@ And for the enclosure:
 * The Daisy Seed (see above)
 * The Hothouse main PCB (see above)
 * 30mm extractor fan (see above)
+* 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
+* Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
+* Plastic zip ties for mounting the inductor coil
+* Thermal paste (only a tiny amount) for moutning the large resistors
 
 ### Tools and consumables
 
@@ -158,11 +163,6 @@ You will need:
 - Other soldering tools – high quality solder, an extractor fan and/or mask to avoid breathing in fumes, a solder sucker for rework, helping hands or clamps, etc.
 - Screwdrivers, pliers, wirecutters, wire strippers, spanners in various sizes to affix pots to the enclosure, etc.
 - A multimeter that can measure resistance and continuity (beep mode)
-- 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
-- Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
-- Plastic zip ties for mounting the inductor coil
-- Thermal paste (only a tiny amount) for moutning the large resistors
-- Some M3 and M4 size bolts, washers, and nuts for mounting the PCB and the large resistors.
 
 ## Assembly
 
