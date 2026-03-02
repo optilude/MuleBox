@@ -32,6 +32,33 @@ The blue LED will stay on if an IR is loaded, and blink when it is being changed
 
 This project ships with four free IRs from Djammincabs [zystrix.com/djammincabs.htm](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either bought or recorded yourself.
 
+Requirements:
+
+- WAV format, 48kHz sample rate, mono or stereo (stereo: left channel is used)
+- Up to 12 files – if fewer, some positions on the rotary switch will be blank
+- Each IR should be up to ~170ms – longer IRs will be truncated, but you can still use them
+
+Note that files are assigned to rotary switch positions 1–12 in alphabetical order, so name them accordingly (e.g. `01_dark.wav`, `02_bright.wav`) to minimise confusion.
+
+Steps:
+
+1. Place your IR WAV files in the `irs/` folder.
+
+2. Run the converter tool to regenerate the IR data header:
+   ```bash
+   python3 tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
+   ```
+
+3. Connect the Daisy Seed to your computer via a USB cable, and put it in DFU mode by pressing boot and then reset.
+
+3. Rebuild and flash to the Daisy Seed:
+   ```bash
+   make
+   make program-dfu
+   ```
+
+4. Return the Daisy Seed to the Hothouse, power it on, and test the unit.
+
 ## Architecture
 
 Think of the Mulebox as as two separate devices hardwired together:
@@ -196,6 +223,7 @@ And for the enclosure:
 * 30mm extractor fan (see above)
 * 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
 * Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
+* Optional: For wiring the front pots, LEDs, and rotary switch, you can use sets of wires with 3-pin JST 1.25mm (or lagrer) connectors (you'll need both male and female). The advantage of this is that you can easily disconnect the front components when opening the enclosure.
 * Plastic zip ties for mounting the inductor coil
 * Thermal paste (only a tiny amount) for moutning the large resistors
 
@@ -210,9 +238,26 @@ You will need:
 
 ## Assembly
 
-## Preparing your IRs
+You've ordered the parts. Waited for the delivery driver. Laid everything out. It's time to put it all together!
+
+The Mulebox in a 1590DD enclosure is a tight fit. You want to think carefully about cable length and dress, and avoid any components unintentionally touching, which could lead to grounding issues or shorts.
+
+Additionally, we will mount the largest components to the removable "lid" (in our case the base), but the other components (jacks and pots) are on the back and front long sides. This creates a problem, because you need wires running from the base to the front and back. If these are too short, you will be unable to connect them. If they are too long, they will get in the way of the internal components or block the fan (and increase the risk of shorts) when the box is closed.
+
+We recommend that you assemble the unit with the lid and box opened like a clamshell, lying as close together as possible along the rear long edge. Run cables that are as short as possible from the rear jacks and pots to the relevant points on the base. You can have a bit more leeway with the front components, which use thinner wires, though it's even more elegant to use small plastic JST connectors that can be done up with the lid partially closed. Care and planning is everything.
+
+**TODO**: Insert photo of enclosure open
+
+Here is one feasible layout that aims to minimise cable runs. Note which wires are 22AWG (thick, handling the higher current of the amp signal), and which ones are thinner, handling only the electronics and line level audio signal.
+
+**TODO**: Insert layout image
+
+
+
 
 ## Building the software
+
+Before the Mulebox will work, you need to flash the firmware from this project onto it. This also transfers the prepared IRs (see above) to its QSPI flash memory.
 
 ### Prerequisites
 
@@ -270,21 +315,17 @@ make help           # Show all available targets
    make flash
    ```
 
-**Tip**: You can also enter DFU mode by holding Footswitch 1 for 2 seconds when the device is running.
+Alternatively, if you have an STM32 STLINK-V3MINIE debug probe, you can use this to flash (using `make program` rather than `make program-dfu`) without entering DFU mode, provided the Daisy Seed has power (either via its own USB socket, or through the Hothouse's 9V supply). The top left side slats on the enclosure are just tall enough to allow you to feed the 14-pin ribbon cable through, which means you can leave the debug probe connected with the enclosure closed and use this for testing.
 
+See the [Daisy Seed C++ SDK documentation](https://daisy.audio/tutorials/cpp-dev-env/) for more details about how to build and flash firmware.
 
 ## License
 
 - Project license: GPL-3.0 (see `LICENSE`)
 - Main application code: GPL-3.0, unless otherwise noted
 - Hothouse abstraction layer: GPL-3.0 (Copyright 2024 Cleveland Music Co.)
-- Impulse Response loader (`src/ImpulseResponse/`): MIT License
-  - Original code from [NeuralAmpModeler Plugin](https://github.com/sdatkinson/NeuralAmpModelerPlugin) by Steven Atkinson
-  - Modified by Keith Bloemer for the [Mars effect in FunBox](https://github.com/GuitarML/FunBox/tree/main/software/Mars)
-  - Further adapted for Mulebox
 - libDaisy: MIT License
 - DaisySP: MIT License
-- Eigen: MPL2 License
 
 ## Resources
 
