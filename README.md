@@ -82,47 +82,47 @@ You need the components below. We suggest ordering everything that is available 
 
 (SKU numbers in brackets)
 
-* 1 x Red 5mm LED (A-1554)
-* 1 x Blue 5mm LED (A-3005)
-* 2 x 5mm LED bezels (A-660)
-* 2 x B10K mini pots with solder lugs (A-1970)
-* 1 x B5K mini pot with solder lugs (A-1970)
-* 3 x dust seals for pots, unless supplied with pots (A-1310)
-* 3 x small knobs for 6mm splined pots, ~16mm (e.g. A-6071)
-* 1 x 100uF electrolytic capacitor (SKU A-959) – unless supplied with a full Hothouse Kit
-* 2 x 20pin female headers (A-1310) – unless supplied with a full Hothouse kit
-* 11 x 1K 1/4W metal film resistors (A-2200) – used for the rotary switch resistor ladder
-* 1 x 1K 1W metal film resistor (A-2196) – higher power rating, used for the attenuator circuit 
-* 3 x isolated jack sockets (A-6042)
-* 1 x small isolated DC power socket (A-991)
-* 4 x 10mm M3 bolts (A-1252) and nuts (A-1247) – for mounting 25W resistors
-* 4 x 10mm M4 bolts (A-4351) and nuts (A-4357) – for mounting 100W resistor
-* 4 x 25mm M3 bolts (A-1257) and nuts (A-1247) – for mounting cooling fan and finger grille
+* 1 x red 5mm LED ([A-1554](https://www.taydaelectronics.com/led-5mm-red.html))
+* 1 x blue 5mm LED ([A-3005](https://www.taydaelectronics.com/led-5mm-blue-lens.html))
+* 2 x 5mm LED bezels ([A-660](https://www.taydaelectronics.com/5mm-bezel-led-holder-chrome-metal.html))
+* 2 x B10K mini pots with solder lugs ([A-1961](https://www.taydaelectronics.com/10k-ohm-linear-taper-potentiometer-with-solder-lugs.html))
+* 1 x B5K mini pot with solder lugs ([A-1970](https://www.taydaelectronics.com/5k-ohm-linear-taper-potentiometer-with-solder-lugs.html))
+* 3 x dust seals for pots, unless supplied with pots ([A-5527](https://www.taydaelectronics.com/dust-seal-covers-for-potentiometer.html))
+* 3 x small knobs for 6mm splined pots, ~16mm (e.g. [A-6071](https://www.taydaelectronics.com/black-knob-white-indicator-16x15mm.html))
+* 1 x 100uF electrolytic capacitor ([A-959](https://www.taydaelectronics.com/100uf-25v-105c-jrb-radial-electrolytic-capacitor-6-3x11mm.html)) – unless supplied with a full Hothouse Kit
+* 2 x 20pin female headers ([A-1310](https://www.taydaelectronics.com/20-pin-2-54-mm-single-row-female-pin-header.html)) – unless supplied with a full Hothouse kit
+* 11 x 1K 1/4W metal film resistors ([A-2200](https://www.taydaelectronics.com/10-x-resistor-1k-ohm-1-4w-1-metal-film-pkg-of-10.html)) – used for the rotary switch resistor ladder
+* 1 x 1K 1W metal film resistor ([A-2196](https://www.taydaelectronics.com/resistor-1k-ohm-1w-1-metal-film-pkg-of-10.html)) – higher power rating, used for the attenuator circuit 
+* 3 x _isolated_ jack sockets ([A-6042](https://www.taydaelectronics.com/6-35mm-1-4-mono-insulated-switched-socket-jack-solder-lugs.html))
+* 1 x small _isolated_ DC power socket ([A-991](https://www.taydaelectronics.com/dc-power-jack-2-1mm-round-type-panel-mount-1.html))
+* 4 x 10mm M3 bolts ([A-1252](https://www.taydaelectronics.com/m3-steel-screw-cross-round-head-m3x10mm.html)) and nuts ([A-1247](https://www.taydaelectronics.com/nut-3mm-for-screw-m3.html)) – for mounting 25W resistors
+* 4 x 10mm M4 bolts ([A-4351](https://www.taydaelectronics.com/m4-steel-screw-cross-round-head-m4x10mm.html)) and nuts ([A-4357](https://www.taydaelectronics.com/nut-4mm-for-screw-m4.html)) – for mounting 100W resistor
+* 4 x 25mm M3 bolts ([A-1257](https://www.taydaelectronics.com/m3-steel-screw-cross-round-head-m3x25mm.html)) and nuts ([A-1247](https://www.taydaelectronics.com/nut-3mm-for-screw-m3.html)) – for mounting cooling fan and finger grille
 
 And for the enclosure:
 
 (skip all these if using a different/custom-drilled enclosure)
 
-* 1 x 1590DD enclosure in a suitable colour (e.g. A-5906)
-* 1 x 1590DD custom drill service (A-5141-CST-DR1)
-* 1 x 1590DD lid custom drill service (A-5141-CST-DRL) – you can skip this if you prefer to place and drill your own mounting holes for the large resistors, induction coil, and PCB
-* 64 x additional hole drilling service (A-99999-CST-DR-H1) – adjust this so that the total number of cutouts in the enclosure is covered (40 holes are included in the default drilling service, so 40 + 64 = 104 total holes)
-* 1 x 1590DD side C UV print service (A-5141-CST-UVC)
-* 1 x 1590DD side E UV print service (A-5141-CST-UVE)
-* 1 x gloss layer UV print service (A-99999-CST-UV-GL) – optional, but recommended to protect the printed labels
-* 1 x "print twice" white layer UV print service (A-99999-CST-UV-WH) – optoinal, but recommended if printing white on black
+* 1 x 1590DD enclosure in a suitable colour (e.g. [A-5906](https://www.taydaelectronics.com/matte-black-sand-texture-1590dd-style-aluminum-diecast-enclosure.html))
+* 1 x 1590DD custom drill service ([A-5141-CST-DR1](https://www.taydaelectronics.com/1590dd-custom-drill-enclosure-service.html))
+* 1 x 1590DD lid custom drill service ([A-5141-CST-DRL](https://www.taydaelectronics.com/1590dd-lid-custom-drill-enclosure-service.html)) – you can skip this if you prefer to place and drill your own mounting holes for the large resistors, induction coil, and PCB
+* 64 x additional hole drilling service ([A-99999-CST-DR-H1](https://www.taydaelectronics.com/drill-service-additional-holes.html)) – adjust this so that the total number of cutouts in the enclosure is covered (40 holes are included in the default drilling service, so 40 + 64 = 104 total holes)
+* 1 x 1590DD side C UV print service ([A-5141-CST-UVC](https://www.taydaelectronics.com/1590dd-side-c-uv-printing-service-1.html))
+* 1 x 1590DD side E UV print service ([A-5141-CST-UVE](https://www.taydaelectronics.com/1590dd-side-e-uv-printing-service-1.html))
+* 1 x gloss layer UV print service ([A-99999-CST-UV-GL](https://www.taydaelectronics.com/custom-uv-gloss-layer-service.html)) – optional, but recommended to protect the printed labels
+* 1 x "print twice" white layer UV print service ([A-99999-CST-UV-WH](https://www.taydaelectronics.com/93825-dup-custom-uv-white-layer-service.html)) – optoinal, but recommended if printing white on black
 
 #### Farnell
 
 (Order codes in brackets)
 
-* 4 x TCEHCBS-6-01 PCB mounts (4691573) – plus suitable screws (#6 or M3.5, self-tapping)
-* 1 x 12-position make-before-break rotary switch – Lorlin CK1034 (1123690)
-* 1 x 3K3 2W metal film resistor - used for the attenuator circuit (1738645)
-* 1 x Fan finger guard (1781195)
-* 1 x 10 Ohm, 100W resistor (1174288)
-* 1 x 100 Ohm, 25W resistor (2009323)
-* 1 x 39 Ohm, 25W resistor (2805189)
+* 4 x TCEHCBS-6-01 PCB standoffs ([4691573](https://uk.farnell.com/essentra-components/tcehcbs-6-01/pcb-mounting-nylon-6-6-9-5mm/dp/4691573)) – plus suitable screws (#6 or M3.5, self-tapping). Alternatively, [this kit from PiHut](https://thepihut.com/products/14-corner-edge-standoffs-set-of-4) contains both the standoffs and the screws.
+* 1 x 12-position make-before-break rotary switch – Lorlin CK1034 ([1123690](https://uk.farnell.com/lorlin/ck1034/switch-1-pole-12-pos-0-15a-250v/dp/1123690)) – note this has an imperial sized 6.35mm (1/4 inch), D-shaped spindle and so resquires a suitable knob. There is a metric version of the same switch (CK1024) which can take a 6mm D-shaft knob, but the front cutouts will then need to be adjusted.
+* 1 x 3K3 2W metal film resistor - used for the attenuator circuit ([1738645](https://uk.farnell.com/neohm-te-connectivity/rox2sj3k3/res-3k3-5-2w-axial-metal-oxide/dp/1738645))
+* 1 x Fan finger guard for 30mm fann, e.g. Multicomp Pro MCSC30-W1B ([1781195](https://uk.farnell.com/multicomp-pro/mcsc30-w1b/fan-finger-guard-metal-30mm-black/dp/1781195))
+* 1 x 10 Ohm, 100W resistor, e.g. TE Connectivity HSC10010RJ ([1174288](https://uk.farnell.com/cgs-te-connectivity/hsc10010rj/resistor-100w-5-10r/dp/1174288))
+* 1 x 100 Ohm, 25W resistor, e.g. TE Connectivity HSA25100RJ ([2009323](https://uk.farnell.com/cgs-te-connectivity/hsa25100rj/resistor-alu-housed-100r-5-25w/dp/2009323))
+* 1 x 39 Ohm, 25W resistor, e.g. TE Connectivity HSA2539RJ ([2805189](https://uk.farnell.com/cgs-te-connectivity/hsa2539rj/resistor-wirewound-39r-5-25w/dp/2805189))
 
 #### Other
 
