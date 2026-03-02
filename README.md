@@ -36,13 +36,15 @@ When selecting hardware components to use, it is important to consider not only 
 
 ### The Daisy Seed
 
-First, buy the [Daisy Seed](electro-smith.com/products/daisy-seed). The Hothouse does not come with it. You can buy it from Elecrosmith directly, or a third party seller close to you. It can be reprogrammed as many times as you like and used for other projects (e.g. using the Hothouse platform in its default pedal-sized enclosure).
+First, buy the [Daisy Seed](electro-smith.com/products/daisy-seed) – the brains of the operation.
+
+The Hothouse does not come with it. You can buy it from Elecrosmith directly, or a third party seller close to you. It can be reprogrammed as many times as you like and used for other projects (e.g. using the Hothouse platform in its default pedal-sized enclosure).
 
 ### The Hothouse PCB
 
-Next, you need the [Hothouse](https://clevelandmusicco.com/hothouse-diy-digital-signal-processing-platform-kit/), which is what the Daisy Seed will mount to to gain access to audio I/O, knobs (pots), and LEDs.
+Next, you need the [Hothouse](https://clevelandmusicco.com/hothouse-diy-digital-signal-processing-platform-kit/).
 
-Ideally, buy the Hothouse from Cleveland Music Co. They sell a version without an enclosure, which will save you a bit of money, whilst still supporting the developers of the Hothouse.
+This is what the Daisy Seed will mount to to gain access to audio I/O, knobs (pots), and LEDs. Ideally, buy the Hothouse from Cleveland Music Co. They sell a version without an enclosure, which will save you a bit of money, whilst still supporting the developers of the Hothouse.
 
 However, the fine folks at Cleveland Music Co have made the PCB available as [open hardware](https://github.com/clevelandmusicco/open-source-pedals/tree/main/hothouse) which means that you can also manufacture your own from their "Gerber" files – probably using [JLCPCB](https://jlcpcb.com). In this case, you want the main PCB only (not the footswitch or I/O breakout boards), and you probably want to get JLCPCB (or whoever you use) to provide and solder the SMD components for you.
 
@@ -60,15 +62,32 @@ Instead, we can use four Essentra TCEHCBS-4-01 PCB mounts and some #6 screws (or
 
 ### The inductor coil
 
-[Sount imports](https://www.soundimports.eu/en/dayton-audio-lw18-90.html)
+Next, you need an inductor coil.
+
+This is literally a large coil of thick wire wound into a coil. This is what makes the load "reactive" and helps ensure the amp acts and feels like a real speaker is connected. For an 8 Ohm, 50W build, you want an "air core", 18AWG coil with an inductance of 0.9mH, such as the [Dayton Audio LW18-90](https://www.soundimports.eu/en/dayton-audio-lw18-90.html). These will usually be stocked by specialist audio hardware or repair shops, rather than general purpose electronics retailers.
+
+The coil needs to be mounted in such a way that it does not touch any other metal components, including the enclosure. It is also pretty large, and so a tight fit. The Dayton Audio coil comes with a pair of plastic zip ties to hold the coil together, and you can use the thicker fastener on the zip ties as a spacer keeping it off the bottom of the enclosure. The suggested layout/drill template has two holes drilled to run additional zip-ties through, for fixing the coil in place.
 
 ### The large resistors
 
-TODO
+The circuit calls for three large, wirewound resistors: one rated at 100W and two at 25W. Again, these take up a lot of room and they get hot.
+
+In contrast with the inductor coil, it is very important to bolt these securely to the metal enclosure, with a small amount of thermal conduction paste smeared on the bottom. This helps turn the enclosure itself into a heatsink, dissipating heat more effectively.
+
+The suggested layout/drill template is based on resistors from the TE Connectivity HSA series (see links below). This choice is somewhat arbitary, and there are other manufacturers. However, you will need to either drill your own, precise mounting holes, or adjust the drill template by referring to the relevant technical drawing, as the hole spacing is not standard across manufacturers.
 
 ### The cooling fan
 
-TODO
+Speaking of heat dissipation, the design includes a small fan at the rear, intended to pull cool air through slats at the front and sides of the enclosure across the resistors, expelling hot air at the back. A large circular cutout exposes the fan, and is then protected with a metal "finger grille".
+
+The drill template has space for a 30mm square extractor fan with standard hole spacing. This is _very tight_ and might require some creativity when mounting and closing the lid. You may  need to add a bit of extra spacing with a nut or small washer on the inside of the enclosure, to allow the lid to close.
+
+Cheap fans are noisy. Quiet fans don't move a lot of air. The quality of the fan will make a difference.
+
+The fan needs to run off the 9V power supply. You can get fans that run natively on 9V, or e.g. 12V fans that will just run a bit slower at lower voltages. A lower-voltage fan (e.g. a 5V fan) will require additional components to step the 9V voltage down to 5V.
+
+**TODO**: Link to specific fan (once tested)
+**TODO**: Fan power details (once tested)
 
 ### The enclosure
 
@@ -124,9 +143,12 @@ And for the enclosure:
 * 1 x 100 Ohm, 25W resistor, e.g. TE Connectivity HSA25100RJ ([2009323](https://uk.farnell.com/cgs-te-connectivity/hsa25100rj/resistor-alu-housed-100r-5-25w/dp/2009323))
 * 1 x 39 Ohm, 25W resistor, e.g. TE Connectivity HSA2539RJ ([2805189](https://uk.farnell.com/cgs-te-connectivity/hsa2539rj/resistor-wirewound-39r-5-25w/dp/2805189))
 
-#### Other
+#### Other items
 
-* * 1 x medium knob for 6.35mm D-shaft rotary switch, ~19mm
+* 1 x medium knob for 6.35mm D-shaft rotary switch, ~19mm
+* The Daisy Seed (see above)
+* The Hothouse main PCB (see above)
+* 30mm extractor fan (see above)
 
 ### Tools and consumables
 
@@ -138,7 +160,7 @@ You will need:
 - A multimeter that can measure resistance and continuity (beep mode)
 - 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
 - Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
-- Plastic zipties for mounting the inductor coil
+- Plastic zip ties for mounting the inductor coil
 - Thermal paste (only a tiny amount) for moutning the large resistors
 - Some M3 and M4 size bolts, washers, and nuts for mounting the PCB and the large resistors.
 
