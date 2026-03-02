@@ -2,7 +2,7 @@
 
 A hardware guitar processing unit built with the Electrosmith Daisy Seed DSP module and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer. (It does not have a headphone amplifier built in).
 
-This document provides guidance for how to build your own. Both software and hardware are open source. You can try to build it as described here, or use this as a starting point for your own build.
+This document provides guidance for how to build your own. Both software and hardware are open source. You can try to build it as described here, or use this as a starting point for your own build of a similar device.
 
 **WARNING #1:** The basic function of this box is to replace the speaker in an amplifier. A tube amplifier, in particular, will be damaged if used without a suitable load. Do not turn the amp on without a speaker or a load (like the one inside the Mulebox). If connections are made incorrectly, become loose, or are poorly soldered inside the Mulebox, the load could be disconnected. In this case, you could damage your amplifier.
 
@@ -11,6 +11,26 @@ This document provides guidance for how to build your own. Both software and har
 **WARNING #3:** This is a very tight build. You need to take care selecting components that can handle the required power, including wires. You need to be familar with soldering, guitar electronics (e.g. you have built guitar amps or pedals before), and be capable of building the code for this software project using basic development tools.
 
 You will also need to supply your own IR files, e.g. ones you have bought yourself.
+
+## Operation
+
+**TODO**: Add an image of the final unit
+
+Connect a 1/4" TS **speaker cable** (not an instrument cable like the one you might use to plug your guitar into an amp or connect two effects pedals) from an 8 Ohm (only!) speaker output on your amplifier, into the amp input on the Mulebox rear.
+
+Connect a pair of 1/4" TS audio cables from the left and right output jacks to a mixer or other recording device. If you want to connect to a pair of speakers, make sure they are either powered or that you use a suitable stereo amplifier. Note that the outputs are not balanced, and there is no headphone output.
+
+Turn the rotary switch on the front to position 1. Connect a 9V DC, centre-negative (only!) "pedal" power supply to the power socket at the back. Turn the other knobs to noon.
+
+The front knobs can be used to control the output level and cut/boost the bass, which might be helpful for certain types of amplifiers. The trim knob at the rear is used to control the input level between the amp and Hothouse. In general it should be as high as possible without causing clipping.
+
+The red LED will stay on when the device is powered. It will blink if the signal starts to clip. In this case, turn down the trim knob.
+
+The blue LED will stay on if an IR is loaded, and blink when it is being changed (by turning the rotary knob). If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off.
+
+## Loading your own Impulse Reponse files
+
+This project ships with four free IRs from Djammincabs [zystrix.com/djammincabs.htm](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either bought or recorded yourself.
 
 ## Architecture
 
@@ -29,6 +49,10 @@ The Daisy Seed needs to be connected to knobs and audio I/O. For that, we use th
 Note that the attenuator is entirely passive. This means that if you turn your amp on but leave the Mulebox unpowered (there is no on/off switch), your amp is still safe. However, the cooling fan will not run, so it is advisable to leave it powered on whenever the amp is in use.
 
 The Mulebox lives inside a "Hammond 1590DD" size enclosure – mainly because this is the largest enclosure one can order from Tayda Electronics and have them paint and drill. It is of course possible to use a different box, so long as it has the required cutouts and enough ventilation, but we provide Tayda drill and UV print templates below, which make it much easier to get a professional-looking enclosure.
+
+The following schematic illustrates the circuit:
+
+![Mulebox schematic diagram](docs/schematic.png)
 
 ## Hardware components
 
@@ -92,7 +116,27 @@ The fan needs to run off the 9V power supply. You can get fans that run natively
 
 ### The enclosure
 
-TODO
+Apart from needing to fit all the components, the most important facet of the enclosure is that it needs to help manage heat effectively. A 50W amplifier at full volume generates enough power to create serious heat, which could cause the Daisy Seed to shut down or impact the performance of the circuit in other unpredictable ways. An aluminium enclosure can act as a heatsink in its own right if the large resistors are clamped securely to it, but we also need to cut ventilation holes.
+
+Since the components (just!) fit inside a Hammond 1590DD enclosure, we can use [Tayda Electronics](https://www.taydaelectronics.com) to paint, drill, and UV print an enclosure for us. See [this guide](https://martinaspeli.net/posts/tayda-uv-printing/) for more details about that process.
+
+You can use [this drill template](https://drill.taydakits.com/box-designs/new?public_key=ZWw5MmVRSTM3OFlKMW1BK1VXT1NrZz09Cg==) as your starting point:
+
+![Mulebox Tayda drill template](docs/drill-template.png)
+
+We will use the "lid" of the enclosure as the base, drilling several mounting holes for the large resistors, induction coil, and the Hothouse PCB standoffs. **Note** that in Tayda drill the lid _from the outside_ but we are mounting from the _inside_, which means the drill holes need to be translated accordingly. The template matches the screw spacing of the components listed in the shoppling list below, but these will likely need adjusting if you use other brands. Alternatively, remove these holes from the drill template, and drill them manually once you have all your components laid out – the base will not be visible in any case.
+
+"Side E" will be used as the front, mounting two LEDs in bezel holders, the rotary switch, and the output level and bass control pots. It also contains crucial slat cutouts that sit in front of the large resistors, directly opposite the fan, allowing it to draw cool air across the top of the resistors. The potentiometer and switch cutouts match the UV print template for the front.
+
+**TODO**: Link to UV print template
+
+"Side C" will be used as the back. It contains cutouts for the jack sockets, the "trim" knob that is used to adjust the volume of the attenuated signal going into the Hothouse, and a large cutout for the fan. Again, the position of these holes match the UV print template for the back.
+
+The top and sides contain a large number of slats – so many in fact, that you need to order "extra holes" from Tayda for them to be willing to cut them. See below.
+
+**TODO**: Link to UV print template
+
+Please review the Tayda drill and UV print guide, and see the list below to understand which components and services to buy to manufacture the enclosure.
 
 ### Other components and shopping list
 
