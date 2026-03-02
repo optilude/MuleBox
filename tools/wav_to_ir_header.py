@@ -46,7 +46,7 @@ def read_wav_file(filepath):
         framerate = wav.getframerate()
         n_frames = wav.getnframes()
 
-        print(f"  Format: {channels}ch, {sample_width*8}-bit, {framerate}Hz, {n_frames} samples ({n_frames/framerate:.1f}ms)")
+        print(f"  Format: {channels}ch, {sample_width*8}-bit, {framerate}Hz, {n_frames} samples ({n_frames/framerate*1000:.0f}ms)")
 
         # Read raw audio data
         raw_data = wav.readframes(n_frames)
@@ -56,10 +56,9 @@ def read_wav_file(filepath):
             samples = struct.unpack(f'<{n_frames * channels}h', raw_data)
             max_val = 32768.0
         elif sample_width == 3:  # 24-bit
-            # 24-bit samples are packed as 3 bytes each
+            # 24-bit samples are packed as 3 bytes each (all channels interleaved)
             samples = []
-            for i in range(0, len(raw_data), 3 * channels):
-                # Read first channel only (mono or left channel)
+            for i in range(0, len(raw_data), 3):
                 b1, b2, b3 = raw_data[i:i+3]
                 # Combine bytes (little-endian, signed 24-bit)
                 val = b1 | (b2 << 8) | (b3 << 16)
