@@ -161,9 +161,7 @@ We will use the "lid" of the enclosure as the base, drilling several mounting ho
 
 The top and sides contain a large number of slats – so many in fact, that you need to order "extra holes" from Tayda for them to be willing to cut them. See below.
 
-**TODO**: Link to UV print template
-
-Please review the Tayda drill and UV print guide, and see the list below to understand which components and services to buy to manufacture the enclosure.
+Please review the Tayda drill and UV print guide, and see the list below to understand which components and services to buy to manufacture the enclosure. Alternatively, if you wish to drill your own enclosure, see the [Layout](docs/cutouts/) directory in this repository, which contains SVG files with precise hole positions and dimensions that match the Tayda template. You can even use [this tool](https://claude.ai/public/artifacts/d6972198-d8ba-438f-a263-92a109cfab29) to extract the positions and dimensions of each cutout.
 
 ### Other components and shopping list
 
@@ -242,18 +240,19 @@ You've ordered the parts. Waited for the delivery driver. Laid everything out. I
 
 The Mulebox in a 1590DD enclosure is a tight fit. You want to think carefully about cable length and dress, and avoid any components unintentionally touching, which could lead to grounding issues or shorts.
 
+Here is an illustration of the final component layout, as if looking down from the top of the inside of the lid (i.e. the base of the unit), with the front- and back-mounted components seen from above.
+
+![Component layout](./docs/layout/components.png)
+
 Additionally, we will mount the largest components to the removable "lid" (in our case the base), but the other components (jacks and pots) are on the back and front long sides. This creates a problem, because you need wires running from the base to the front and back. If these are too short, you will be unable to connect them. If they are too long, they will get in the way of the internal components or block the fan (and increase the risk of shorts) when the box is closed.
 
 We recommend that you assemble the unit with the lid and box opened like a clamshell, lying as close together as possible along the rear long edge. Run cables that are as short as possible from the rear jacks and pots to the relevant points on the base. You can have a bit more leeway with the front components, which use thinner wires, though it's even more elegant to use small plastic JST connectors that can be done up with the lid partially closed. Care and planning is everything.
 
 **TODO**: Insert photo of enclosure open
 
-Here is one feasible layout that aims to minimise cable runs. Note which wires are 22AWG (thick, handling the higher current of the amp signal), and which ones are thinner, handling only the electronics and line level audio signal.
+Here is one feasible layout that aims to minimise cable runs. Note that the wires that attach to the resistors, inductor coil, input jack should be 22AWG (thick, handling the higher current of the amp signal). The ones connecting to the PCB should be thinner, handling only the electronics and line level audio signal.
 
-**TODO**: Insert layout image
-
-
-
+![Wiring diagram](./docs/layout/wiring.png)
 
 ## Building the software
 
