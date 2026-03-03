@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 2115 343" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Cutouts--hide-for-export-" serif:id="Cutouts (hide for export)">
+        <g id="Jack-socket" serif:id="Jack socket" transform="matrix(1.69428,0,0,3.01438,-864.5,-280.022)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="_9V" serif:id="9V" transform="matrix(1.00117,0,0,1.78123,618.991,-95.4068)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Jack-socket1" serif:id="Jack socket" transform="matrix(1.69428,0,0,3.01438,602.429,-280.022)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Jack-socket2" serif:id="Jack socket" transform="matrix(1.69428,0,0,3.01438,848.098,-280.022)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Alpha-mini-pot" serif:id="Alpha mini pot" transform="matrix(1.15519,0,0,2.05526,714.523,-136.432)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Fan-mount" serif:id="Fan mount" transform="matrix(0.462076,0,0,0.822104,94.6674,-93.6438)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Fan-mount1" serif:id="Fan mount" transform="matrix(4.31271,0,0,7.67297,-2198.13,-977.458)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Fan-mount2" serif:id="Fan mount" transform="matrix(0.462076,0,0,0.822104,378.132,-93.6438)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Fan-mount3" serif:id="Fan mount" transform="matrix(0.462076,0,0,0.822104,94.6674,189.821)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+        <g id="Fan-mount4" serif:id="Fan mount" transform="matrix(0.462076,0,0,0.822104,378.132,189.821)">
+            <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(146,0,255);"/>
+        </g>
+    </g>
+</svg>

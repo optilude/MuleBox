@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1382 2186" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Cutouts">
+        <g id="_100W-resistor-holes" serif:id="100W resistor holes" transform="matrix(1,0,0,1,-25.8039,11.3914)">
+            <g id="_100W-resistor-hole" serif:id="100W resistor hole" transform="matrix(0.677712,0,0,1.20575,205.153,-68.3052)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="_100W-resistor-hole1" serif:id="100W resistor hole" transform="matrix(0.677712,0,0,1.20575,618.539,-68.0841)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="_100W-resistor-hole2" serif:id="100W resistor hole" transform="matrix(0.677712,0,0,1.20575,205.153,368.813)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="_100W-resistor-hole3" serif:id="100W resistor hole" transform="matrix(0.677712,0,0,1.20575,618.539,368.813)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+        </g>
+        <g id="_25W-resistor-holes" serif:id="25W resistor holes" transform="matrix(1.00055,0,0,-1,14.0297,1798.27)">
+            <g id="_25W-resistor-hole" serif:id="25W resistor hole" transform="matrix(0.508284,0,0,0.904315,70.0432,613.144)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="_25W-resistor-hole1" serif:id="25W resistor hole" transform="matrix(0.508284,0,0,0.904315,-163.665,829.664)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+        </g>
+        <g id="_25W-resistor-holes1" serif:id="25W resistor holes" transform="matrix(1,0,0,-1,13.1807,1798.27)">
+            <g id="_25W-resistor-hole2" serif:id="25W resistor hole" transform="matrix(0.508284,0,0,0.904315,356.578,613.144)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="_25W-resistor-hole3" serif:id="25W resistor hole" transform="matrix(0.508284,0,0,0.904315,122.87,829.664)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+        </g>
+        <g id="Coil-holes" serif:id="Coil holes">
+            <g id="Coil-hole" serif:id="Coil hole" transform="matrix(0.677712,0,0,1.20575,593.416,614.369)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="Coil-hole1" serif:id="Coil hole" transform="matrix(0.677712,0,0,1.20575,593.416,1040.07)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="Coil-hole2" serif:id="Coil hole" transform="matrix(0.677712,0,0,1.20575,593.416,484.948)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="Coil-hole3" serif:id="Coil hole" transform="matrix(0.677712,0,0,1.20575,592.974,909.645)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,-0.637795,0)">
+            <g id="PCB-mount-hole" serif:id="PCB mount hole" transform="matrix(0.616102,0,0,1.09614,30.4043,1278.02)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="PCB-mount-hole1" serif:id="PCB mount hole" transform="matrix(0.616102,0,0,1.09614,625.68,1278.02)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="PCB-mount-hole2" serif:id="PCB mount hole" transform="matrix(0.616102,0,0,1.09614,30.4043,1920.54)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+            <g id="PCB-mount-hole3" serif:id="PCB mount hole" transform="matrix(0.616102,0,0,1.09614,625.68,1920.54)">
+                <ellipse cx="632.241" cy="149.71" rx="38.341" ry="21.55" style="fill:rgb(143,0,255);"/>
+            </g>
+        </g>
+    </g>
+</svg>

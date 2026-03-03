@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1300 343" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="WHITE">
+    </g>
+    <g id="Cutouts--hide-for-export-" serif:id="Cutouts (hide for export)">
+        <g id="Slat" transform="matrix(6.11045,0,0,0.123356,-124.181,40.3309)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+        <g id="Slat1" serif:id="Slat" transform="matrix(6.11045,0,0,0.123356,360.043,40.3309)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+        <g id="Slat2" serif:id="Slat" transform="matrix(6.11045,0,0,0.123356,-124.181,111.26)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+        <g id="Slat3" serif:id="Slat" transform="matrix(6.11045,0,0,0.123356,360.043,111.26)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+        <g id="Slat4" serif:id="Slat" transform="matrix(6.11045,0,0,0.123356,-124.181,182.189)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+        <g id="Slat5" serif:id="Slat" transform="matrix(6.11045,0,0,0.123356,360.043,182.189)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+        <g id="Slat6" serif:id="Slat" transform="matrix(6.11045,0,0,0.123356,-124.181,253.118)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+        <g id="Slat7" serif:id="Slat" transform="matrix(6.11045,0,0,0.123356,360.043,253.118)">
+            <rect x="52.218" y="55.277" width="69.585" height="287.243" style="fill:rgb(143,0,255);"/>
+        </g>
+    </g>
+</svg>
