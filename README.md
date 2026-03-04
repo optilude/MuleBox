@@ -304,31 +304,54 @@ Now we can turn our attention to the PCB.
 
 2. Place the PCB into the three installed standoffs. This helps you gauge the length of wires required. You can solder wires to the top of the PCB, though be careful not to touch any other components while you do!
 
-3. Solder trios of wires to the pads for pots 4, 5, 6 on the Hothouse PCB. If you are using short wires with plastic JST connectors, keep them long enough to reach to the front of the enclosure. If using normal wires, keep them a bit longer, or it will be hard to fit the pots later. Leave the other pot and switch pads empty - we won't use them.
+3. At the rear of the PCB, solder a wire from the "LIN" pad to the middle lug (wiper) of the B5K pot on the rear. This is the audio input, and since it's mono, we'll use only the left channel. The "RIN" pad will remain empty.
 
-4. Solder another trio of wires (or three wires on a single thriple JST connector) to the LED1, LED2, and GND pads at the front of the PCB, near pots 4, 5, and 6. These will run to the LEDs. Leave the other pads on the front (FSW1, FSW2, PIN1) empty – we will not use them.
+4. Solder a wire from the "ROUT" pad to the tip lug of the right output jack socket, and from the "LOUT" pad to the tip of the left output jack socket.
 
-5. At the rear of the PCB, solder a wire from the "LIN" pad to the middle lug (wiper) of the B5K pot on the rear. This is the audio input, and since it's mono, we'll use only the left channel. The "RIN" pad will remain empty.
+5. We will now create a ground bus. The goal is to connect the GND pad at the rear of the PCB to the sleeve lug of one of the nearest output jack socket, and then run that to the sleeve lug of the adjacent output jack socket, the ground pin of the B5K socket (which itself is connected to the sleeve of the input jack socket), and eventually to the ground pin of the 9V power socket. There are a few ways you can do this, but one way is to use a short piece of solid core wire that has been fully or partially stripped, placing this through the ground lugs of the jack sockets as a bar that you can then wrap other wires around before soldering them together. You want to ground loops (multiple parallel ground paths), and ensure that any exposed wire cannot come into contact with any other components and accidentally create a short. Do not solder to the 9V socket yet, as we also need to account for the fan.
 
-6. Solder a wire from the "ROUT" pad to the tip lug of the right output jack socket, and from the "LOUT" pad to the tip of the left output jack socket.
+At this point, the connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connect to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two pots. If you have left the enclosure open like a clamshell along the rear long edge, you have been able to run short wires to the PCB and large resistors that will fold relatively easily into the unit when the enclosure is closed onto the lid. However, with the enclosure opened like this, the components that will be at the front will now be upside down and far too the back. Ideally, we want to avoid very long wires that run almost double the depth of the unit. There are a few different strategies you could employ:
 
-7. We will now create a ground bus. The goal is to connect the GND pad at the rear of the PCB to the sleeve lug of one of the nearest output jack socket, and then run that to the sleeve lug of the adjacent output jack socket, the ground pin of the B5K socket (which itself is connected to the sleeve of the input jack socket), and eventually to the ground pin of the 9V power socket. There are a few ways you can do this, but one way is to use a short piece of solid core wire that has been fully or partially stripped, placing this through the ground lugs of the jack sockets as a bar that you can then wrap other wires around before soldering them together. You want to ground loops (multiple parallel ground paths), and ensure that any exposed wire cannot come into contact with any other components and accidentally create a short. Do not solder to the 9V socket yet, as we also need to account for the fan.
+* Run long, thin wires, and try to fold them in as neatly as possible. This can be messy and increases the risk of the wires disturbing airflow or getting in the way of other components.
 
-At this point, the connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connec to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two pots.
+* Measure an appropriate length of wire and solder the wires in place before mounting the components to the front panel. Then "unsnap" the PCB from the standoffs (which is most feasible if you only installed three standoffs to start with) and carefully fold the PCB back over the open enclosure, so it floats upside down whilst you mount the front components. The problem then will be re-seating the PCB securely as you close the unit up. The longer the wires, the easier it will be to get your finger into the enclosure to do so.
 
-...
+* Solder the wires with the front-mounted components loose, and only install them as you close the box up. This is most tricky with the LEDs, since these need to be pushed into the bezels from the inside.
 
+* Use triple-wire JST connectors. Solder the wires with the female connectors to the PCB and the wires with the male connectors to the pots, switch, and LED, with wires cut to a length where they can be connected with the enclosure only slightly open at the front. This creates neat wiring, but you have to be careful when opening the enclosure not to snap the connectors or wires.
+
+Some trial and error may be required, and it might be a good idea to do a single pot first as a test. 
+
+Regardless of your mounting strategy, the connections need to be made as follows:
+
+1. Solder trios of wires to the pads for pots 4, 5, 6 on the Hothouse PCB. The pads are quite large, and it is important that you get the wires to touch the metal edges of the pad while you solder. Do not allow the wires to float in the middle of the pad in a pool of solder, as this can lead to a poor connection. Leave the other pot and switch pads empty - we won't use them.
+
+2. Solder another trio of wires (or three wires on a single thriple JST connector) to the LED1, LED2, and GND pads at the front of the PCB, near pots 4, 5, and 6. These will run to the LEDs. Leave the other pads on the front (FSW1, FSW2, PIN1) empty – we will not use them.
+
+3. Install the LED bezels in the enclosure. Temporarily push the two LEDs (red for the top light, which will be at the bottom of the enclosure if opened) into the bezels to help gauge the length of wire required.
+  
+4. Identify the negative (short) legs of the two LEDs (one red, one blue), angle them so they touch securely, and solder them together. Make short loops for the positive (long) legs. Solder the LED1 wire to the red LED positive leg, the LED2 wire to the blue LED positive leg, and the GND wire to the two negative legs. Use heat shrink or careful positioning to ensure that the positive legs can't touch the metal bezel or any other components, creating a short.
+
+5. Wire the rotary switch to the POT4 pads. Pin 1 (the rightmost pin when viewed from above) is marked on each trio of pot pads, and should connect to pin 1 of the rotary switch.
+
+6. Wire the two B10K pots to POT5 and POT6, respectively, on the Hothouse. You need to take special care to ensure you do not wire them backwards. Again, wire the Pin 1 pad to pin 1 of the pot. If you look at the [Hothouse build guide](https://github.com/clevelandmusicco/HothouseExamples/wiki/Cleveland-Music-Co.-Hothouse-DIY-Digital-Signal-Processing-Pedal-Kit-Build-Guide-(Stereo-Version)) you can see how it expects the pots to be mounted directly to the rear of the PCB in a certain orientation, with the body of the pots facing up towards the audio and power pads (RIN, ROUT, LIN, LOUT, GND, 9V) that in the Mulebox are found at the rear. You can use this to visualise which pin of the pot is meant be in the Pin 1 pad on the PCB. If you get it wrong, the pots will work backwards.
+
+7. Depending on your mounting strategy (especially if you are using wires with JST connectors), you can now mount the final PCB corner standoff to secure the PCB in place.
 
 Next, we need to wire the power and fan:
+
+**TODO**
 
 - PCB
 - Fan
 
 Finally:
 
-- Mount the final PCB standoff
-- Insert the Daisy Seed after flashing it
-- Close the lid and connect the wires
+1. Flash the Daisy Seed with the latest firmware (see below)
+2. Carefully insert it into the header pins, so that the USB socket faces to the left side of the unit (i.e. are on the side of the PCB closest to the edge of the lid, furthest away from the large resistors). This may need a bit of pressure, but you should be careful not to bend any of the pins.
+3. Close the lids, connecting the front components or their wires as required.
+4. Insert the lid screws.
+5. Screw in or stick on rubber feet to each corner if desired, so that the bolts in the lid are clear of the ground. Lifting the enclosure a bit can also help heat management.
 
 ## Building the software
 
