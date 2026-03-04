@@ -30,11 +30,11 @@ The blue LED will stay on if an IR is loaded, and blink when it is being changed
 
 ## Loading your own Impulse Reponse files
 
-This project ships with four free IRs from Djammincabs [zystrix.com/djammincabs.htm](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either bought or recorded yourself.
+This project ships with four free IRs from [Djammincabs](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either bought or recorded yourself.
 
 Requirements:
 
-- WAV format, 48kHz sample rate, mono or stereo (stereo: left channel is used)
+- WAV format, 48kHz sample rate, mono or stereo
 - Up to 12 files – if fewer, some positions on the rotary switch will be blank
 - Each IR should be up to ~170ms – longer IRs will be truncated, but you can still use them
 
@@ -67,7 +67,7 @@ Think of the Mulebox as as two separate devices hardwired together:
 
 The JohnH design can be used to build an atteunator box that quietens an amp whilst passing output to a real speaker in a guitar cabinet, with selectable levels of attenuation. The Mulebox does *not* support pass-through to a guitar cabinet. Instead it takes a "line out" signal and sends it to the DSP module.
 
-The attenutator absorbs all the energy of the audio signal (up to 50W) and turns it into heat. Therefore, the attenuator gets hot. An aluminium chassis acts as a heat sink, and is cut with with plenty of ventilation. There is also a small fan to provide airflow. This is important not only to ensure the passive attenuator components don't fail – we are running a DSP module in the same box and this has a narrower operating temperature range.
+The attenutator absorbs all the energy of the audio signal (up to 50W) and turns it into heat. Therefore, the attenuator gets hot. An aluminium chassis acts as a heat sink, and is cut with with plenty of ventilation. There is also a small fan to provide airflow. This is important not only to ensure the passive attenuator components don't fail, but also since we are running a DSP module in the same box and this has a narrower operating temperature range.
 
 2. A DSP processor that takes the raw amp sound and applies a selectable Impulse Response (IR) to it, emulating a guitar speaker cabinet, before passing the audio out as a stereo signal. This is based on the [Electrosmith Daisy Seed](https://electro-smith.com/products/daisy-seed) module, which can be programmed to perform a variety of audio-related functions (this is the source code repository for the Mulebox firmware, written in C++ for the Daisy platform).
 
@@ -101,7 +101,7 @@ However, the fine folks at Cleveland Music Co have made the PCB available as [op
 
 There are several online tutorials that explain how to do this, but the basic idea is that you upload the Gerber (.zip) and Bill of Materials (.csv) file for the main PCB to the JLCPCB website, and choose their PCB assembly service. It's a very slick process. You will probably have to order at least five boards, but even then it's pretty affordable (plus you now have spares).
 
-If you go this route, you will also need to buy two o single-row, 20-pin, 2.54mm pitch female square-pin headers and a 100uF low-ESR electrolytic capacitor, which are otherwise included in the Hothouse kit.
+If you go this route, you will also need to buy two single-row, 20-pin, 2.54mm pitch female square-pin headers and a 100uF low-ESR electrolytic capacitor, which are otherwise included in the Hothouse kit.
 
 You will also need pots, jacks, a power socket, and LEDs, but we'll detail those below, as you'll need to get them regardless of whether you buy the Hothouse kit or manufacture your own PCBs. The components that come with the Hothouse are different from what we will mount in the Mulebox.
 
