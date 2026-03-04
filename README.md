@@ -314,7 +314,9 @@ Now we can turn our attention to the PCB.
 
 7. We will now create a ground bus. The goal is to connect the GND pad at the rear of the PCB to the sleeve lug of one of the nearest output jack socket, and then run that to the sleeve lug of the adjacent output jack socket, the ground pin of the B5K socket (which itself is connected to the sleeve of the input jack socket), and eventually to the ground pin of the 9V power socket. There are a few ways you can do this, but one way is to use a short piece of solid core wire that has been fully or partially stripped, placing this through the ground lugs of the jack sockets as a bar that you can then wrap other wires around before soldering them together. You want to ground loops (multiple parallel ground paths), and ensure that any exposed wire cannot come into contact with any other components and accidentally create a short. Do not solder to the 9V socket yet, as we also need to account for the fan.
 
-8. 
+At this point, the connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connec to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two pots.
+
+...
 
 
 Next, we need to wire the power and fan:
