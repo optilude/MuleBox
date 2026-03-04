@@ -276,7 +276,7 @@ We will start with the attenuator and line out:
 
 5. Insert the fan finger grille from the outside, and then run longer M3 bolts through its mounting holes and the screw holes on the enclosure. Then insert the fan with the wires running towards the middle of the enclosure. This might be difficult and require some force and/or careful adaptation of the plastic parts of the fan. If the fan is flush to the enclosure, you may struggle to fit the lid back on. It is worth testing this now before solder in add any wires, and either add a nut for some extra spacing to allow the lip of the lid to slide into place, or gently cut away a small part of the fan casing. Then use nuts on the inside to keep the fan secure.
 
-6. Mount the 9V power socket, the B5K pot, and the two output jack sockets in place. This completes the rear of the enclosure (which will be lying, upside-down, close to the rear of the lid if you have placed them like an open clamshell).
+6. Mount the 9V power socket, the B5K pot (remember to snap off the key pin that will stop it from sitting flush with the enclosure, and to add the plastic dust seal to the rear), and the two output jack sockets in place. This completes the rear of the enclosure (which will be lying, upside-down, close to the rear of the lid if you have placed them like an open clamshell).
 
 7. Run 22AWG (thick) wires between the large resistors, inductor coil, and rear jack as shown in the wiring diagram. If you have the enclosur open and upside down, realise that the diagram is a bird's eye view onto the inside of the lid, so the rear-mounted components will be upside down! Keep wires as short and neat as possible, and strip enough insulation off to wrap securely into the solder lugs, but no more. Double check your wires, then solder everything to the large resistors and inductor coil (i.e. the components mounted to the lid). Don't solder the input jack socket yet.
 
@@ -284,17 +284,49 @@ We will start with the attenuator and line out:
 
 9. Solder one side of the 2W, 3K3 "small" resistor to a wire, and protect the exposed leg with some heatshrink tubing. Do not put heathrink over the resistor body itself! Make sure the wire is long enough to reach from the tip (hot) of input jack socket to pin 3 of the B5K pot on the rear, which means the pin that is _furthest_ from the input jack socket. Solder the wire end to the tip lug of the input jack socket alongside the wire that runs to the large resistors on the lid.
 
-10. Place the other "small" resistor, 1K, 1W, between pins 1 and 3 of the B5K pot. Insert the ground wire from the sleeve of the input jack into pin 1 and the loose end of the 2W resistor that connects to the tip of the input jack to pin 3. Keep the exposed resistor legs as short as possible, and solder both in place, snipping off any excess. Leave the wiper (middle) lug of the B5K pot unsoldered for now – this is our line out to the Hothouse PCB.
+10. Place the other "small" resistor, 1K, 1W, between pins 1 and 3 of the B5K pot. Insert the ground wire from the sleeve of the input jack into pin 1 and the loose end of the 2W resistor that connects to the tip of the input jack to pin 3. Solder a further short wire to the the same lug as the ground – we will use this later to connect to the "ground bus". Keep the exposed resistor legs as short as possible, and solder both lugs, snipping off any excess. Leave the wiper (middle) lug of the B5K pot unsoldered for now – this is our line out to the Hothouse PCB.
 
 At this point, you should have all three large resistors, the inductor coil, and three of the PCB standoffs securely mounted to the lid, with thermal paste under the large resistors. The fan will be in place, and the input jack socket will be connected, with two wires running across towards the B5K pot. The wire from the tip of the input jack socket will end in a 3K3 2W resistor. A 1K 1W resistor will be soldered across the outer lugs of the pot, one side shared with the 3K3 2W resistor and the other side shared with the wire to the amp in sleeve (ground).
+
+Next we need to prepare the rotary switch.
+
+1. Identify pin 1 and pin 12 on the switch. Insert a short wire and one end of a 1K 1/4W resistor in the lug for pin 1. In lug 2, insert one side of a second 1K resistor alongside the other leg of the resistor connected to pin 1. Continue this up to pin 12, where you should also insert a second wire. The idea is to create a "ladder", where there is a 1k resistor between each adjacent pair of pins, and also a wire at the first and last pins.
+
+2. The common pin should be in the middle. Solder a third short wire to it.
+
+3. Mount the rotary switch to the front panel of the enclosure.
+
+You can test the rotary switch with a multimeter. It should measure close to zero resistance between the pin 1 wire and common in position 1, 1k between those same wires in position 2, 2k in position 3, and so on. In this regard, it will act like an 11k potentiometer where the measured value between pin 1 and the common moves in steps of 1K as the switch is turned. The value between pin 12 and the common will be 11k in position 1, 10k in position 2, and so on, and 0 in position 12.
 
 Now we can turn our attention to the PCB.
 
 1. Complete the Hothouse PCB, outside the enclosure. The surface-mounted components should already be in place if you ordered it from Cleveland Audio Co. or used the PCB assembly service, but you will need to solder in the female headers that seat the Daisy Seed itself, as well as the 100uF electrolytic capacitor. Remember that these are polarised! Do not solder any pots, switches, or ribbon cables to the Hothouse PCB.
 
-2. Solder trios of wires to the pads for pots 4, 5, 6 on the Houthouse PCB. If you are using short wires with plastic JST connectors, keep them long enough to reach to the front of the enclosure. If using normal wires, keep them a bit longer, or it will be hard to fit the pots later. Leave the other pot and switch pads empty - we won't use them.
+2. Place the PCB into the three installed standoffs. This helps you gauge the length of wires required. You can solder wires to the top of the PCB, though be careful not to touch any other components while you do!
 
-3. Solder another trio of wires (or three wires on a single thriple JST connector) to the LED1, LED2, and GND pads at the front of the PCB, near pots 4, 5, and 6. These will run to the LEDs.
+3. Solder trios of wires to the pads for pots 4, 5, 6 on the Hothouse PCB. If you are using short wires with plastic JST connectors, keep them long enough to reach to the front of the enclosure. If using normal wires, keep them a bit longer, or it will be hard to fit the pots later. Leave the other pot and switch pads empty - we won't use them.
+
+4. Solder another trio of wires (or three wires on a single thriple JST connector) to the LED1, LED2, and GND pads at the front of the PCB, near pots 4, 5, and 6. These will run to the LEDs. Leave the other pads on the front (FSW1, FSW2, PIN1) empty – we will not use them.
+
+5. At the rear of the PCB, solder a wire from the "LIN" pad to the middle lug (wiper) of the B5K pot on the rear. This is the audio input, and since it's mono, we'll use only the left channel. The "RIN" pad will remain empty.
+
+6. Solder a wire from the "ROUT" pad to the tip lug of the right output jack socket, and from the "LOUT" pad to the tip of the left output jack socket.
+
+7. We will now create a ground bus. The goal is to connect the GND pad at the rear of the PCB to the sleeve lug of one of the nearest output jack socket, and then run that to the sleeve lug of the adjacent output jack socket, the ground pin of the B5K socket (which itself is connected to the sleeve of the input jack socket), and eventually to the ground pin of the 9V power socket. There are a few ways you can do this, but one way is to use a short piece of solid core wire that has been fully or partially stripped, placing this through the ground lugs of the jack sockets as a bar that you can then wrap other wires around before soldering them together. You want to ground loops (multiple parallel ground paths), and ensure that any exposed wire cannot come into contact with any other components and accidentally create a short. Do not solder to the 9V socket yet, as we also need to account for the fan.
+
+8. 
+
+
+Next, we need to wire the power and fan:
+
+- PCB
+- Fan
+
+Finally:
+
+- Mount the final PCB standoff
+- Insert the Daisy Seed after flashing it
+- Close the lid and connect the wires
 
 ## Building the software
 
