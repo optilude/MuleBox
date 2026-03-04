@@ -2,7 +2,7 @@
 
 A hardware guitar processing unit built with the Electrosmith Daisy Seed DSP module and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer. (It does not have a headphone amplifier built in).
 
-This document provides guidance for how to build your own. Both software and hardware are open source. You can try to build it as described here, or use this as a starting point for your own build of a similar device.
+This document provides guidance for how to build your own. Both software and hardware are open source. You can build it as described here, or use this as a starting point for your own build of a similar device.
 
 **WARNING #1:** The basic function of this box is to replace the speaker in an amplifier. A tube amplifier, in particular, will be damaged if used without a suitable load. Do not turn the amp on without a speaker or a load (like the one inside the Mulebox). If connections are made incorrectly, become loose, or are poorly soldered inside the Mulebox, the load could be disconnected. In this case, you could damage your amplifier.
 
@@ -157,13 +157,17 @@ We will use the "lid" of the enclosure as the base, drilling several mounting ho
 
 "Side E" will be used as the front, mounting two LEDs in bezel holders, the rotary switch, and the output level and bass control pots. It also contains crucial slat cutouts that sit in front of the large resistors, directly opposite the fan, allowing it to draw cool air across the top of the resistors. The potentiometer and switch cutouts match the UV print template for the front.
 
-**TODO**: Link to UV print template
-
 "Side C" will be used as the back. It contains cutouts for the jack sockets, the "trim" knob that is used to adjust the volume of the attenuated signal going into the Hothouse, and a large cutout for the fan. Again, the position of these holes match the UV print template for the back.
 
 The top and sides contain a large number of slats – so many in fact, that you need to order "extra holes" from Tayda for them to be willing to cut them. See below.
 
 Please review the Tayda drill and UV print guide, and see the list below to understand which components and services to buy to manufacture the enclosure. Alternatively, if you wish to drill your own enclosure, see the [Layout](docs/cutouts/) directory in this repository, which contains SVG files with precise hole positions and dimensions that match the Tayda template. You can even use [this tool](https://claude.ai/public/artifacts/d6972198-d8ba-438f-a263-92a109cfab29) to extract the positions and dimensions of each cutout.
+
+Resources:
+
+* [Tayda Electronics Drill template](https://drill.taydakits.com/box-designs/new?public_key=ZWw5MmVRSTM3OFlKMW1BK1VXT1NrZz09Cg==)
+* [Tayda Electronics UV templates in PDF format](./docs/uv/) for the front (side E) and back (side C) with white, gloss and colour layers
+* [Affinity Designer files](./docs/) for each side, including drawings of the cutouts in the drill template
 
 ### Other components and shopping list
 
@@ -217,11 +221,11 @@ And for the enclosure:
 
 #### Other items
 
-* 1 x medium knob for 6.35mm D-shaft rotary switch, ~19mm
-* The Daisy Seed (see above)
-* The Hothouse main PCB (see above)
-* 30mm extractor fan (see above)
-* 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
+* 1 x medium knob for 6.35mm D-shaft rotary switch, ~19mm, with the pointer towards the _flat_ edge (assuming you are using the Lorlin CK1034 rotary switch). These can be a bit hard to source, but the [Cliff K21 D-shaft 1/4" knobs](https://www.digikey.co.uk/en/products/detail/cliff-electronic-components-ltd/CL178886/26698222) with a suitable cap works.
+* 1 x [Daisy Seed](https://electro-smith.com/products/daisy-seed) – see above
+* 1 x [Hothouse main PCB](clevelandmusicco.com/hothouse-diy-digital-signal-processing-platform-kit/) – see above
+* 1 x 30mm extractor fan – see above
+* 22 AWG or similar (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
 * Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
 * Optional: For wiring the front pots, LEDs, and rotary switch, you can use sets of wires with 3-pin JST 1.25mm (or larger) connectors (you'll need both male and female). The advantage of this is that you can easily disconnect the front components when opening the enclosure.
 * Plastic zip ties for mounting the inductor coil
