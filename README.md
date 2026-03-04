@@ -113,11 +113,11 @@ Instead, we can use four Essentra TCEHCBS-4-01 PCB mounts and some #6 screws (or
 
 ### The inductor coil
 
-Next, you need an inductor coil.
+Next, you need an inductor coil: literally a large coil of thick wire wound into a coil. This is what makes the load "reactive" and helps ensure the amp acts and feels like a real speaker is connected.
 
-This is literally a large coil of thick wire wound into a coil. This is what makes the load "reactive" and helps ensure the amp acts and feels like a real speaker is connected. For an 8 Ohm, 50W build, you want an "air core", 18AWG coil with an inductance of 0.9mH, such as the [Dayton Audio LW18-90](https://www.soundimports.eu/en/dayton-audio-lw18-90.html). These will usually be stocked by specialist audio hardware or repair shops, rather than general purpose electronics retailers.
+For an 8 Ohm, 50W build, you want an "air core", 18AWG coil with an inductance of 0.9mH, such as the [Dayton Audio LW18-90](https://www.soundimports.eu/en/dayton-audio-lw18-90.html). These will usually be stocked by specialist audio hardware or repair shops, rather than general purpose electronics retailers.
 
-The coil needs to be mounted in such a way that it does not touch any other metal components, including the enclosure. It is also pretty large, and so a tight fit. The Dayton Audio coil comes with a pair of plastic zip ties to hold the coil together, and you can use the thicker fastener on the zip ties as a spacer keeping it off the bottom of the enclosure. The suggested layout/drill template has two holes drilled to run additional zip-ties through, for fixing the coil in place.
+The coil needs to be mounted in such a way that it does not touch any other metal components, including the enclosure. It is also pretty large, and so a tight fit. The Dayton Audio coil comes with a pair of plastic zip ties to hold the coil together, and you can use the thicker fastener on the zip ties as a spacer, keeping it off the bottom of the enclosure. The suggested layout/drill template has two holes drilled to run additional zip-ties through, for fixing the coil in place.
 
 ### The large resistors
 
@@ -145,13 +145,15 @@ The fan needs to run off the 9V power supply. You can get fans that run natively
 
 Apart from needing to fit all the components, the most important facet of the enclosure is that it needs to help manage heat effectively. A 50W amplifier at full volume generates enough power to create serious heat, which could cause the Daisy Seed to shut down or impact the performance of the circuit in other unpredictable ways. An aluminium enclosure can act as a heatsink in its own right if the large resistors are clamped securely to it, but we also need to cut ventilation holes.
 
-Since the components (just!) fit inside a Hammond 1590DD enclosure, we can use [Tayda Electronics](https://www.taydaelectronics.com) to paint, drill, and UV print an enclosure for us. See [this guide](https://martinaspeli.net/posts/tayda-uv-printing/) for more details about that process.
+Since the components (just!) fit inside a Hammond 1590DD enclosure, we can use [Tayda Electronics](https://www.taydaelectronics.com) to paint, drill, and UV print an enclosure for us. See [this guide](https://martinaspeli.net/posts/tayda-uv-printing/) for more details about that process, including how to set up the UV print templates.
 
-You can use [this drill template](https://drill.taydakits.com/box-designs/new?public_key=ZWw5MmVRSTM3OFlKMW1BK1VXT1NrZz09Cg==) as your starting point:
+You can use [this drill template](https://drill.taydakits.com/box-designs/new?public_key=ZWw5MmVRSTM3OFlKMW1BK1VXT1NrZz09Cg==) as your starting point, which looks like this:
 
 ![Mulebox Tayda drill template](docs/drill-template.png)
 
-We will use the "lid" of the enclosure as the base, drilling several mounting holes for the large resistors, induction coil, and the Hothouse PCB standoffs. **Note** that in Tayda drill the lid _from the outside_ but we are mounting from the _inside_, which means the drill holes need to be translated accordingly. The template matches the screw spacing of the components listed in the shoppling list below, but these will likely need adjusting if you use other brands. Alternatively, remove these holes from the drill template, and drill them manually once you have all your components laid out – the base will not be visible in any case.
+We will use the "lid" of the enclosure as the base, drilling several mounting holes for the large resistors, induction coil, and the Hothouse PCB standoffs.
+
+**Note** that Tayda drill the lid _from the outside_ but we are mounting from the _inside_, which means the drill holes need to be translated accordingly. The template matches the screw spacing of the components listed in the shoppling list below, but these will likely need adjusting if you use other brands. Alternatively, remove these holes from the drill template, and drill them manually once you have all your components laid out – the base will not be visible in any case.
 
 "Side E" will be used as the front, mounting two LEDs in bezel holders, the rotary switch, and the output level and bass control pots. It also contains crucial slat cutouts that sit in front of the large resistors, directly opposite the fan, allowing it to draw cool air across the top of the resistors. The potentiometer and switch cutouts match the UV print template for the front.
 
@@ -199,7 +201,7 @@ And for the enclosure:
 * 1 x 1590DD side C UV print service ([A-5141-CST-UVC](https://www.taydaelectronics.com/1590dd-side-c-uv-printing-service-1.html))
 * 1 x 1590DD side E UV print service ([A-5141-CST-UVE](https://www.taydaelectronics.com/1590dd-side-e-uv-printing-service-1.html))
 * 1 x gloss layer UV print service ([A-99999-CST-UV-GL](https://www.taydaelectronics.com/custom-uv-gloss-layer-service.html)) – optional, but recommended to protect the printed labels
-* 1 x "print twice" white layer UV print service ([A-99999-CST-UV-WH](https://www.taydaelectronics.com/93825-dup-custom-uv-white-layer-service.html)) – optoinal, but recommended if printing white on black
+* 1 x "print twice" white layer UV print service ([A-99999-CST-UV-WH](https://www.taydaelectronics.com/93825-dup-custom-uv-white-layer-service.html)) – optional, but recommended if printing white on black
 
 #### Farnell
 
@@ -208,7 +210,7 @@ And for the enclosure:
 * 4 x TCEHCBS-6-01 PCB standoffs ([4691573](https://uk.farnell.com/essentra-components/tcehcbs-6-01/pcb-mounting-nylon-6-6-9-5mm/dp/4691573)) – plus suitable screws (#6 or M3.5, self-tapping). Alternatively, [this kit from PiHut](https://thepihut.com/products/14-corner-edge-standoffs-set-of-4) contains both the standoffs and the screws.
 * 1 x 12-position make-before-break rotary switch – Lorlin CK1034 ([1123690](https://uk.farnell.com/lorlin/ck1034/switch-1-pole-12-pos-0-15a-250v/dp/1123690)) – note this has an imperial sized 6.35mm (1/4 inch), D-shaped spindle and so resquires a suitable knob. There is a metric version of the same switch (CK1024) which can take a 6mm D-shaft knob, but the front cutouts will then need to be adjusted.
 * 1 x 3K3 2W metal film resistor - used for the attenuator circuit ([1738645](https://uk.farnell.com/neohm-te-connectivity/rox2sj3k3/res-3k3-5-2w-axial-metal-oxide/dp/1738645))
-* 1 x Fan finger guard for 30mm fann, e.g. Multicomp Pro MCSC30-W1B ([1781195](https://uk.farnell.com/multicomp-pro/mcsc30-w1b/fan-finger-guard-metal-30mm-black/dp/1781195))
+* 1 x Fan finger guard for 30mm fan, e.g. Multicomp Pro MCSC30-W1B ([1781195](https://uk.farnell.com/multicomp-pro/mcsc30-w1b/fan-finger-guard-metal-30mm-black/dp/1781195))
 * 1 x 10 Ohm, 100W resistor, e.g. TE Connectivity HSC10010RJ ([1174288](https://uk.farnell.com/cgs-te-connectivity/hsc10010rj/resistor-100w-5-10r/dp/1174288))
 * 1 x 100 Ohm, 25W resistor, e.g. TE Connectivity HSA25100RJ ([2009323](https://uk.farnell.com/cgs-te-connectivity/hsa25100rj/resistor-alu-housed-100r-5-25w/dp/2009323))
 * 1 x 39 Ohm, 25W resistor, e.g. TE Connectivity HSA2539RJ ([2805189](https://uk.farnell.com/cgs-te-connectivity/hsa2539rj/resistor-wirewound-39r-5-25w/dp/2805189))
@@ -221,7 +223,7 @@ And for the enclosure:
 * 30mm extractor fan (see above)
 * 22 AWG (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
 * Thinner wire in muiltiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
-* Optional: For wiring the front pots, LEDs, and rotary switch, you can use sets of wires with 3-pin JST 1.25mm (or lagrer) connectors (you'll need both male and female). The advantage of this is that you can easily disconnect the front components when opening the enclosure.
+* Optional: For wiring the front pots, LEDs, and rotary switch, you can use sets of wires with 3-pin JST 1.25mm (or larger) connectors (you'll need both male and female). The advantage of this is that you can easily disconnect the front components when opening the enclosure.
 * Plastic zip ties for mounting the inductor coil
 * Thermal paste (only a tiny amount) for moutning the large resistors
 
