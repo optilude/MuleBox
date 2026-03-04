@@ -250,15 +250,51 @@ Here is an illustration of the final component layout, as if looking down from t
 
 ![Component layout](./docs/layout/components.png)
 
-Additionally, we will mount the largest components to the removable "lid" (in our case the base), but the other components (jacks and pots) are on the back and front long sides. This creates a problem, because you need wires running from the base to the front and back. If these are too short, you will be unable to connect them. If they are too long, they will get in the way of the internal components or block the fan (and increase the risk of shorts) when the box is closed.
+You will mount the largest components to the removable "lid" (in our case the base), but the other components (jacks and pots) are on the back and front long sides. This creates a problem, because you need wires running from the base to the front and back. If these are too short, you will be unable to connect them. If they are too long, they will get in the way of the internal components or block the fan (and increase the risk of shorts) when the box is closed.
 
-We recommend that you assemble the unit with the lid and box opened like a clamshell, lying as close together as possible along the rear long edge. Run cables that are as short as possible from the rear jacks and pots to the relevant points on the base. You can have a bit more leeway with the front components, which use thinner wires, though it's even more elegant to use small plastic JST connectors that can be done up with the lid partially closed. Care and planning is everything.
+We recommend that you assemble the unit with the lid and box opened like a clamshell, lying as close together as possible along the rear long edge. In this position, run cables that are as short as possible from the rear jacks and pots to the relevant points on the base. You can have a bit more leeway with the front components, which use thinner wires, though it's even more elegant to use small plastic JST connectors that can be done up with the lid partially closed. Care and planning is everything.
 
 **TODO**: Insert photo of enclosure open
+
+It can also be useful to fit only three of the four PCB corner mounts to begin with. This makes it easy to take the PCB out so it can float inside the enclosure with the lid open. All the wires to the front of the unit run directly to the PCB.
 
 Here is one feasible layout that aims to minimise cable runs. Note that the wires that attach to the resistors, inductor coil, input jack should be 22AWG (thick, handling the higher current of the amp signal). The ones connecting to the PCB should be thinner, handling only the electronics and line level audio signal.
 
 ![Wiring diagram](./docs/layout/wiring.png)
+
+### Recommended build order
+
+We will start with the attenuator and line out:
+
+1. Begin by placing the large resistors (1 x 100W, 2 x 25W) as shown in the layout. Smear a very thin layer of thermal paste on the bottom and bolt them securely to the lid, with the nuts on the inside (i.e. the side where the resistors are mounted) and the screws on the outside.
+
+2. Fix the inductor coil in place using zip ties. Be careful that it does not wobble around, and that no part of it touches any metal components, including the enclosure.
+
+3. Screw in place the rear and front-left PCB standoffs, but leave the front-right standoff off for now.
+
+4. Insert the amp-in jack at the right of open (upside-down) enclosure, making sure to use an isolated jack as specified so that no metal part of the jack touches the enclosure.
+
+5. Insert the fan finger grille from the outside, and then run longer M3 bolts through its mounting holes and the screw holes on the enclosure. Then insert the fan with the wires running towards the middle of the enclosure. This might be difficult and require some force and/or careful adaptation of the plastic parts of the fan. If the fan is flush to the enclosure, you may struggle to fit the lid back on. It is worth testing this now before solder in add any wires, and either add a nut for some extra spacing to allow the lip of the lid to slide into place, or gently cut away a small part of the fan casing. Then use nuts on the inside to keep the fan secure.
+
+6. Mount the 9V power socket, the B5K pot, and the two output jack sockets in place. This completes the rear of the enclosure (which will be lying, upside-down, close to the rear of the lid if you have placed them like an open clamshell).
+
+7. Run 22AWG (thick) wires between the large resistors, inductor coil, and rear jack as shown in the wiring diagram. If you have the enclosur open and upside down, realise that the diagram is a bird's eye view onto the inside of the lid, so the rear-mounted components will be upside down! Keep wires as short and neat as possible, and strip enough insulation off to wrap securely into the solder lugs, but no more. Double check your wires, then solder everything to the large resistors and inductor coil (i.e. the components mounted to the lid). Don't solder the input jack socket yet.
+
+8. Run an extra length of 22AWG wire from the sleeve (ground) of the jack socket to pin of the B5K pot at the rear that is _closest_ to the input jack socket if you mounted the socket with the lugs facing out of the enclosure (i.e. "up" when the enclosure is upside down) – pin 1. You can now solder the ground wire from the large resistors and this new wire to the input jack socket.
+
+9. Solder one side of the 2W, 3K3 "small" resistor to a wire, and protect the exposed leg with some heatshrink tubing. Do not put heathrink over the resistor body itself! Make sure the wire is long enough to reach from the tip (hot) of input jack socket to pin 3 of the B5K pot on the rear, which means the pin that is _furthest_ from the input jack socket. Solder the wire end to the tip lug of the input jack socket alongside the wire that runs to the large resistors on the lid.
+
+10. Place the other "small" resistor, 1K, 1W, between pins 1 and 3 of the B5K pot. Insert the ground wire from the sleeve of the input jack into pin 1 and the loose end of the 2W resistor that connects to the tip of the input jack to pin 3. Keep the exposed resistor legs as short as possible, and solder both in place, snipping off any excess. Leave the wiper (middle) lug of the B5K pot unsoldered for now – this is our line out to the Hothouse PCB.
+
+At this point, you should have all three large resistors, the inductor coil, and three of the PCB standoffs securely mounted to the lid, with thermal paste under the large resistors. The fan will be in place, and the input jack socket will be connected, with two wires running across towards the B5K pot. The wire from the tip of the input jack socket will end in a 3K3 2W resistor. A 1K 1W resistor will be soldered across the outer lugs of the pot, one side shared with the 3K3 2W resistor and the other side shared with the wire to the amp in sleeve (ground).
+
+Now we can turn our attention to the PCB.
+
+1. Complete the Hothouse PCB, outside the enclosure. The surface-mounted components should already be in place if you ordered it from Cleveland Audio Co. or used the PCB assembly service, but you will need to solder in the female headers that seat the Daisy Seed itself, as well as the 100uF electrolytic capacitor. Remember that these are polarised! Do not solder any pots, switches, or ribbon cables to the Hothouse PCB.
+
+2. Solder trios of wires to the pads for pots 4, 5, 6 on the Houthouse PCB. If you are using short wires with plastic JST connectors, keep them long enough to reach to the front of the enclosure. If using normal wires, keep them a bit longer, or it will be hard to fit the pots later. Leave the other pot and switch pads empty - we won't use them.
+
+3. Solder another trio of wires (or three wires on a single thriple JST connector) to the LED1, LED2, and GND pads at the front of the PCB, near pots 4, 5, and 6. These will run to the LEDs.
 
 ## Building the software
 
