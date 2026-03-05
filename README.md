@@ -340,11 +340,11 @@ You can largely build the Mulebox in any order you want, but here is a suggested
 
 The cooling fan can be one of the most fiddly components to install, because if there is _any_ pressure on its housing, it will likely either stop or run noisily. Unfortunately, there is only _just_ enough space for a 30mm fan inside a 1590DD enclosure, and the sides also slant outwards slightly, making it difficult to mount the fan cleanly. We therefore recommend getting the fan in place first and testing it with a 9V battery.
 
-1. Mount the finger grille from the outside of the enclosure and run 25mm M3 bolts through at least two screw holes. Depending on your model of fan, you may only be able to use two or bolts screws in any case!
+1. Mount the finger grille from the outside of the enclosure and run 25mm M3 bolts through at least two screw holes. Depending on your model of fan, you may only be able to use two or three bolts in any case!
 
 2. Put a nut on the screw and tighten on the inside of the enclosure. This will keep the finger grille in place, but also create some spacing at the edge, which will likely be necessary to allow the lid to close without compressing the fan housing.
 
-3. Slide the fan onto the bolts, with the direction of air flow towards the outside of the enclosure (there should be a small arrow indicating the directoin, but you can also power the fan up and confirm that air is blowing out through the finger grille). Do not use too much force when installing the fan and check for any bending or warping of its plastic housing. If necessary, carefully enlarge either the holes on the fan housing or the enclosure or both, to make it possible to angle the bolts appropriately. You want the fan to be scurely in place so it does not vibrate, but not under any bending tension.
+3. Slide the fan onto the bolts, with the direction of air flow towards the outside of the enclosure (there should be a small arrow indicating the direction, but you can also power the fan up and confirm that air is blowing out through the finger grille). Do not use too much force when installing the fan and check for any bending or warping of its plastic housing. If necessary, carefully enlarge either the holes on the fan housing or the enclosure or both, to make it possible to angle the bolts appropriately. You want the fan to be scurely in place so it does not vibrate, but not under any bending tension.
 
 4. Whilst doing this, frequently test that the fan runs, by conencting it to a 9V battery or other power source. If at any point it stops or makes a grinding noise, you have probably bent the housing. Free the fan and confirm that it works still, then attempt to seat it again.
 
@@ -464,11 +464,15 @@ We are almost done! The only installation that remains is the power.
 
 ## Testing
 
-Before connecting the Mulebox to you amplifier, plug in the speaker cable and use a multimeter to measure the DC resistance across the tip and sleeve of the other end (i.e. the end that would go into your amp). It should measure about 8 Ohms, give or take. If you get an "open loop" (no connection) or very low (less than 7?) or high (more than 10?) resistance rating, do not plug your amp in. Open the enclosure and look for incorrect connections.
+Before connecting the Mulebox to your amplifier, plug in the speaker cable and use a multimeter to measure the DC resistance across the tip and sleeve of the other end (i.e. the end that would go into your amp). It should measure about 8 Ohms, give or take. If you get an "open loop" (no connection) or very low (less than 7?) or high (more than 10?) resistance rating, do not plug your amp in. Open the enclosure and look for incorrect connections.
 
 Then, plug in the 9V DC power supply (make sure it is centre-negative – the same type of power commonly used for effects pedals). The fan should start to spin and you should see a small light on the Daisy Seed through the top slats in the enclosure. If not, there is a problem with the power connections.
 
 The red and blue LEDs on the front panel should also go on. This means the firmware is running and an IR is loaded correctly. If not, something may be wrong with the software build.
+
+Connect the stereo outputs of the Mulebox to a mixer or interface that you can monitor with speakers or headphones. Listen for any noise before connecting the amp. If it sounds unduly noisy, look for faulty or dry solder joints or damaged wires.
+
+If all is good, plug the speaker cable into the 8 Ohm speaker output of your amp and turn it on. Keep the volume low on both the amp and the Mulebox (both the trim knob at the rear and the line out knob at the front). Try to play something and turn up the volume knobs slowly.
 
 ## License
 
