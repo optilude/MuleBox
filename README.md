@@ -32,6 +32,8 @@ The red LED will stay on when the device is powered. It will blink if the signal
 
 The blue LED will stay on if an IR is loaded, and blink when it is being changed (by turning the rotary knob). If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off.
 
+If all is well, you should hear your amp through a simulated speaker on the stereo output.
+
 ## Architecture
 
 Think of the Mulebox as two separate devices hardwired together:
@@ -106,13 +108,11 @@ Speaking of heat dissipation, the design includes a small fan at the rear, inten
 
 The drill template has space for a 30mm square extractor fan with standard hole spacing. This is _very tight_ and might require some creativity when mounting and closing the lid. You may need to add a bit of extra spacing with a nut or small washer on the inside of the enclosure, to allow the lid to close.
 
-Cheap fans are noisy. Quiet fans don't move a lot of air. The quality of the fan will make a difference.
-
 The fan needs to run off the 9V power supply. You can get fans that run natively on 9V, or e.g. 12V fans that will just run a bit slower at lower voltages. A lower-voltage fan (e.g. a 5V fan) will require additional components to step the 9V voltage down to 5V.
 
-**TODO**: Link to specific fan (once tested)
+Cheap fans are noisy. Quiet fans don't move a lot of air. The quality of the fan will make a difference. Look for 'vapo' magnetic bearings, and noise ratings below 20dB, noting that a 12V fan run at 9V, for example, will be slower and thus quieter than the stated rating.
 
-**TODO**: Fan power details (once tested)
+Sunon makes good fans and the Sunon MF30101V2 12V 30mmx30mmx10mm fan is a good, quiet fan that can run at 9V, but there are many other options.
 
 ### The enclosure
 
@@ -163,9 +163,9 @@ You need the components below. We suggest ordering everything that is available 
 * 1 x 1K 1W metal film resistor ([A-2196](https://www.taydaelectronics.com/resistor-1k-ohm-1w-1-metal-film-pkg-of-10.html)) – higher power rating, used for the attenuator circuit 
 * 3 x _isolated_ jack sockets ([A-6042](https://www.taydaelectronics.com/6-35mm-1-4-mono-insulated-switched-socket-jack-solder-lugs.html))
 * 1 x small _isolated_ DC power socket ([A-991](https://www.taydaelectronics.com/dc-power-jack-2-1mm-round-type-panel-mount-1.html))
-* 4 x 10mm M3 bolts ([A-1252](https://www.taydaelectronics.com/m3-steel-screw-cross-round-head-m3x10mm.html)) and nuts ([A-1247](https://www.taydaelectronics.com/nut-3mm-for-screw-m3.html)) – for mounting 25W resistors
-* 4 x 10mm M4 bolts ([A-4351](https://www.taydaelectronics.com/m4-steel-screw-cross-round-head-m4x10mm.html)) and nuts ([A-4357](https://www.taydaelectronics.com/nut-4mm-for-screw-m4.html)) – for mounting 100W resistor
-* 4 x 25mm M3 bolts ([A-1257](https://www.taydaelectronics.com/m3-steel-screw-cross-round-head-m3x25mm.html)) and nuts ([A-1247](https://www.taydaelectronics.com/nut-3mm-for-screw-m3.html)) – for mounting cooling fan and finger grille
+* 4 x 10mm M3 bolts ([A-1252](https://www.taydaelectronics.com/m3-steel-screw-cross-round-head-m3x10mm.html)) and 4 x nuts ([A-1247](https://www.taydaelectronics.com/nut-3mm-for-screw-m3.html)) – for mounting 25W resistors
+* 4 x 10mm M4 bolts ([A-4351](https://www.taydaelectronics.com/m4-steel-screw-cross-round-head-m4x10mm.html)) and 4 x nuts ([A-4357](https://www.taydaelectronics.com/nut-4mm-for-screw-m4.html)) – for mounting 100W resistor
+* 4 x 25mm M3 bolts ([A-1257](https://www.taydaelectronics.com/m3-steel-screw-cross-round-head-m3x25mm.html)) and 8 x nuts ([A-1247](https://www.taydaelectronics.com/nut-3mm-for-screw-m3.html)) – for mounting cooling fan and finger grille
 
 And for the enclosure:
 
@@ -187,6 +187,7 @@ And for the enclosure:
 * 4 x TCEHCBS-6-01 PCB standoffs ([4691573](https://uk.farnell.com/essentra-components/tcehcbs-6-01/pcb-mounting-nylon-6-6-9-5mm/dp/4691573)) – plus suitable screws (#6 or M3.5, self-tapping). Alternatively, [this kit from PiHut](https://thepihut.com/products/14-corner-edge-standoffs-set-of-4) contains both the standoffs and the screws.
 * 1 x 12-position make-before-break rotary switch – Lorlin CK1034 ([1123690](https://uk.farnell.com/lorlin/ck1034/switch-1-pole-12-pos-0-15a-250v/dp/1123690)) – note this has an imperial sized 6.35mm (1/4 inch), D-shaped spindle and so requires a suitable knob. There is a metric version of the same switch (CK1024) which can take a 6mm D-shaft knob, but the front cutouts will then need to be adjusted.
 * 1 x 3K3 2W metal film resistor - used for the attenuator circuit ([1738645](https://uk.farnell.com/neohm-te-connectivity/rox2sj3k3/res-3k3-5-2w-axial-metal-oxide/dp/1738645))
+* 1 x Sunon MF30101V2 30mm fan or similar ([4382050](https://uk.farnell.com/sunon/mf30101v2-1000u-a99/dc-fan-vapo-30mm-8600rpm-12vdc/dp/4382050))
 * 1 x Fan finger guard for 30mm fan, e.g. Multicomp Pro MCSC30-W1B ([1781195](https://uk.farnell.com/multicomp-pro/mcsc30-w1b/fan-finger-guard-metal-30mm-black/dp/1781195))
 * 1 x 10 Ohm, 100W resistor, e.g. TE Connectivity HSC10010RJ ([1174288](https://uk.farnell.com/cgs-te-connectivity/hsc10010rj/resistor-100w-5-10r/dp/1174288))
 * 1 x 100 Ohm, 25W resistor, e.g. TE Connectivity HSA25100RJ ([2009323](https://uk.farnell.com/cgs-te-connectivity/hsa25100rj/resistor-alu-housed-100r-5-25w/dp/2009323))
@@ -197,7 +198,6 @@ And for the enclosure:
 * 1 x medium knob for 6.35mm D-shaft rotary switch, ~19mm, with the pointer towards the _flat_ edge (assuming you are using the Lorlin CK1034 rotary switch). These can be a bit hard to source, but the [Cliff K21 D-shaft 1/4" knobs](https://www.digikey.co.uk/en/products/detail/cliff-electronic-components-ltd/CL178886/26698222) with a suitable cap works.
 * 1 x [Daisy Seed](https://electro-smith.com/products/daisy-seed) – see above
 * 1 x [Hothouse main PCB](https://clevelandmusicco.com/hothouse-diy-digital-signal-processing-platform-kit/) – see above
-* 1 x 30mm extractor fan – see above
 * 22 AWG or similar (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
 * Thinner wire in multiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
 * Optional: For wiring the front pots, LEDs, and rotary switch, you can use sets of wires with 3-pin JST 1.25mm (or larger) connectors (you'll need both male and female). The advantage of this is that you can easily disconnect the front components when opening the enclosure.
@@ -334,7 +334,29 @@ Here is one feasible layout that aims to minimise cable runs. Note that the wire
 
 ### Recommended build order
 
-We will start with the attenuator and line out:
+You can largely build the Mulebox in any order you want, but here is a suggested approach.
+
+#### Test fit the fan
+
+The cooling fan can be one of the most fiddly components to install, because if there is _any_ pressure on its housing, it will likely either stop or run noisily. Unfortunately, there is only _just_ enough space for a 30mm fan inside a 1590DD enclosure, and the sides also slant outwards slightly, making it difficult to mount the fan cleanly. We therefore recommend getting the fan in place first and testing it with a 9V battery.
+
+1. Mount the finger grille from the outside of the enclosure and run 25mm M3 bolts through at least two screw holes. Depending on your model of fan, you may only be able to use two or bolts screws in any case!
+
+2. Put a nut on the screw and tighten on the inside of the enclosure. This will keep the finger grille in place, but also create some spacing at the edge, which will likely be necessary to allow the lid to close without compressing the fan housing.
+
+3. Slide the fan onto the bolts, with the direction of air flow towards the outside of the enclosure (there should be a small arrow indicating the directoin, but you can also power the fan up and confirm that air is blowing out through the finger grille). Do not use too much force when installing the fan and check for any bending or warping of its plastic housing. If necessary, carefully enlarge either the holes on the fan housing or the enclosure or both, to make it possible to angle the bolts appropriately. You want the fan to be scurely in place so it does not vibrate, but not under any bending tension.
+
+4. Whilst doing this, frequently test that the fan runs, by conencting it to a 9V battery or other power source. If at any point it stops or makes a grinding noise, you have probably bent the housing. Free the fan and confirm that it works still, then attempt to seat it again.
+
+5. Run the power wires out of the enclosure slats, and install the lid. Confirm that the fan still runs. If not, check that the inner lip of the enclosure lid has not bent the fan housing.
+
+6. Fasten the enclosure lid screws and confirm that the fan still runs and that air is flowing freely out of the finger grille at the rear of the unit. If not, again look for signs of bending. It may be necessary to put a thin spacer between the lid and the enclosure before tigthening the screws, to gain half a millimetre of extra headroom.
+
+Later on, be careful that no wires or other components end up pushing or warping the fan housing.
+
+#### The attenuator circuit
+
+Once you are confident the fan is properly installed, we recommend tackling the bulky resistors and inductor coil, with their thicker wires.
 
 1. Begin by placing the large resistors (1 x 100W, 2 x 25W) as shown in the layout. Smear a very thin layer of thermal paste on the bottom and bolt them securely to the lid, with the nuts on the inside (i.e. the side where the resistors are mounted) and the screws on the outside.
 
@@ -358,7 +380,9 @@ We will start with the attenuator and line out:
 
 At this point, you should have all three large resistors, the inductor coil, and three of the PCB standoffs securely mounted to the lid, with thermal paste under the large resistors. The fan will be in place, and the input jack socket will be connected, with two wires running across towards the B5K pot. The wire from the tip of the input jack socket will end in a 3K3 2W resistor. A 1K 1W resistor will be soldered across the outer lugs of the pot, one side shared with the 3K3 2W resistor and the other side shared with the wire to the amp in sleeve (ground).
 
-Next we need to prepare the rotary switch.
+#### The rotary switch
+
+We will soon come to the DSP part of the circuit, with the front and rear-mounted pots and sockets, but first we need to prepare the resistor ladder on the rotary switch, which is much easier to do outside the enclosure.
 
 1. Identify pin 1 and pin 12 on the switch. Insert a short wire and one end of a 1K 1/4W resistor in the lug for pin 1. In lug 2, insert one side of a second 1K resistor alongside the other leg of the resistor connected to pin 1. Continue this up to pin 12, where you should also insert a second wire. The idea is to create a "ladder", where there is a 1k resistor between each adjacent pair of pins, and also a wire at the first and last pins.
 
@@ -372,7 +396,9 @@ Here is a close-up of a completed rotary switch with the 1k resistor ladder.
 
 ![Front components including rotary switch](./docs/photos/front-pots.jpeg)
 
-Now we can turn our attention to the PCB.
+#### The PCB and rear-mounted components
+
+We will start by installing the PCB and mounting to the components on the rear, which, if you leave the enclosure open as suggested, turns out to be easier than the components on the front.
 
 1. Complete the Hothouse PCB, outside the enclosure. The surface-mounted components should already be in place if you ordered it from Cleveland Music Co. or used the PCB assembly service, but you will need to solder in the female headers that seat the Daisy Seed itself, as well as the 100uF electrolytic capacitor. Remember that these are polarised! Do not solder any pots, switches, or ribbon cables to the Hothouse PCB.
 
@@ -383,6 +409,8 @@ Now we can turn our attention to the PCB.
 4. Solder a wire from the "ROUT" pad to the tip lug of the right output jack socket, and from the "LOUT" pad to the tip of the left output jack socket.
 
 5. We will now create a ground bus. The goal is to connect the GND pad at the rear of the PCB to the sleeve lug of one of the nearest output jack socket, and then run that to the sleeve lug of the adjacent output jack socket, the ground pin of the B5K socket (which itself is connected to the sleeve of the input jack socket), and eventually to the ground pin of the 9V power socket. There are a few ways you can do this, but one way is to use a short piece of solid core wire that has been fully or partially stripped, placing this through the ground lugs of the jack sockets as a bar that you can then wrap other wires around before soldering them together. You want to avoid ground loops (multiple parallel ground paths), and ensure that any exposed wire cannot come into contact with any other components and accidentally create a short. Do not solder to the 9V socket yet, as we also need to account for the fan.
+
+#### The front-mounted components
 
 At this point, the connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connect to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two pots. If you have left the enclosure open like a clamshell along the rear long edge, you have been able to run short wires to the PCB and large resistors that will fold relatively easily into the unit when the enclosure is closed onto the lid. However, with the enclosure opened like this, the components that will be at the front will now be upside down and far to the back. Ideally, we want to avoid very long wires that run almost double the depth of the unit. There are a few different strategies you could employ:
 
@@ -416,18 +444,18 @@ Regardless of your mounting strategy, the connections need to be made as follows
 
 7. Depending on your mounting strategy (especially if you are using wires with JST connectors), you can now mount the final PCB corner standoff to secure the PCB in place.
 
-Next, we need to wire the power and fan:
+#### 9V power and the fan
 
 **TODO**
 
 - PCB
 - Fan
 
-Finally:
+#### Final steps
 
 1. Flash the Daisy Seed with the latest firmware if you haven't already done so.
 2. Carefully insert it into the header pins, so that the USB socket faces to the left side of the unit (i.e. are on the side of the PCB closest to the edge of the lid, furthest away from the large resistors). This may need a bit of pressure, but you should be careful not to bend any of the pins.
-3. Close the lids, connecting the front components or their wires as required.
+3. Close the lid, connecting the front components or their wires as required.
 4. Insert the lid screws.
 5. Screw in or stick on rubber feet to each corner if desired, so that the bolts in the lid are clear of the ground. Lifting the enclosure a bit can also help heat management.
 
