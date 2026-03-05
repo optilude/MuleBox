@@ -10,13 +10,17 @@ This document provides guidance for how to build your own. Both software and har
 
 **WARNING #3:** This is a very tight build. You need to take care selecting components that can handle the required power, including wires. You need to be familiar with soldering, guitar electronics (e.g. you have built guitar amps or pedals before), and be capable of building the code for this software project using basic development tools.
 
-You will also need to supply your own IR files, e.g. ones you have bought yourself.
+You will also need to supply your own IR files, e.g. ones you have bought or recorded yourself.
 
 ## Operation
 
-**TODO**: Add an image of the final unit
+This is the assembled Mulebox:
 
-Connect a 1/4" TS **speaker cable** (not an instrument cable like the one you might use to plug your guitar into an amp or connect two effects pedals) from an 8 Ohm (only!) speaker output on your amplifier, into the amp input on the Mulebox rear.
+![Front view](./docs/photos/front.jpeg)
+
+![Rear view](./docs/photos/back.jpeg)
+
+To use it, connect a 1/4" TS **speaker cable** (not an instrument cable like the one you might use to plug your guitar into an amp or connect two effects pedals) from an 8 Ohm (only!) speaker output on your amplifier, into the amp input on the Mulebox rear.
 
 Connect a pair of 1/4" TS audio cables from the left and right output jacks to a mixer or other recording device. If you want to connect to a pair of speakers, make sure they are either powered or that you use a suitable stereo amplifier. Note that the outputs are not balanced, and there is no headphone output.
 
@@ -77,7 +81,7 @@ Note that the attenuator is entirely passive. This means that if you turn your a
 
 The Mulebox lives inside a "Hammond 1590DD" size enclosure – mainly because this is the largest enclosure one can order from Tayda Electronics and have them paint and drill. It is of course possible to use a different box, so long as it has the required cutouts and enough ventilation, but we provide Tayda drill and UV print templates below, which make it much easier to get a professional-looking enclosure.
 
-The following schematic illustrates the circuit:
+Here is the schematic of the full circuit:
 
 ![Mulebox schematic diagram](docs/schematic.png)
 
@@ -254,7 +258,9 @@ You will mount the largest components to the removable "lid" (in our case the ba
 
 We recommend that you assemble the unit with the lid and box opened like a clamshell, lying as close together as possible along the rear long edge. In this position, run cables that are as short as possible from the rear jacks and pots to the relevant points on the base. You can have a bit more leeway with the front components, which use thinner wires, though it's even more elegant to use small plastic JST connectors that can be done up with the lid partially closed. Care and planning is everything.
 
-**TODO**: Insert photo of enclosure open
+![Open enclosure](./docs/photos/open-enclosure.jpeg)
+
+(**Note**: The build in this photo is not identical to the suggested layout above – the inductor coil and 25W resistors have been swapped around due to a drilling error. It is however electronically identical. This uses wires with JST connectors for the front-mounted components.)
 
 It can also be useful to fit only three of the four PCB corner mounts to begin with. This makes it easy to take the PCB out so it can float inside the enclosure with the lid open. All the wires to the front of the unit run directly to the PCB.
 
@@ -298,6 +304,10 @@ Next we need to prepare the rotary switch.
 
 You can test the rotary switch with a multimeter. It should measure close to zero resistance between the pin 1 wire and common in position 1, 1k between those same wires in position 2, 2k in position 3, and so on. In this regard, it will act like an 11k potentiometer where the measured value between pin 1 and the common moves in steps of 1K as the switch is turned. The value between pin 12 and the common will be 11k in position 1, 10k in position 2, and so on, and 0 in position 12.
 
+Here is a close-up of a completed rotary switch with the 1k resistor ladder.
+
+![Front components including rotary switch](./docs/photos/front-pots.jpeg)
+
 Now we can turn our attention to the PCB.
 
 1. Complete the Hothouse PCB, outside the enclosure. The surface-mounted components should already be in place if you ordered it from Cleveland Music Co. or used the PCB assembly service, but you will need to solder in the female headers that seat the Daisy Seed itself, as well as the 100uF electrolytic capacitor. Remember that these are polarised! Do not solder any pots, switches, or ribbon cables to the Hothouse PCB.
@@ -320,7 +330,11 @@ At this point, the connections to the rear of the PCB will be in place, and ther
 
 * Use triple-wire JST connectors. Solder the wires with the female connectors to the PCB and the wires with the male connectors to the pots, switch, and LED, with wires cut to a length where they can be connected with the enclosure only slightly open at the front. This creates neat wiring, but you have to be careful when opening the enclosure not to snap the connectors or wires.
 
-Some trial and error may be required, and it might be a good idea to do a single pot first as a test. 
+Some trial and error may be required, and it might be a good idea to do a single pot first as a test.
+
+The images above illustrate using JST connectors for the front components. Here is a photo of the "flying PCB" approach:
+
+![Hothouse PCB flying between back and front](./docs/photos/flying-board.jpeg)
 
 Regardless of your mounting strategy, the connections need to be made as follows:
 
@@ -330,7 +344,7 @@ Regardless of your mounting strategy, the connections need to be made as follows
 
 3. Install the LED bezels in the enclosure. Temporarily push the two LEDs (red for the top light, which will be at the bottom of the enclosure if opened) into the bezels to help gauge the length of wire required.
   
-4. Identify the negative (short) legs of the two LEDs (one red, one blue), angle them so they touch securely, and solder them together. Make short loops for the positive (long) legs. Solder the LED1 wire to the red LED positive leg, the LED2 wire to the blue LED positive leg, and the GND wire to the two negative legs. Use heat shrink or careful positioning to ensure that the positive legs can't touch the metal bezel or any other components, creating a short.
+4. Identify the negative (short) legs of the two LEDs (one red, one blue), angle them so they touch securely, and solder them together. Make short loops for the positive (long) legs. Solder the LED1 wire to the red LED positive leg, the LED2 wire to the blue LED positive leg, and the GND wire to the two negative legs. Use heat shrink or careful positioning to ensure that the positive legs can't touch the metal bezel or any other components, creating a short. The close-up photo above of the front-mounted components shows the wiring of the LEDs.
 
 5. Wire the rotary switch to the POT4 pads. Pin 1 (the rightmost pin when viewed from above) is marked on each trio of pot pads, and should connect to pin 1 of the rotary switch.
 
