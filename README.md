@@ -353,6 +353,10 @@ Finally:
 4. Insert the lid screws.
 5. Screw in or stick on rubber feet to each corner if desired, so that the bolts in the lid are clear of the ground. Lifting the enclosure a bit can also help heat management.
 
+## Testing
+
+**TODO**
+
 ## Building the software
 
 Before the Mulebox will work, you need to flash the firmware from this project onto it. This also transfers the prepared IRs (see above) to its QSPI flash memory.
