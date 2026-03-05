@@ -32,37 +32,6 @@ The red LED will stay on when the device is powered. It will blink if the signal
 
 The blue LED will stay on if an IR is loaded, and blink when it is being changed (by turning the rotary knob). If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off.
 
-## Loading your own Impulse Response files
-
-This project ships with four free IRs from [Djammincabs](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either bought or recorded yourself.
-
-Requirements:
-
-- WAV format, 48kHz sample rate, mono or stereo
-- Up to 12 files – if fewer, some positions on the rotary switch will be blank
-- Each IR should be up to ~170ms – longer IRs will be truncated, but you can still use them
-
-Note that files are assigned to rotary switch positions 1–12 in alphabetical order, so name them accordingly (e.g. `01_dark.wav`, `02_bright.wav`) to minimise confusion.
-
-Steps:
-
-1. Place your IR WAV files in the `irs/` folder.
-
-2. Run the converter tool to regenerate the IR data header:
-   ```bash
-   python3 tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
-   ```
-
-3. Connect the Daisy Seed to your computer via a USB cable, and put it in DFU mode by pressing boot and then reset.
-
-4. Rebuild and flash to the Daisy Seed:
-   ```bash
-   make
-   make program-dfu
-   ```
-
-5. Return the Daisy Seed to the Hothouse, power it on, and test the unit.
-
 ## Architecture
 
 Think of the Mulebox as two separate devices hardwired together:
@@ -244,7 +213,102 @@ You will need:
 - Screwdrivers, pliers, wirecutters, wire strippers, spanners in various sizes to affix pots to the enclosure, etc.
 - A multimeter that can measure resistance and continuity (beep mode)
 
-## Assembly
+## Building the software
+
+Before the Mulebox will work, you need to flash the firmware from this project onto the Daisy Seed. This also transfers the prepared IRs (see above) to its QSPI flash memory. You can do this in isolation with the Daisy Seed connected via USB, or using a debug probe connected to the installed Daisy Seed.
+
+### Prerequisites
+
+1. **ARM GCC Toolchain**
+   ```bash
+   # macOS
+   brew install --cask gcc-arm-embedded
+
+   # Linux (Debian/Ubuntu)
+   sudo apt-get install gcc-arm-none-eabi
+
+   # Or download from: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm
+   ```
+
+2. **dfu-util** (for flashing via USB)
+   ```bash
+   # macOS
+   brew install dfu-util
+
+   # Linux
+   sudo apt-get install dfu-util
+   ```
+
+3. **Clone with submodules**
+   ```bash
+   git clone --recurse-submodules <repository-url>
+   cd Mulebox
+   ```
+
+   If already cloned without submodules:
+   ```bash
+   git submodule update --init --recursive
+   ```
+
+### Build Commands
+
+```bash
+make                # Build the project
+make clean          # Clean build files
+make clean-all      # Clean including library builds
+make help           # Show all available targets
+```
+
+### Flashing to Daisy Seed
+
+1. Connect the Daisy Seed to your computer via USB
+2. Enter DFU (bootloader) mode:
+   - Hold down the **BOOT** button
+   - Press and release the **RESET** button
+   - Release the **BOOT** button
+3. Flash the firmware:
+   ```bash
+   make program-dfu
+   # or simply:
+   make flash
+   ```
+
+Alternatively, if you have an STM32 STLINK-V3MINIE debug probe, you can use this to flash (using `make program` rather than `make program-dfu`) without entering DFU mode, provided the Daisy Seed has power (either via its own USB socket, or through the Hothouse's 9V supply). The top left side slats on the enclosure are just tall enough to allow you to feed the 14-pin ribbon cable through, which means you can leave the debug probe connected with the enclosure closed and use this for testing.
+
+See the [Daisy Seed C++ SDK documentation](https://daisy.audio/tutorials/cpp-dev-env/) for more details about how to build and flash firmware.
+
+## Loading your own Impulse Response files
+
+This project ships with four free IRs from [Djammincabs](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either bought or recorded yourself.
+
+Requirements:
+
+- WAV format, 48kHz sample rate, mono or stereo
+- Up to 12 files – if fewer, some positions on the rotary switch will be blank
+- Each IR should be up to ~170ms – longer IRs will be truncated, but you can still use them
+
+Note that files are assigned to rotary switch positions 1–12 in alphabetical order, so name them accordingly (e.g. `01_dark.wav`, `02_bright.wav`) to minimise confusion.
+
+Steps:
+
+1. Place your IR WAV files in the `irs/` folder.
+
+2. Run the converter tool to regenerate the IR data header:
+   ```bash
+   python3 tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
+   ```
+
+3. Connect the Daisy Seed to your computer via a USB cable, and put it in DFU mode by pressing boot and then reset.
+
+4. Rebuild and flash to the Daisy Seed:
+   ```bash
+   make
+   make program-dfu
+   ```
+
+5. Return the Daisy Seed to the Hothouse, power it on, and test the unit.
+
+## Assembling the hardware
 
 You've ordered the parts. Waited for the delivery driver. Laid everything out. It's time to put it all together!
 
@@ -361,7 +425,7 @@ Next, we need to wire the power and fan:
 
 Finally:
 
-1. Flash the Daisy Seed with the latest firmware (see below)
+1. Flash the Daisy Seed with the latest firmware if you haven't already done so.
 2. Carefully insert it into the header pins, so that the USB socket faces to the left side of the unit (i.e. are on the side of the PCB closest to the edge of the lid, furthest away from the large resistors). This may need a bit of pressure, but you should be careful not to bend any of the pins.
 3. Close the lids, connecting the front components or their wires as required.
 4. Insert the lid screws.
@@ -369,71 +433,11 @@ Finally:
 
 ## Testing
 
-**TODO**
+Before connecting the Mulebox to you amplifier, plug in the speaker cable and use a multimeter to measure the DC resistance across the tip and sleeve of the other end (i.e. the end that would go into your amp). It should measure about 8 Ohms, give or take. If you get an "open loop" (no connection) or very low (less than 7?) or high (more than 10?) resistance rating, do not plug your amp in. Open the enclosure and look for incorrect connections.
 
-## Building the software
+Then, plug in the 9V DC power supply (make sure it is centre-negative – the same type of power commonly used for effects pedals). The fan should start to spin and you should see a small light on the Daisy Seed through the top slats in the enclosure. If not, there is a problem with the power connections.
 
-Before the Mulebox will work, you need to flash the firmware from this project onto it. This also transfers the prepared IRs (see above) to its QSPI flash memory.
-
-### Prerequisites
-
-1. **ARM GCC Toolchain**
-   ```bash
-   # macOS
-   brew install --cask gcc-arm-embedded
-
-   # Linux (Debian/Ubuntu)
-   sudo apt-get install gcc-arm-none-eabi
-
-   # Or download from: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm
-   ```
-
-2. **dfu-util** (for flashing via USB)
-   ```bash
-   # macOS
-   brew install dfu-util
-
-   # Linux
-   sudo apt-get install dfu-util
-   ```
-
-3. **Clone with submodules**
-   ```bash
-   git clone --recurse-submodules <repository-url>
-   cd Mulebox
-   ```
-
-   If already cloned without submodules:
-   ```bash
-   git submodule update --init --recursive
-   ```
-
-### Build Commands
-
-```bash
-make                # Build the project
-make clean          # Clean build files
-make clean-all      # Clean including library builds
-make help           # Show all available targets
-```
-
-## Flashing to Daisy Seed
-
-1. Connect the Daisy Seed to your computer via USB
-2. Enter DFU (bootloader) mode:
-   - Hold down the **BOOT** button
-   - Press and release the **RESET** button
-   - Release the **BOOT** button
-3. Flash the firmware:
-   ```bash
-   make program-dfu
-   # or simply:
-   make flash
-   ```
-
-Alternatively, if you have an STM32 STLINK-V3MINIE debug probe, you can use this to flash (using `make program` rather than `make program-dfu`) without entering DFU mode, provided the Daisy Seed has power (either via its own USB socket, or through the Hothouse's 9V supply). The top left side slats on the enclosure are just tall enough to allow you to feed the 14-pin ribbon cable through, which means you can leave the debug probe connected with the enclosure closed and use this for testing.
-
-See the [Daisy Seed C++ SDK documentation](https://daisy.audio/tutorials/cpp-dev-env/) for more details about how to build and flash firmware.
+The red and blue LEDs on the front panel should also go on. This means the firmware is running and an IR is loaded correctly. If not, something may be wrong with the software build.
 
 ## License
 
