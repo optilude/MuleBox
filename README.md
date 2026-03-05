@@ -446,10 +446,13 @@ Regardless of your mounting strategy, the connections need to be made as follows
 
 #### 9V power and the fan
 
-**TODO**
+We are almost done! The only installation that remains is the power.
 
-- PCB
-- Fan
+1. Connect the negative (usually black) wire from the fan to the negative (centre pin) lug of the 9V power socket. (If you are unsure which lug is negative, use a multimeter to check continuity with the centre pin of the socket.)
+
+2. Also connect this to the ground bus at the output jacks, and solder in place. All the ground points –the sleeves of all three jacks, the GND pad on the PCB, the ground sides of the large resistors, etc. – should now be connected.
+
+3. Connect the positive terminal of the 9V socket to the 9V input of the Hothouse PCB, and the positive (usually red) wire from the fan, and solder in place.
 
 #### Final steps
 
