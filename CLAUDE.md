@@ -152,16 +152,18 @@ make clean-all      # Clean including libraries
 
 **Flash bootloader (first-time only):**
 ```bash
-# 1. Connect Daisy Seed via USB
-# 2. Enter STM DFU mode: Hold BOOT, press RESET, release both
+# USB only: enter STM DFU mode (Hold BOOT, press RESET, release both)
 make program-boot
+# Or with STLINK debug probe (no buttons needed):
+make program-boot-probe
 ```
 
 **Flash firmware:**
 ```bash
-# 1. Enter Daisy bootloader: press RESET (do NOT hold BOOT), or hold left footswitch 2s
-# 2. Flash within 2.5s grace period (bootloader LED will pulse):
+# USB only: enter Daisy bootloader (press RESET, or hold left footswitch 2s)
 make program-dfu    # or: make flash
+# Or with STLINK debug probe (no USB or buttons needed):
+make program
 ```
 
 ## Development Workflow
