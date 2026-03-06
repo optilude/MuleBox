@@ -316,9 +316,16 @@ int main(void) {
     savedSettings.Init(defaultSettings, 0x7FF000);
     loadSettings();
 
-    // Set initial LED2 state based on loaded IR
-    ledRight.Set(irBypass ? 0.0f : 1.0f);
+    // Diagnostic startup blink: blue LED (LED_2) blinks once per IR loaded.
+    // Count the blinks to confirm the correct number of IRs compiled in.
+    ledRight.Set(0.0f);
     ledRight.Update();
+    hw.DelayMs(500);
+    for (int i = 0; i < (int)ImpulseResponseData::IR_COUNT; i++) {
+        ledRight.Set(1.0f); ledRight.Update(); hw.DelayMs(150);
+        ledRight.Set(0.0f); ledRight.Update(); hw.DelayMs(150);
+    }
+    hw.DelayMs(400);
 
     // Start audio processing
     hw.StartAdc();
@@ -386,21 +393,21 @@ int main(void) {
         // LED state machine
         uint32_t now = daisy::System::GetNow();
 
-        // LED1 (red): always on, blink off briefly on clipping
+        // LED1 (red): always on, blinks off briefly on clipping
         float led1 = 1.0f;
         if (clippingDetected) {
             clippingBlinkStart = now;
             clippingDetected = false;
         }
         if (clippingBlinkStart > 0 && (now - clippingBlinkStart) < CLIPPING_BLINK_MS) {
-            led1 = 0.0f;  // Off during clipping blink
+            led1 = 0.0f;
         } else {
             clippingBlinkStart = 0;
         }
         ledLeft.Set(led1);
 
-        // LED2 (blue): steady state managed by IR load logic above
-        // Only update here if not in the middle of an IR load blink
+        // LED2 (blue): on when IR loaded, off on empty slot
+        // IR-load blinks are handled above; only update steady state here
         if (!shouldBypass) {
             ledRight.Set(irBypass ? 0.0f : 1.0f);
         }
@@ -408,47 +415,6 @@ int main(void) {
         // Update LED hardware
         ledLeft.Update();
         ledRight.Update();
-
-        // Check if footswitch 1 is held for 2 seconds to reset to bootloader.
-        // We reimplement this instead of calling hw.CheckResetToBootloader()
-        // because that uses BootloaderMode::STM, but with BOOT_SRAM we need
-        // BootloaderMode::DAISY to return to the Daisy bootloader.
-        {
-            static uint32_t bootHoldStart = 0;
-            if(hw.switches[Hothouse::FOOTSWITCH_1].Pressed())
-            {
-                if(bootHoldStart == 0)
-                {
-                    bootHoldStart = daisy::System::GetNow();
-                }
-                else if(daisy::System::GetNow() - bootHoldStart >= 2000)
-                {
-                    hw.StopAdc();
-                    hw.StopAudio();
-
-                    // Flash LEDs alternately 3 times to signal reset
-                    daisy::Led _led1, _led2;
-                    _led1.Init(hw.seed.GetPin(Hothouse::LED_1), false);
-                    _led2.Init(hw.seed.GetPin(Hothouse::LED_2), false);
-                    for(int i = 0; i < 3; i++)
-                    {
-                        _led1.Set(1); _led2.Set(0);
-                        _led1.Update(); _led2.Update();
-                        daisy::System::Delay(100);
-                        _led1.Set(0); _led2.Set(1);
-                        _led1.Update(); _led2.Update();
-                        daisy::System::Delay(100);
-                    }
-
-                    daisy::System::ResetToBootloader(
-                        daisy::System::BootloaderMode::DAISY);
-                }
-            }
-            else
-            {
-                bootHoldStart = 0;
-            }
-        }
 
         // Small delay to prevent busy-waiting
         hw.DelayMs(10);
