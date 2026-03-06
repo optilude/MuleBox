@@ -114,7 +114,7 @@ def trim_or_pad_ir(samples, target_length=MAX_IR_SAMPLES):
 
 def format_cpp_raw_array(samples, name, indent=0):
     """
-    Format samples as C raw array with QSPI section attribute.
+    Format samples as C raw array.
 
     Args:
         samples: List of float samples
@@ -126,8 +126,7 @@ def format_cpp_raw_array(samples, name, indent=0):
     """
     indent_str = ' ' * indent
     lines = [
-        f"{indent_str}// Stored in QSPI flash",
-        f'{indent_str}__attribute__((section(".qspiflash_data"))) __attribute__((aligned(4)))',
+        f"{indent_str}__attribute__((aligned(4)))",
         f"{indent_str}const float {name}[{len(samples)}] = {{"
     ]
 
@@ -159,7 +158,7 @@ def sanitize_name(filepath):
 
 def generate_header(ir_data, output_path):
     """
-    Generate C++ header file with IR data stored in QSPI flash.
+    Generate C++ header file with IR data embedded in firmware.
 
     Args:
         ir_data: List of (name, samples) tuples
@@ -171,7 +170,7 @@ def generate_header(ir_data, output_path):
         "// Auto-generated IR data header",
         "// Do not edit manually - regenerate using wav_to_ir_header.py",
         "//",
-        "// IR data is stored in QSPI flash and must be copied to RAM before use.",
+        "// IR data is embedded in firmware and loaded to SRAM at boot.",
         "",
         f"#ifndef {guard_name}",
         f"#define {guard_name}",
@@ -186,7 +185,7 @@ def generate_header(ir_data, output_path):
     lines.append("// IR metadata")
     lines.append("struct IRInfo {")
     lines.append("    const char* name;")
-    lines.append("    const float* data;  // Pointer to QSPI data")
+    lines.append("    const float* data;  // Pointer to IR sample data")
     lines.append("    size_t length;      // Sample count")
     lines.append("};")
     lines.append("")
@@ -226,7 +225,7 @@ def generate_header(ir_data, output_path):
     print(f"\nGenerated header: {output_path}")
     print(f"  Total IRs: {len(ir_data)}")
     print(f"  Total samples: {total_samples}")
-    print(f"  Estimated QSPI size: ~{total_samples * 4 / 1024:.1f} KB")
+    print(f"  Estimated flash size: ~{total_samples * 4 / 1024:.1f} KB")
     print(f"  Estimated RAM per IR: ~{max(ir_lengths) * 4 / 1024:.1f} KB")
 
 

@@ -94,7 +94,7 @@ Parameter irSelectorParam;   // KNOB_6: IR selector (resistor ladder)
 /**
  * Fixed constants
  */
-constexpr int SETTINGS_VERSION = 5;  // Bumped for control remap + FIR engine change
+constexpr int SETTINGS_VERSION = 6;  // Bumped: PersistentStorage relocated for BOOT_SRAM
 constexpr float SAMPLE_RATE = 48000.0f;
 static const float BASS_FREQ = 110.0f;        // Bass EQ center frequency in Hz
 static const float BASS_Q = 0.7f;             // Q factor (bandwidth)
@@ -311,7 +311,9 @@ int main(void) {
         SETTINGS_VERSION,
         0                 // irIndex (default to first IR)
     };
-    savedSettings.Init(defaultSettings);
+    // Store settings at end of QSPI flash (8MB - 4KB = offset 0x7FF000)
+    // to avoid the bootloader area (0x000000-0x03FFFF) and application binary (0x040000+)
+    savedSettings.Init(defaultSettings, 0x7FF000);
     loadSettings();
 
     // Set initial LED2 state based on loaded IR
@@ -407,8 +409,46 @@ int main(void) {
         ledLeft.Update();
         ledRight.Update();
 
-        // Check if footswitch 1 is held for reset to bootloader mode
-        hw.CheckResetToBootloader();
+        // Check if footswitch 1 is held for 2 seconds to reset to bootloader.
+        // We reimplement this instead of calling hw.CheckResetToBootloader()
+        // because that uses BootloaderMode::STM, but with BOOT_SRAM we need
+        // BootloaderMode::DAISY to return to the Daisy bootloader.
+        {
+            static uint32_t bootHoldStart = 0;
+            if(hw.switches[Hothouse::FOOTSWITCH_1].Pressed())
+            {
+                if(bootHoldStart == 0)
+                {
+                    bootHoldStart = daisy::System::GetNow();
+                }
+                else if(daisy::System::GetNow() - bootHoldStart >= 2000)
+                {
+                    hw.StopAdc();
+                    hw.StopAudio();
+
+                    // Flash LEDs alternately 3 times to signal reset
+                    daisy::Led _led1, _led2;
+                    _led1.Init(hw.seed.GetPin(Hothouse::LED_1), false);
+                    _led2.Init(hw.seed.GetPin(Hothouse::LED_2), false);
+                    for(int i = 0; i < 3; i++)
+                    {
+                        _led1.Set(1); _led2.Set(0);
+                        _led1.Update(); _led2.Update();
+                        daisy::System::Delay(100);
+                        _led1.Set(0); _led2.Set(1);
+                        _led1.Update(); _led2.Update();
+                        daisy::System::Delay(100);
+                    }
+
+                    daisy::System::ResetToBootloader(
+                        daisy::System::BootloaderMode::DAISY);
+                }
+            }
+            else
+            {
+                bootHoldStart = 0;
+            }
+        }
 
         // Small delay to prevent busy-waiting
         hw.DelayMs(10);

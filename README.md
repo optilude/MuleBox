@@ -215,7 +215,7 @@ You will need:
 
 ## Building the software
 
-Before the Mulebox will work, you need to flash the firmware from this project onto the Daisy Seed. This also transfers the prepared IRs (see above) to its QSPI flash memory. You can do this in isolation with the Daisy Seed connected via USB, or using a debug probe connected to the installed Daisy Seed.
+Before the Mulebox will work, you need to build flash the firmware from this source code repository onto the Daisy Seed. This also transfers the prepared IRs (see above) to its QSPI flash memory. For this to work, you need to connect the Daisy Seed to a computer via USB.
 
 ### Prerequisites
 
@@ -259,21 +259,40 @@ make clean-all      # Clean including library builds
 make help           # Show all available targets
 ```
 
-### Flashing to Daisy Seed
+### Flashing to Daisy Seed
 
-1. Connect the Daisy Seed to your computer via USB
-2. Enter DFU (bootloader) mode:
-   - Hold down the **BOOT** button
+The MuleBox uses the Daisy bootloader to program firmware (including IR data) to QSPI flash. The bootloader must be installed once; after that, firmware updates are straightforward.
+
+#### First-time setup: install the Daisy bootloader
+
+This step is only needed once per Daisy Seed, or when updating the bootloader.
+
+1. Connect the Daisy Seed to your computer via USB.
+2. Enter STM DFU mode:
+   - Hold down the **BOOT** button on the Daisy Seed
    - Press and release the **RESET** button
    - Release the **BOOT** button
-3. Flash the firmware:
+3. Flash the bootloader:
+   ```bash
+   make program-boot
+   ```
+4. The Daisy Seed will restart. Its onboard LED should pulse for about 2.5 seconds (the bootloader's grace period), then stay off since no application is loaded yet. If no application is found, the bootloader continues to wait for a DFU connection indefinitely.
+
+#### Flashing firmware
+
+After the bootloader is installed, use this procedure for all firmware updates:
+
+1. Enter the Daisy bootloader by doing **one** of the following:
+   - **Press RESET** on the Daisy Seed (do _not_ hold BOOT). The onboard LED will pulse for about 2.5 seconds.
+   - **Power-cycle** the Daisy Seed by unplugging and reconnecting USB or 9V power.
+2. Flash the firmware within the 2.5 second grace period:
    ```bash
    make program-dfu
-   # or simply:
-   make flash
    ```
+   If you miss the window, press **RESET** again and retry. On the first flash (no application loaded), the bootloader waits indefinitely, so there is no time pressure.
+3. The firmware loads and begins running automatically.
 
-Alternatively, if you have an STM32 STLINK-V3MINIE debug probe, you can use this to flash (using `make program` rather than `make program-dfu`) without entering DFU mode, provided the Daisy Seed has power (either via its own USB socket, or through the Hothouse's 9V supply). The top left side slats on the enclosure are just tall enough to allow you to feed the 14-pin ribbon cable through, which means you can leave the debug probe connected with the enclosure closed and use this for testing.
+If you have an STM32 STLINK-V3MINIE debug probe, it can be used for debugging with GDB, but `make program` (OpenOCD) is not available when using the Daisy bootloader. Use `make program-dfu` via USB instead.
 
 See the [Daisy Seed C++ SDK documentation](https://daisy.audio/tutorials/cpp-dev-env/) for more details about how to build and flash firmware.
 
@@ -298,15 +317,13 @@ Steps:
    python3 tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
    ```
 
-3. Connect the Daisy Seed to your computer via a USB cable, and put it in DFU mode by pressing boot and then reset.
+3. Enter the Daisy bootloader (hold the left footswitch for 2 seconds, or press RESET on the Daisy Seed).
 
-4. Rebuild and flash to the Daisy Seed:
+4. Rebuild and flash to the Daisy Seed per the instructions above:
    ```bash
    make
    make program-dfu
    ```
-
-5. Return the Daisy Seed to the Hothouse, power it on, and test the unit.
 
 ## Assembling the hardware
 

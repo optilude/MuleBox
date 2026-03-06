@@ -22,14 +22,18 @@ C_DEFS = -DUSE_ARM_DSP
 LIBDAISY_DIR = libDaisy
 DAISYSP_DIR = DaisySP
 
+# Use Daisy bootloader: application is written to QSPI flash via DFU,
+# then copied to SRAM at boot. This enables programming both firmware
+# and IR data in a single DFU flash operation.
+APP_TYPE = BOOT_SRAM
+
+# Use the 2000ms grace period bootloader so that firmware can be
+# reflashed by pressing RESET and running make program-dfu within 2.5s
+BOOT_BIN = $(SYSTEM_FILES_DIR)/dsy_bootloader_v6_3-intdfu-2000ms.bin
+
 # Core location, and generic Makefile
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
 include $(SYSTEM_FILES_DIR)/Makefile
-
-# Override default .bin with .hex for QSPI flash support
-# The .bin format fails with QSPI because it tries to fill the
-# 2GB+ gap between internal flash (0x08000000) and QSPI (0x90000000)
-TARGET_BIN = $(TARGET).hex
 
 # Additional targets for convenience
 .PHONY: clean-all flash help
@@ -47,17 +51,19 @@ help:
 	@echo "MuleBox Build System"
 	@echo "===================="
 	@echo ""
-	@echo "Common targets:"
-	@echo "  make          - Build the project"
-	@echo "  make clean    - Clean build files"
-	@echo "  make clean-all- Clean all build files including libraries"
-	@echo "  make program-dfu - Flash to Daisy via USB DFU (uses .hex format)"
-	@echo "  make flash    - Alias for program-dfu"
-	@echo ""
-	@echo "Before flashing:"
+	@echo "First-time setup (flash Daisy bootloader):"
 	@echo "  1. Connect Daisy Seed via USB"
-	@echo "  2. Hold BOOT button and press RESET"
-	@echo "  3. Release both buttons"
-	@echo "  4. Run 'make flash'"
+	@echo "  2. Hold BOOT button and press RESET, release both"
+	@echo "  3. Run 'make program-boot'"
 	@echo ""
-	@echo "Note: This project uses .hex format for flashing due to QSPI flash usage."
+	@echo "Flashing firmware:"
+	@echo "  1. Enter Daisy bootloader (hold left footswitch 2s, or press RESET)"
+	@echo "  2. Run 'make program-dfu' (or 'make flash')"
+	@echo ""
+	@echo "Common targets:"
+	@echo "  make              - Build the project"
+	@echo "  make clean        - Clean build files"
+	@echo "  make clean-all    - Clean including library builds"
+	@echo "  make program-boot - Flash Daisy bootloader (first-time only)"
+	@echo "  make program-dfu  - Flash firmware via USB DFU"
+	@echo "  make flash        - Alias for program-dfu"

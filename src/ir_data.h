@@ -1,7 +1,7 @@
 // Auto-generated IR data header
 // Do not edit manually - regenerate using wav_to_ir_header.py
 //
-// IR data is stored in QSPI flash and must be copied to RAM before use.
+// IR data is embedded in firmware and loaded to SRAM at boot.
 
 #ifndef IR_DATA_H
 #define IR_DATA_H
@@ -13,13 +13,12 @@ namespace ImpulseResponseData {
 // IR metadata
 struct IRInfo {
     const char* name;
-    const float* data;  // Pointer to QSPI data
+    const float* data;  // Pointer to IR sample data
     size_t length;      // Sample count
 };
 
 // IR: ir_01_dark_closed (8160 samples, 170.0ms)
-// Stored in QSPI flash
-__attribute__((section(".qspiflash_data"))) __attribute__((aligned(4)))
+__attribute__((aligned(4)))
 const float ir_01_dark_closed[8160] = {
     0.32868695f, 0.53083658f, 0.64708328f, 0.65657783f, 0.57914937f, 0.45015132f, 0.29724896f, 0.15358174f,
     0.05945861f, 0.03770614f, 0.07035446f, 0.11036420f, 0.12173593f, 0.09563756f, 0.06680548f, 0.09324896f,
@@ -1044,8 +1043,7 @@ const float ir_01_dark_closed[8160] = {
 };
 
 // IR: ir_02_warm_mid (8160 samples, 170.0ms)
-// Stored in QSPI flash
-__attribute__((section(".qspiflash_data"))) __attribute__((aligned(4)))
+__attribute__((aligned(4)))
 const float ir_02_warm_mid[8160] = {
     -0.48640037f, -0.40440476f, -0.20009792f, 0.07552063f, 0.37929726f, 0.66039276f, 0.86958539f, 0.98182940f,
     0.99899995f, 0.94786608f, 0.86905849f, 0.79323280f, 0.73243737f, 0.69118333f, 0.68519282f, 0.70931256f,
@@ -2070,8 +2068,7 @@ const float ir_02_warm_mid[8160] = {
 };
 
 // IR: ir_03_balanced (8160 samples, 170.0ms)
-// Stored in QSPI flash
-__attribute__((section(".qspiflash_data"))) __attribute__((aligned(4)))
+__attribute__((aligned(4)))
 const float ir_03_balanced[8160] = {
     -0.00980270f, -0.38499296f, -0.71017945f, -0.92188382f, -0.99899995f, -0.94839001f, -0.79245710f, -0.54891682f,
     -0.25201476f, 0.03686106f, 0.27398860f, 0.43013668f, 0.47603393f, 0.40959418f, 0.25506413f, 0.04934597f,
@@ -3096,8 +3093,7 @@ const float ir_03_balanced[8160] = {
 };
 
 // IR: ir_04_bright_open (8160 samples, 170.0ms)
-// Stored in QSPI flash
-__attribute__((section(".qspiflash_data"))) __attribute__((aligned(4)))
+__attribute__((aligned(4)))
 const float ir_04_bright_open[8160] = {
     0.66119373f, 0.70344508f, 0.67905617f, 0.57011187f, 0.40485132f, 0.21268499f, 0.02351308f, -0.12780976f,
     -0.22923326f, -0.28660953f, -0.30802858f, -0.30265081f, -0.28589606f, -0.27026165f, -0.25457680f, -0.22563052f,

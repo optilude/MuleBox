@@ -150,11 +150,17 @@ make clean          # Clean build files
 make clean-all      # Clean including libraries
 ```
 
-**Flash to Daisy:**
+**Flash bootloader (first-time only):**
 ```bash
 # 1. Connect Daisy Seed via USB
-# 2. Enter DFU mode: Hold BOOT, press RESET, release both
-# 3. Flash:
+# 2. Enter STM DFU mode: Hold BOOT, press RESET, release both
+make program-boot
+```
+
+**Flash firmware:**
+```bash
+# 1. Enter Daisy bootloader: press RESET (do NOT hold BOOT), or hold left footswitch 2s
+# 2. Flash within 2.5s grace period (bootloader LED will pulse):
 make program-dfu    # or: make flash
 ```
 
