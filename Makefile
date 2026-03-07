@@ -1,11 +1,24 @@
 # MuleBox - Guitar Processing Unit Makefile
 # For Electrosmith Daisy Seed on Cleveland Audio Hothouse platform
 
-# Project Name
-TARGET = MuleBox
+# Project Name and Sources
+ifdef TEST
+  ifeq ($(TEST),knobs)
+    TARGET = test_knobs
+    APP_SRC = src/tests/test_knobs.cpp
+  else ifeq ($(TEST),rotary)
+    TARGET = test_rotary
+    APP_SRC = src/tests/test_rotary.cpp
+  else
+    $(error Unknown test: $(TEST). Use TEST=knobs or TEST=rotary)
+  endif
+else
+  TARGET = MuleBox
+  APP_SRC = src/main.cpp
+endif
 
 # Sources
-CPP_SOURCES = src/main.cpp \
+CPP_SOURCES = $(APP_SRC) \
               src/hothouse.cpp
 
 # CMSIS-DSP FIR filtering (ARM-optimized convolution for IR processing)
@@ -96,6 +109,8 @@ help:
 	@echo ""
 	@echo "Common targets:"
 	@echo "  make                  - Build the project"
+	@echo "  make TEST=knobs       - Build the test_knobs program"
+	@echo "  make TEST=rotary      - Build the test_rotary program"
 	@echo "  make clean            - Clean build files"
 	@echo "  make clean-all        - Clean including library builds"
 	@echo "  make program-boot     - Flash bootloader via USB DFU (first-time)"

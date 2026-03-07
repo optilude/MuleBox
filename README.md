@@ -519,6 +519,18 @@ Connect the stereo outputs of the Mulebox to a mixer or interface that you can m
 
 If all is good, plug the speaker cable into the 8 Ohm speaker output of your amp and turn it on. Keep the volume low on both the amp and the Mulebox (both the trim knob at the rear and the line out knob at the front). Try to play something and turn up the volume knobs slowly.
 
+### Hardware Testing Programs
+
+Before jumping straight to the main firmware, you can verify that your LEDs, front-panel knobs, and rotary switch are wired correctly using the included test programs.
+
+1. **Knobs test:**
+   Build and flash the knobs test using `make TEST=knobs program` (or `program-dfu` if using USB). When running, turning the two standard potentiometers (bass and output level) will independently adjust the brightness of the red and blue LEDs. If an LED doesn't light up or the knobs don't smoothly alter the brightness, check your wiring to POT5, POT4, and the LED pads on the PCB.
+
+2. **Rotary switch test:**
+   Build and flash the rotary switch test using `make TEST=rotary program` (or `program-dfu`). In this test, turning the rotary switch will change the brightness of the LEDs. The brightness should jump in distinct steps as you turn the switch. If it acts erratically or only works in some positions, double check the resistor ladder on the rotary switch and its connection to POT6 on the PCB.
+
+Once you have verified the hardware works as expected, flash the main firmware by simply running `make` and `make program` (or `program-dfu`).
+
 ## License
 
 - Project license: GPL-3.0 (see `LICENSE`)
