@@ -30,6 +30,8 @@ The front knobs can be used to control the output level and cut/boost the bass, 
 
 The red LED will stay on when the device is powered. It will blink if the signal starts to clip. In this case, turn down the trim knob.
 
+At startup, the red LED will blink to indicate the number of IRs that have been installed, up to 12 times.
+
 The blue LED will stay on if an IR is loaded, and blink when it is being changed (by turning the rotary knob). If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off.
 
 If all is well, you should hear your amp through a simulated speaker on the stereo output.
