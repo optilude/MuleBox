@@ -24,7 +24,6 @@ using clevelandmusicco::Hothouse;
 
 using daisy::Parameter;
 using daisy::Led;
-using daisy::PersistentStorage;
 using daisy::SaiHandle;
 using daisy::AudioHandle;
 
@@ -85,7 +84,7 @@ class DebouncedAnalogSwitch {
 
 Hothouse hw;
 DebouncedAnalogSwitch irSwitch;
-Led ledLeft, ledRight;
+Led ledRed, ledBlue;
 Parameter outputLevelParam;   // KNOB_4: output level
 Parameter bassParam;          // KNOB_5: bass boost/cut
 Parameter irSelectorParam;   // KNOB_6: IR selector (resistor ladder)
@@ -94,7 +93,6 @@ Parameter irSelectorParam;   // KNOB_6: IR selector (resistor ladder)
 /**
  * Fixed constants
  */
-constexpr int SETTINGS_VERSION = 6;  // Bumped: PersistentStorage relocated for BOOT_SRAM
 constexpr float SAMPLE_RATE = 48000.0f;
 static const float BASS_FREQ = 110.0f;        // Bass EQ center frequency in Hz
 static const float BASS_Q = 0.7f;             // Q factor (bandwidth)
@@ -152,66 +150,28 @@ void loadIr(int irIndex) {
     irBypass = false;
 }
 
+
 /**
- * Persistent storage of settings
+ * Blink blue LED N times, then leave on/off based on whether an IR exists
+ * at the given position. N = position + 1 (position 0 = 1 blink, etc.)
  */
+void blinkIrPosition(int position) {
+    int blinkCount = position + 1;
+    bool hasIr = (position < (int)ImpulseResponseData::IR_COUNT);
 
-struct Settings {
-    int version;
-    int irIndex;   // Last selected IR index (0-11)
+    ledBlue.Set(0.0f);
+    ledBlue.Update();
+    hw.DelayMs(200);
 
-    bool operator!=(const Settings& a) const {
-        return !(
-            a.version == version &&
-            a.irIndex == irIndex
-        );
-    }
-};
-
-PersistentStorage<Settings> savedSettings(hw.seed.qspi);
-bool triggerSettingsSave = false;
-
-void loadSettings() {
-
-    // Reference to local copy of settings stored in flash
-    Settings &localSettings = savedSettings.GetSettings();
-
-    int savedVersion = localSettings.version;
-
-    if (savedVersion != SETTINGS_VERSION) {
-        // Something has changed. Load defaults!
-        savedSettings.RestoreDefaults();
-        loadSettings();
-        return;
+    for (int i = 0; i < blinkCount; i++) {
+        ledBlue.Set(1.0f); ledBlue.Update(); hw.DelayMs(150);
+        ledBlue.Set(0.0f); ledBlue.Update(); hw.DelayMs(150);
     }
 
-    // Load IR index
-    int irIndex = localSettings.irIndex;
-
-    // If no IRs exist in this build, force bypass.
-    if (ImpulseResponseData::IR_COUNT == 0) {
-        irBypass = true;
-        return;
-    }
-
-    // Clamp to valid range to ensure safety if IR list changed
-    if (irIndex < 0 || irIndex >= (int)ImpulseResponseData::IR_COUNT) {
-        irIndex = 0;
-    }
-
-    // Load IR from QSPI flash and initialize FIR processor
-    loadIr(irIndex);
+    // Leave LED on if IR loaded, off if empty slot
+    ledBlue.Set(hasIr ? 1.0f : 0.0f);
+    ledBlue.Update();
 }
-
-void saveSettings() {
-    Settings &localSettings = savedSettings.GetSettings();
-
-    localSettings.version = SETTINGS_VERSION;
-    localSettings.irIndex = currentIrIndex;
-
-    triggerSettingsSave = true;
-}
-
 
 // Audio callback - processes audio samples in blocks
 // Called at audio rate: 48kHz / 8 samples = 6kHz
@@ -271,12 +231,12 @@ int main(void) {
     hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
 
     // Initialize LEDs
-    ledLeft.Init(hw.seed.GetPin(Hothouse::LED_1), false);
-    ledRight.Init(hw.seed.GetPin(Hothouse::LED_2), false);
+    ledRed.Init(hw.seed.GetPin(Hothouse::LED_1), false);
+    ledBlue.Init(hw.seed.GetPin(Hothouse::LED_2), false);
 
     // Turn on LED1 (red) immediately to indicate power-on
-    ledLeft.Set(1.0f);
-    ledLeft.Update();
+    ledRed.Set(1.0f);
+    ledRed.Update();
 
     // KNOB_4: Output level (0.0 = silence, noon = unity, full CW = +6dB boost)
     outputLevelParam.Init(hw.knobs[Hothouse::KNOB_4],
@@ -306,39 +266,41 @@ int main(void) {
     bassFilter.SetFreq(BASS_FREQ);
     bassFilter.SetRes(BASS_Q);
 
-    // Load saved settings and initialize IR
-    Settings defaultSettings = {
-        SETTINGS_VERSION,
-        0                 // irIndex (default to first IR)
-    };
-    // Store settings at end of QSPI flash (8MB - 4KB = offset 0x7FF000)
-    // to avoid the bootloader area (0x000000-0x03FFFF) and application binary (0x040000+)
-    savedSettings.Init(defaultSettings, 0x7FF000);
-    loadSettings();
+    // Start ADC so we can read knob 6 before audio starts
+    hw.StartAdc();
 
-    // Diagnostic startup blink: blue LED (LED_2) blinks once per IR loaded.
-    // Count the blinks to confirm the correct number of IRs compiled in.
-    ledRight.Set(0.0f);
-    ledRight.Update();
-    hw.DelayMs(500);
-    for (int i = 0; i < (int)ImpulseResponseData::IR_COUNT; i++) {
-        ledRight.Set(1.0f); ledRight.Update(); hw.DelayMs(150);
-        ledRight.Set(0.0f); ledRight.Update(); hw.DelayMs(150);
+    // Read initial IR selection from knob 6 (resistor ladder)
+    // Process controls and pump the parameter smoother to let it converge
+    float rawValue = 0.0f;
+    for (int i = 0; i < 50; i++) {
+        hw.ProcessAllControls();
+        rawValue = irSelectorParam.Process();
+        hw.DelayMs(2);
     }
-    hw.DelayMs(400);
+    {
+        int rawPosition = (int)(rawValue + 0.5f);
+        if (rawPosition < 0) rawPosition = 0;
+        if (rawPosition >= MAX_IR_POSITIONS) rawPosition = MAX_IR_POSITIONS - 1;
+
+        // Initialize debouncer with this position
+        irSwitch.Process(rawPosition);
+
+        // Load IR if valid, otherwise bypass
+        if (rawPosition < (int)ImpulseResponseData::IR_COUNT) {
+            loadIr(rawPosition);
+        } else {
+            irBypass = true;
+        }
+
+        // Blink to indicate position
+        blinkIrPosition(rawPosition);
+    }
 
     // Start audio processing
-    hw.StartAdc();
     hw.StartAudio(AudioCallback);
 
     // Main loop
     while(1) {
-
-        // Save settings if triggered
-        if(triggerSettingsSave) {
-            savedSettings.Save();
-            triggerSettingsSave = false;
-        }
 
         // Process all hardware controls (knobs, switches)
         hw.ProcessAllControls();
@@ -352,42 +314,21 @@ int main(void) {
         if (rawPosition >= MAX_IR_POSITIONS) rawPosition = MAX_IR_POSITIONS - 1;
 
         // Process through debouncer to get stable position
+        int prevPosition = irSwitch.Value();
         int selectedPosition = irSwitch.Process(rawPosition);
 
-        // Bypass if selector position exceeds compiled IR count
-        bool shouldBypass = (selectedPosition >= (int)ImpulseResponseData::IR_COUNT);
+        // Detect switch change (debounced)
+        if (selectedPosition != prevPosition) {
+            bool hasIr = (selectedPosition < (int)ImpulseResponseData::IR_COUNT);
 
-        // Handle bypass state change (empty slot selected/deselected)
-        if (shouldBypass != irBypass) {
-            irBypass = shouldBypass;
-
-            // LED2 blink on empty slot selection, then off
-            if (shouldBypass) {
-                ledRight.Set(1.0f);
-                ledRight.Update();
-                hw.DelayMs(50);
-                ledRight.Set(0.0f);
-                ledRight.Update();
+            if (hasIr) {
+                loadIr(selectedPosition);
+            } else {
+                irBypass = true;
             }
 
-            saveSettings();
-        }
-
-        // If not bypassed and IR selection changed, load new IR
-        if (!shouldBypass && selectedPosition != currentIrIndex) {
-            // LED2 off during IR load (visible blink)
-            ledRight.Set(0.0f);
-            ledRight.Update();
-
-            loadIr(selectedPosition);
-
-            hw.DelayMs(50);  // Brief visible blink
-
-            // LED2 on when IR loaded
-            ledRight.Set(1.0f);
-            ledRight.Update();
-
-            saveSettings();
+            // Blink N times then set steady state
+            blinkIrPosition(selectedPosition);
         }
 
         // LED state machine
@@ -404,17 +345,11 @@ int main(void) {
         } else {
             clippingBlinkStart = 0;
         }
-        ledLeft.Set(led1);
-
-        // LED2 (blue): on when IR loaded, off on empty slot
-        // IR-load blinks are handled above; only update steady state here
-        if (!shouldBypass) {
-            ledRight.Set(irBypass ? 0.0f : 1.0f);
-        }
+        ledRed.Set(led1);
 
         // Update LED hardware
-        ledLeft.Update();
-        ledRight.Update();
+        ledRed.Update();
+        ledBlue.Update();
 
         // Small delay to prevent busy-waiting
         hw.DelayMs(10);
