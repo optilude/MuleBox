@@ -29,8 +29,7 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out,
   ledRed.Update();
   ledBlue.Update();
 
-  // Audio processing; since this is a HelloWorld,
-  // just pass the input to the output in either state
+  // Audio pass-through
   for (size_t i = 0; i < size; ++i) {
       out[0][i] = out[1][i] = in[0][i];
   }
@@ -38,7 +37,7 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out,
 
 int main() {
   hw.Init();
-  hw.SetAudioBlockSize(4);  // Number of samples handled per callback
+  hw.SetAudioBlockSize(4);
   hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
 
   knobIR.Init(hw.knobs[Hothouse::KNOB_6], 0.3f, 1.0f, Parameter::LINEAR);

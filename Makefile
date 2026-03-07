@@ -9,8 +9,11 @@ ifdef TEST
   else ifeq ($(TEST),rotary)
     TARGET = test_rotary
     APP_SRC = src/tests/test_rotary.cpp
+  else ifeq ($(TEST),ir_loading)
+    TARGET = test_ir_loading
+    APP_SRC = src/tests/test_ir_loading.cpp
   else
-    $(error Unknown test: $(TEST). Use TEST=knobs or TEST=rotary)
+    $(error Unknown test: $(TEST). Use TEST=knobs, TEST=rotary, or TEST=ir_loading)
   endif
 else
   TARGET = MuleBox
