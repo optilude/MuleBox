@@ -1,3 +1,8 @@
+// Simple test of rotary knob blinking and IR loading (but not processing!)
+// Red LED blinks on startup to indicate number of IRs loaded
+// Blue LED blinks to indicate position of IR knob when changed
+// LED stays on if IR loaded, off if not (empty slot or fault)
+
 #include "daisysp.h"
 #include "hothouse.h"
 #include "debounced_analog_switch.h"
@@ -23,11 +28,21 @@ IrLoader<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> irLoader;
 constexpr int MAX_IR_POSITIONS = 12;
 constexpr int DEBOUNCE_MS = 500;
 
+bool isLoadingIr = false;
+
 void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out,
                    size_t size) {
     
     // This could be in main() but seems to work most reliably if it's here
-    irSwitch.Process();
+    // We wait if we are in the middle of loading an IR to avoid thread safety issues
+    // In the main() loop, we check for irSwitch.HasChanged() and then act on that
+    if (!isLoadingIr) {
+        irSwitch.Process();
+        
+        ledBlue.Set(irLoader.irBypass ? 0.0f : 0.75f);
+        ledBlue.Update();
+    }
+
 
     // Audio pass-through
     for (size_t i = 0; i < size; ++i) {
@@ -74,8 +89,20 @@ int main() {
         
         // Check for changes in the IR selector switch
         if(irSwitch.HasChanged()) {
+            isLoadingIr = true;
             irSwitch.ResetChangedFlag();
-            blinkLed(ledBlue, irSwitch.Value() + 1, true);
+            
+            int position = irSwitch.Value();
+            blinkLed(ledBlue, position + 1, false);
+
+            // Check if there is an IR at the position, and if so set blue LED to on
+            if (position >= 0 && position < (int)ImpulseResponseData::IR_COUNT) {
+                irLoader.loadIr(position);
+            } else {
+                irLoader.irBypass = true;
+            }
+
+            isLoadingIr = false;
         }
         hw.DelayMs(100);
     }
