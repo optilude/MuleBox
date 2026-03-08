@@ -54,14 +54,13 @@ volatile bool isLoadingIr = false;
 volatile bool clippingDetected = false;
 uint32_t clippingBlinkStart = 0;
 
-void blinkLed(Led& led, int times, bool keep_on = false, int delay_ms = 150) {
+void blinkLed(Led& led, int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
     led.Set(0.0f); led.Update(); hw.DelayMs(200);
     for (int i = 0; i < times; i++) {
-        led.Set(1.0f); led.Update(); hw.DelayMs(delay_ms);
-        led.Set(0.0f); led.Update(); hw.DelayMs(delay_ms);
-    }
-    if (keep_on) {
-        led.Set(1.0f); led.Update();
+        led.Set(brightness); led.Update(); hw.DelayMs(delay_ms);
+        if (i < times - 1 || !keep_on) {
+            led.Set(0.0f); led.Update(); hw.DelayMs(delay_ms);
+        }
     }
 }
 
@@ -84,7 +83,7 @@ void AudioCallback(AudioHandle::InputBuffer in,
     float bassAmount = bassParam.Process();
     float outputLevel = outputLevelParam.Process();
 
-    // Pre-process: read mono input, apply bass boost/cut, check input clipping
+    // // Pre-process: read mono input, apply bass boost/cut, check input clipping
     float firIn[AUDIO_BLOCK_SIZE];
     for (size_t i = 0; i < size; i++) {
         float mono = in[0][i];
@@ -100,11 +99,12 @@ void AudioCallback(AudioHandle::InputBuffer in,
         firIn[i] = mono + (bassFilter.Peak() * bassAmount);
     }
 
-    // IR convolution (handles bypass internally)
+    // // IR convolution (handles bypass internally)
     float firOut[AUDIO_BLOCK_SIZE];
+    irLoader.irBypass = true; // temp - things are breaking here
     irLoader.ProcessBlock(firIn, firOut, size);
 
-    // Apply output level, check output clipping, write stereo output
+    // // Apply output level, check output clipping, write stereo output
     for (size_t i = 0; i < size; i++) {
         float sample = firOut[i] * outputLevel;
 
@@ -173,7 +173,6 @@ int main(void) {
 
             int position = irSwitch.Value();
 
-            // Blink blue LED to indicate position (N+1 blinks for position N)
             blinkLed(ledBlue, position + 1, false);
 
             // Load IR or set bypass for empty slot
@@ -189,19 +188,19 @@ int main(void) {
         // LED1 (red): always on, blinks off briefly on clipping
         uint32_t now = daisy::System::GetNow();
 
-        float led1 = 1.0f;
+        float powerLed = 1.0f;
         if (clippingDetected) {
             clippingBlinkStart = now;
             clippingDetected = false;
         }
         if (clippingBlinkStart > 0 && (now - clippingBlinkStart) < CLIPPING_BLINK_MS) {
-            led1 = 0.0f;
+            powerLed = 0.0f;
         } else {
             clippingBlinkStart = 0;
         }
-        ledRed.Set(led1);
+        ledRed.Set(powerLed);
         ledRed.Update();
 
-        hw.DelayMs(10);
+        hw.DelayMs(50);
     }
 }
