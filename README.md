@@ -28,11 +28,11 @@ Turn the rotary switch on the front to position 1. Connect a 9V DC, centre-negat
 
 The front knobs can be used to control the output level and cut/boost the bass, which might be helpful for certain types of amplifiers. The trim knob at the rear is used to control the input level between the amp and Hothouse. In general it should be as high as possible without causing clipping.
 
-The red LED will stay on when the device is powered. It will blink if the signal starts to clip. In this case, turn down the trim knob.
+The red LED will stay on when the device is powered. It will blink off briefly if the **input** signal starts to clip. In this case, turn down the trim knob on the rear.
 
 At startup, the red LED will blink to indicate the number of IRs that have been installed, up to 12 times.
 
-The blue LED will stay on if an IR is loaded, and blink when it is being changed (by turning the rotary knob). If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off.
+The blue LED will stay on if an IR is loaded, and blink when it is being changed (by turning the rotary knob). If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off. The blue LED will also quickly invert its state (blink) if the **output** signal starts to clip. In this case, turn down the output level knob on the front.
 
 If all is well, you should hear your amp through a simulated speaker on the stereo output.
 

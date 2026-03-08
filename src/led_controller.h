@@ -32,11 +32,11 @@ public:
         currentBrightness = 0.0f;
     }
 
-    void InterruptBlink(uint32_t offTickDuration) {
+    void InterruptBlink(uint32_t offTickDuration, float tempBrightness = 0.0f) {
         isBlinking = true;
         blinkState = false;
         blinkTicks = offTickDuration;
-        currentBrightness = 0.0f;
+        currentBrightness = tempBrightness;
         blinksRemaining = 0;
         keepOnAfter = (baseBrightness > 0.0f);
         blinkBrightness = baseBrightness;

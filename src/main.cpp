@@ -63,7 +63,8 @@ IrLoader irLoader;
 
 // State
 volatile bool isLoadingIr = false;
-volatile bool clippingDetected = false;
+volatile bool inputClippingDetected = false;
+volatile bool outputClippingDetected = false;
 
 LedController redLedController(ledRed, SAMPLE_RATE, AUDIO_BLOCK_SIZE);
 LedController blueLedController(ledBlue, SAMPLE_RATE, AUDIO_BLOCK_SIZE);
@@ -106,7 +107,7 @@ void AudioCallback(AudioHandle::InputBuffer in,
 
         // Input clipping detection
         if (fabsf(mono) > CLIPPING_THRESHOLD) {
-            clippingDetected = true;
+            inputClippingDetected = true;
         }
 
         // Bass boost/cut via SVF peak filter
@@ -125,7 +126,7 @@ void AudioCallback(AudioHandle::InputBuffer in,
 
         // Output clipping detection
         if (fabsf(sample) > CLIPPING_THRESHOLD) {
-            clippingDetected = true;
+            outputClippingDetected = true;
         }
 
         // Stereo output (dual mono)
@@ -217,13 +218,19 @@ int main(void) {
             isLoadingIr = false;
         }
 
-        // LED1 (red): always on, blinks off briefly on clipping
-        if (clippingDetected) {
-            clippingDetected = false;
-            // Interrupt whatever it's doing and keep it off for 100ms
+        // LED1 (red): always on, blinks off briefly on input clipping
+        if (inputClippingDetected) {
+            inputClippingDetected = false;
             redLedController.InterruptBlink(CLIPPING_BLINK_DURATION_TICKS);
         } else {
             redLedController.SetBaseBrightness(1.0f);
+        }
+
+        // LED2 (blue): on when loaded / off when empty, blinks opposite on output clipping
+        if (outputClippingDetected) {
+            outputClippingDetected = false;
+            float blinkTarget = irLoader.irBypass ? 1.0f : 0.0f;
+            blueLedController.InterruptBlink(CLIPPING_BLINK_DURATION_TICKS, blinkTarget);
         }
 
         hw.DelayMs(50);
