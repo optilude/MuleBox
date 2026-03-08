@@ -85,6 +85,11 @@ program-boot-probe:
 	$(OCD) -s $(OCD_DIR) $(OCDFLAGS) \
 		-c "program $(BOOT_BIN) verify reset exit $(INTERNAL_ADDRESS)"
 
+# Desktop test harness (builds and runs on macOS, not Daisy hardware)
+.PHONY: desktop-test
+desktop-test:
+	$(MAKE) -C tools/desktop_test
+
 # Additional targets for convenience
 .PHONY: clean-all flash help
 
