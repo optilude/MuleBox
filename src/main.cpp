@@ -42,19 +42,94 @@ constexpr int MAX_IR_POSITIONS = 12;
 constexpr size_t MAX_IR_LENGTH = 8192;
 constexpr size_t AUDIO_BLOCK_SIZE = 8;
 constexpr float CLIPPING_THRESHOLD = 0.95f;
-constexpr uint32_t CLIPPING_BLINK_MS = 100;
+constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (48000 / AUDIO_BLOCK_SIZE) / 1000;
 constexpr int DEBOUNCE_MS = 500;
 
-// DSP
-Svf bassFilter;
-IrLoader<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> irLoader;
+class LedController {
+public:
+    LedController(Led& l) : led(l), baseBrightness(0.0f), currentBrightness(0.0f), blinksRemaining(0), isBlinking(false), blinkTicks(0), blinkDurationTicks(0), blinkState(false), keepOnAfter(false) {}
 
-// State
-volatile bool isLoadingIr = false;
-volatile bool clippingDetected = false;
-uint32_t clippingBlinkStart = 0;
+    void SetBaseBrightness(float brightness) {
+        baseBrightness = brightness;
+        if (!isBlinking) {
+            currentBrightness = baseBrightness;
+        }
+    }
 
-void blinkLed(Led& led, int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
+    void Blink(int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
+        blinksRemaining = times;
+        keepOnAfter = keep_on;
+        blinkBrightness = brightness;
+        // Audio rate = 48000 / AUDIO_BLOCK_SIZE
+        blinkDurationTicks = delay_ms * (48000 / AUDIO_BLOCK_SIZE) / 1000;
+        
+        // Start with an off period of 200ms
+        isBlinking = true;
+        blinkState = false;
+        blinkTicks = 200 * (48000 / AUDIO_BLOCK_SIZE) / 1000;
+        currentBrightness = 0.0f;
+    }
+
+    void InterruptBlink(uint32_t offTickDuration) {
+        isBlinking = true;
+        blinkState = false;
+        blinkTicks = offTickDuration;
+        currentBrightness = 0.0f;
+        blinksRemaining = 0;
+        keepOnAfter = (baseBrightness > 0.0f);
+        blinkBrightness = baseBrightness;
+        blinkDurationTicks = 0;
+    }
+
+    void ProcessAudioRate() {
+        if (!isBlinking) {
+            currentBrightness = baseBrightness;
+        } else {
+            if (blinkTicks > 0) {
+                blinkTicks--;
+            } else {
+                if (blinkState) {
+                    blinkState = false;
+                    currentBrightness = 0.0f;
+                    blinkTicks = blinkDurationTicks;
+                } else {
+                    if (blinksRemaining > 0) {
+                        blinksRemaining--;
+                        blinkState = true;
+                        currentBrightness = blinkBrightness;
+                        blinkTicks = blinkDurationTicks;
+                    } else {
+                        isBlinking = false;
+                        if (keepOnAfter) {
+                            baseBrightness = blinkBrightness;
+                        } else {
+                            baseBrightness = 0.0f;
+                        }
+                        currentBrightness = baseBrightness;
+                    }
+                }
+            }
+        }
+        
+        led.Set(currentBrightness);
+        led.Update();
+    }
+
+private:
+    Led& led;
+    float baseBrightness;
+    float currentBrightness;
+    
+    int blinksRemaining;
+    bool isBlinking;
+    uint32_t blinkTicks;
+    uint32_t blinkDurationTicks;
+    bool blinkState;
+    float blinkBrightness;
+    bool keepOnAfter;
+};
+
+void blinkLedBlocking(Led& led, int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
     led.Set(0.0f); led.Update(); hw.DelayMs(200);
     for (int i = 0; i < times; i++) {
         led.Set(brightness); led.Update(); hw.DelayMs(delay_ms);
@@ -63,6 +138,17 @@ void blinkLed(Led& led, int times, bool keep_on = false, float brightness = 1.0f
         }
     }
 }
+
+// DSP
+Svf bassFilter;
+IrLoader<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> irLoader;
+
+// State
+volatile bool isLoadingIr = false;
+volatile bool clippingDetected = false;
+
+LedController redLedController(ledRed);
+LedController blueLedController(ledBlue);
 
 // Audio callback - processes audio samples in blocks
 // Called at audio rate: 48kHz / 8 samples = 6kHz
@@ -75,9 +161,12 @@ void AudioCallback(AudioHandle::InputBuffer in,
     if (!isLoadingIr) {
         irSwitch.Process();
 
-        ledBlue.Set(irLoader.irBypass ? 0.0f : 1.0f);
-        ledBlue.Update();
+        blueLedController.SetBaseBrightness(irLoader.irBypass ? 0.0f : 1.0f);
     }
+
+    // Process LEDs at audio rate
+    redLedController.ProcessAudioRate();
+    blueLedController.ProcessAudioRate();
 
     // Read control parameters (smoothed)
     float bassAmount = bassParam.Process();
@@ -101,8 +190,11 @@ void AudioCallback(AudioHandle::InputBuffer in,
 
     // // IR convolution (handles bypass internally)
     float firOut[AUDIO_BLOCK_SIZE];
-    irLoader.irBypass = true; // temp - things are breaking here
-    irLoader.ProcessBlock(firIn, firOut, size);
+    // temp - IR ProcessBlock is crashing
+    for (size_t i = 0; i < size; i++) {
+        firOut[i] = firIn[i];
+    }
+    // irLoader.ProcessBlock(firIn, firOut, size);
 
     // // Apply output level, check output clipping, write stereo output
     for (size_t i = 0; i < size; i++) {
@@ -152,13 +244,26 @@ int main(void) {
     hw.StartAdc();
 
     // Blink red LED for each loaded IR on startup, then keep on
-    blinkLed(ledRed, ImpulseResponseData::IR_COUNT, true);
-
+    blinkLedBlocking(ledRed, ImpulseResponseData::IR_COUNT, true);
+    redLedController.SetBaseBrightness(1.0f);
+    
     // Stabilize rotary switch reading (let ADC + debounce converge)
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 60; i++) {
         irSwitch.Process();
-        hw.DelayMs(100);
+        hw.DelayMs(10);
     }
+    irSwitch.ResetChangedFlag();
+
+    // Load initial IR so we have audio immediately
+    int initialPosition = irSwitch.Value();
+    if (initialPosition >= 0 && initialPosition < (int)ImpulseResponseData::IR_COUNT) {
+        irLoader.loadIr(initialPosition);
+    } else {
+        irLoader.irBypass = true;
+    }
+
+    // Blink blue LED to indicate the initial IR position as audio starts
+    blueLedController.Blink(initialPosition + 1, false, 0.5f);
 
     // Start audio processing
     hw.StartAudio(AudioCallback);
@@ -173,7 +278,8 @@ int main(void) {
 
             int position = irSwitch.Value();
 
-            blinkLed(ledBlue, position + 1, false);
+            // Blink blue LED to indicate IR position (dimmer blink)
+            blueLedController.Blink(position + 1, false, 0.5f);
 
             // Load IR or set bypass for empty slot
             if (position >= 0 && position < (int)ImpulseResponseData::IR_COUNT) {
@@ -186,20 +292,13 @@ int main(void) {
         }
 
         // LED1 (red): always on, blinks off briefly on clipping
-        uint32_t now = daisy::System::GetNow();
-
-        float powerLed = 1.0f;
         if (clippingDetected) {
-            clippingBlinkStart = now;
             clippingDetected = false;
-        }
-        if (clippingBlinkStart > 0 && (now - clippingBlinkStart) < CLIPPING_BLINK_MS) {
-            powerLed = 0.0f;
+            // Interrupt whatever it's doing and keep it off for 100ms
+            redLedController.InterruptBlink(CLIPPING_BLINK_DURATION_TICKS);
         } else {
-            clippingBlinkStart = 0;
+            redLedController.SetBaseBrightness(1.0f);
         }
-        ledRed.Set(powerLed);
-        ledRed.Update();
 
         hw.DelayMs(50);
     }
