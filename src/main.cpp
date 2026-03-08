@@ -31,10 +31,10 @@ using daisysp::Svf;
 
 // Hardware
 Hothouse hw;
-DebouncedAnalogSwitch irSwitch;
 Led ledRed, ledBlue;
 Parameter outputLevelParam;   // KNOB_4: output level
 Parameter bassParam;          // KNOB_5: bass boost/cut
+DebouncedAnalogSwitch irSwitch;
 
 // Constants
 static const float BASS_FREQ = 110.0f;
@@ -47,16 +47,6 @@ constexpr float CLIPPING_THRESHOLD = 0.95f;
 constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (SAMPLE_RATE / AUDIO_BLOCK_SIZE) / 1000;
 constexpr int DEBOUNCE_MS = 500;
 
-void blinkLedBlocking(Led& led, int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
-    led.Set(0.0f); led.Update(); hw.DelayMs(200);
-    for (int i = 0; i < times; i++) {
-        led.Set(brightness); led.Update(); hw.DelayMs(delay_ms);
-        if (i < times - 1 || !keep_on) {
-            led.Set(0.0f); led.Update(); hw.DelayMs(delay_ms);
-        }
-    }
-}
-
 // DSP
 Svf bassFilter;
 IrLoader<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> irLoader;
@@ -68,6 +58,16 @@ volatile bool clippingDetected = false;
 LedController redLedController(ledRed, SAMPLE_RATE, AUDIO_BLOCK_SIZE);
 LedController blueLedController(ledBlue, SAMPLE_RATE, AUDIO_BLOCK_SIZE);
 
+void blinkLedBlocking(Led& led, int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
+    led.Set(0.0f); led.Update(); hw.DelayMs(200);
+    for (int i = 0; i < times; i++) {
+        led.Set(brightness); led.Update(); hw.DelayMs(delay_ms);
+        if (i < times - 1 || !keep_on) {
+            led.Set(0.0f); led.Update(); hw.DelayMs(delay_ms);
+        }
+    }
+}
+
 // Audio callback - processes audio samples in blocks
 // Called at audio rate: 48kHz / 8 samples = 6kHz
 void AudioCallback(AudioHandle::InputBuffer in,
@@ -78,7 +78,6 @@ void AudioCallback(AudioHandle::InputBuffer in,
     // Skip during IR loading to avoid thread-safety issues
     if (!isLoadingIr) {
         irSwitch.Process();
-
         blueLedController.SetBaseBrightness(irLoader.irBypass ? 0.0f : 1.0f);
     }
 
@@ -90,7 +89,7 @@ void AudioCallback(AudioHandle::InputBuffer in,
     float bassAmount = bassParam.Process();
     float outputLevel = outputLevelParam.Process();
 
-    // // Pre-process: read mono input, apply bass boost/cut, check input clipping
+    // Pre-process: read mono input, apply bass boost/cut, check input clipping
     float firIn[AUDIO_BLOCK_SIZE];
     for (size_t i = 0; i < size; i++) {
         float mono = in[0][i];
@@ -106,13 +105,10 @@ void AudioCallback(AudioHandle::InputBuffer in,
         firIn[i] = mono + (bassFilter.Peak() * bassAmount);
     }
 
-    // // IR convolution (handles bypass internally)
+    // IR convolution (handles bypass internally)
     float firOut[AUDIO_BLOCK_SIZE];
-    // temp - IR ProcessBlock is crashing
-    for (size_t i = 0; i < size; i++) {
-        firOut[i] = firIn[i];
-    }
-    // irLoader.ProcessBlock(firIn, firOut, size);
+    // XXX: This causes the unit to crash/hang
+    irLoader.ProcessBlock(firIn, firOut, size);
 
     // // Apply output level, check output clipping, write stereo output
     for (size_t i = 0; i < size; i++) {
