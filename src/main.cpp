@@ -19,6 +19,7 @@
 #include "ir_loader.h"
 #include "ir_data.h"
 #include "led_controller.h"
+#include "dev/sdram.h"
 
 using clevelandmusicco::Hothouse;
 
@@ -42,14 +43,23 @@ static const float BASS_Q = 0.7f;
 constexpr int MAX_IR_POSITIONS = 12;
 constexpr size_t MAX_IR_LENGTH = 8192;
 constexpr uint32_t SAMPLE_RATE = 48000;
-constexpr size_t AUDIO_BLOCK_SIZE = 8;
+constexpr size_t AUDIO_BLOCK_SIZE = 128;
 constexpr float CLIPPING_THRESHOLD = 0.95f;
 constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (SAMPLE_RATE / AUDIO_BLOCK_SIZE) / 1000;
 constexpr int DEBOUNCE_MS = 500;
 
+// Convolution engine constants
+constexpr size_t PARTITION_SIZE = ConvolutionEngine::L;  // 128
+constexpr size_t FFT_SIZE = ConvolutionEngine::N;        // 256
+constexpr size_t MAX_PARTITIONS = (MAX_IR_LENGTH + PARTITION_SIZE - 1) / PARTITION_SIZE;
+
+// Large convolution buffers in SDRAM (64KB each)
+float DSY_SDRAM_BSS convIrFreqBuf[MAX_PARTITIONS * FFT_SIZE];
+float DSY_SDRAM_BSS convFdlBuf[MAX_PARTITIONS * FFT_SIZE];
+
 // DSP
 Svf bassFilter;
-IrLoader<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> irLoader;
+IrLoader irLoader;
 
 // State
 volatile bool isLoadingIr = false;
@@ -69,7 +79,7 @@ void blinkLedBlocking(Led& led, int times, bool keep_on = false, float brightnes
 }
 
 // Audio callback - processes audio samples in blocks
-// Called at audio rate: 48kHz / 8 samples = 6kHz
+// Called at audio rate: 48kHz / 128 samples = 375Hz
 void AudioCallback(AudioHandle::InputBuffer in,
                    AudioHandle::OutputBuffer out,
                    size_t size) {
@@ -105,12 +115,11 @@ void AudioCallback(AudioHandle::InputBuffer in,
         firIn[i] = mono + (bassFilter.Peak() * bassAmount);
     }
 
-    // IR convolution (handles bypass internally)
+    // IR convolution (FFT-based partitioned overlap-save)
     float firOut[AUDIO_BLOCK_SIZE];
-    // XXX: This causes the unit to crash/hang
     irLoader.ProcessBlock(firIn, firOut, size);
 
-    // // Apply output level, check output clipping, write stereo output
+    // Apply output level, check output clipping, write stereo output
     for (size_t i = 0; i < size; i++) {
         float sample = firOut[i] * outputLevel;
 
@@ -168,6 +177,9 @@ int main(void) {
     }
     irSwitch.ResetChangedFlag();
 
+    // Initialize convolution engine (FFT setup, SDRAM buffers)
+    irLoader.Init(MAX_PARTITIONS, convIrFreqBuf, convFdlBuf);
+
     // Load initial IR so we have audio immediately
     int initialPosition = irSwitch.Value();
     if (initialPosition >= 0 && initialPosition < (int)ImpulseResponseData::IR_COUNT) {
@@ -177,7 +189,7 @@ int main(void) {
     }
 
     // Blink blue LED to indicate the initial IR position as audio starts
-    blueLedController.Blink(initialPosition + 1, false, 0.5f, 150);
+    blueLedController.Blink(initialPosition + 1, false, 1.0f, 200);
 
     // Start audio processing
     hw.StartAudio(AudioCallback);
@@ -193,7 +205,7 @@ int main(void) {
             int position = irSwitch.Value();
 
             // Blink blue LED to indicate IR position (dimmer blink)
-            blueLedController.Blink(position + 1, false, 0.5f, 150);
+            blueLedController.Blink(position + 1, false, 1.0f, 200);
 
             // Load IR or set bypass for empty slot
             if (position >= 0 && position < (int)ImpulseResponseData::IR_COUNT) {

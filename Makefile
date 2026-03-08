@@ -24,9 +24,17 @@ endif
 CPP_SOURCES = $(APP_SRC) \
               src/hothouse.cpp
 
-# CMSIS-DSP FIR filtering (ARM-optimized convolution for IR processing)
-C_SOURCES = $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/FilteringFunctions/arm_fir_f32.c \
-            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/FilteringFunctions/arm_fir_init_f32.c
+# CMSIS-DSP FFT-based convolution (partitioned overlap-save for IR processing)
+C_SOURCES = $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/TransformFunctions/arm_rfft_fast_f32.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/TransformFunctions/arm_rfft_fast_init_f32.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/TransformFunctions/arm_cfft_f32.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/TransformFunctions/arm_cfft_init_f32.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/TransformFunctions/arm_cfft_radix8_f32.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/TransformFunctions/arm_bitreversal2.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/CommonTables/arm_common_tables.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/CommonTables/arm_const_structs.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/ComplexMathFunctions/arm_cmplx_mult_cmplx_f32.c \
+            $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/BasicMathFunctions/arm_add_f32.c
 
 # Include paths
 C_INCLUDES = -Isrc
