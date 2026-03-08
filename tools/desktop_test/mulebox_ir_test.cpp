@@ -298,11 +298,13 @@ static void usage(const char* prog) {
     printf("Options:\n");
     printf("  -l           List available IRs and exit\n");
     printf("  -i INDEX     Select IR by index (default: 0)\n");
+    printf("  -g dB        Output gain in dB (default: 0)\n");
     printf("  --selftest   Validate FFT shim and convolution accuracy\n");
 }
 
 int main(int argc, char* argv[]) {
     int irIndex = 0;
+    float gainDb = 0.0f;
     const char* inputPath = nullptr;
     const char* outputPath = nullptr;
 
@@ -314,6 +316,8 @@ int main(int argc, char* argv[]) {
             return selftest() ? 0 : 1;
         } else if (strcmp(argv[i], "-i") == 0 && i + 1 < argc) {
             irIndex = atoi(argv[++i]);
+        } else if (strcmp(argv[i], "-g") == 0 && i + 1 < argc) {
+            gainDb = atof(argv[++i]);
         } else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
             usage(argv[0]);
             return 0;
@@ -392,6 +396,13 @@ int main(int argc, char* argv[]) {
 
     // Trim to actual output length
     output.resize(numOutputSamples);
+
+    // Apply output gain
+    if (gainDb != 0.0f) {
+        float gainLinear = powf(10.0f, gainDb / 20.0f);
+        for (float& s : output) s *= gainLinear;
+        printf("Gain: %+.1f dB (%.4fx)\n", gainDb, gainLinear);
+    }
 
     // Find peak level
     float peak = 0.0f;

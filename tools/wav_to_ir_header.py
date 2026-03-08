@@ -13,6 +13,8 @@ Example:
 """
 
 import argparse
+import cmath
+import math
 import wave
 import struct
 import os
@@ -110,6 +112,58 @@ def trim_or_pad_ir(samples, target_length=MAX_IR_SAMPLES):
         return samples + [0.0] * (target_length - current_length)
     else:
         return samples
+
+
+def _fft_recursive(x):
+    """Radix-2 Cooley-Tukey FFT. Input length must be a power of 2."""
+    N = len(x)
+    if N <= 1:
+        return x
+    even = _fft_recursive(x[0::2])
+    odd = _fft_recursive(x[1::2])
+    T = [cmath.exp(-2j * cmath.pi * k / N) * odd[k] for k in range(N // 2)]
+    return [even[k] + T[k] for k in range(N // 2)] + \
+           [even[k] - T[k] for k in range(N // 2)]
+
+
+def _rfft(samples):
+    """Real FFT via Cooley-Tukey. Zero-pads to next power of 2."""
+    N = len(samples)
+    # Pad to next power of 2
+    fft_len = 1
+    while fft_len < N:
+        fft_len <<= 1
+    padded = list(samples) + [0.0] * (fft_len - N)
+    full = _fft_recursive(padded)
+    # Return positive frequencies only (0 to N/2 inclusive)
+    return full[:fft_len // 2 + 1]
+
+
+def normalize_ir(samples):
+    """
+    Normalize IR so its peak frequency response magnitude is 0 dB.
+
+    This ensures the IR never amplifies any frequency — it only attenuates
+    or passes through. Prevents output clipping when convolving with
+    unity-level input signals.
+
+    Args:
+        samples: List of float samples
+
+    Returns:
+        list: Normalized samples
+    """
+    spectrum = _rfft(samples)
+    peak_mag = max(abs(c) for c in spectrum)
+
+    if peak_mag > 0:
+        gain = 1.0 / peak_mag
+        peak_db = 20.0 * math.log10(peak_mag)
+        print(f"  Freq-response normalization: peak was {peak_db:+.1f} dB, "
+              f"scaled by {gain:.4f} ({20.0 * math.log10(gain):+.1f} dB)")
+        return [s * gain for s in samples]
+
+    return samples
 
 
 def format_cpp_raw_array(samples, name, indent=0):
@@ -291,6 +345,9 @@ Examples:
 
             # Trim or pad to target length
             samples = trim_or_pad_ir(samples, max_samples)
+
+            # Normalize so peak frequency response = 0 dB
+            samples = normalize_ir(samples)
 
             # Generate C++ variable name
             var_name = sanitize_name(wav_path)
