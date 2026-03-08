@@ -18,6 +18,7 @@
 #include "debounced_analog_switch.h"
 #include "ir_loader.h"
 #include "ir_data.h"
+#include "led_controller.h"
 
 using clevelandmusicco::Hothouse;
 
@@ -40,94 +41,11 @@ static const float BASS_FREQ = 110.0f;
 static const float BASS_Q = 0.7f;
 constexpr int MAX_IR_POSITIONS = 12;
 constexpr size_t MAX_IR_LENGTH = 8192;
+constexpr uint32_t SAMPLE_RATE = 48000;
 constexpr size_t AUDIO_BLOCK_SIZE = 8;
 constexpr float CLIPPING_THRESHOLD = 0.95f;
-constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (48000 / AUDIO_BLOCK_SIZE) / 1000;
+constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (SAMPLE_RATE / AUDIO_BLOCK_SIZE) / 1000;
 constexpr int DEBOUNCE_MS = 500;
-
-class LedController {
-public:
-    LedController(Led& l) : led(l), baseBrightness(0.0f), currentBrightness(0.0f), blinksRemaining(0), isBlinking(false), blinkTicks(0), blinkDurationTicks(0), blinkState(false), keepOnAfter(false) {}
-
-    void SetBaseBrightness(float brightness) {
-        baseBrightness = brightness;
-        if (!isBlinking) {
-            currentBrightness = baseBrightness;
-        }
-    }
-
-    void Blink(int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
-        blinksRemaining = times;
-        keepOnAfter = keep_on;
-        blinkBrightness = brightness;
-        // Audio rate = 48000 / AUDIO_BLOCK_SIZE
-        blinkDurationTicks = delay_ms * (48000 / AUDIO_BLOCK_SIZE) / 1000;
-        
-        // Start with an off period of 200ms
-        isBlinking = true;
-        blinkState = false;
-        blinkTicks = 200 * (48000 / AUDIO_BLOCK_SIZE) / 1000;
-        currentBrightness = 0.0f;
-    }
-
-    void InterruptBlink(uint32_t offTickDuration) {
-        isBlinking = true;
-        blinkState = false;
-        blinkTicks = offTickDuration;
-        currentBrightness = 0.0f;
-        blinksRemaining = 0;
-        keepOnAfter = (baseBrightness > 0.0f);
-        blinkBrightness = baseBrightness;
-        blinkDurationTicks = 0;
-    }
-
-    void ProcessAudioRate() {
-        if (!isBlinking) {
-            currentBrightness = baseBrightness;
-        } else {
-            if (blinkTicks > 0) {
-                blinkTicks--;
-            } else {
-                if (blinkState) {
-                    blinkState = false;
-                    currentBrightness = 0.0f;
-                    blinkTicks = blinkDurationTicks;
-                } else {
-                    if (blinksRemaining > 0) {
-                        blinksRemaining--;
-                        blinkState = true;
-                        currentBrightness = blinkBrightness;
-                        blinkTicks = blinkDurationTicks;
-                    } else {
-                        isBlinking = false;
-                        if (keepOnAfter) {
-                            baseBrightness = blinkBrightness;
-                        } else {
-                            baseBrightness = 0.0f;
-                        }
-                        currentBrightness = baseBrightness;
-                    }
-                }
-            }
-        }
-        
-        led.Set(currentBrightness);
-        led.Update();
-    }
-
-private:
-    Led& led;
-    float baseBrightness;
-    float currentBrightness;
-    
-    int blinksRemaining;
-    bool isBlinking;
-    uint32_t blinkTicks;
-    uint32_t blinkDurationTicks;
-    bool blinkState;
-    float blinkBrightness;
-    bool keepOnAfter;
-};
 
 void blinkLedBlocking(Led& led, int times, bool keep_on = false, float brightness = 1.0f, int delay_ms = 250) {
     led.Set(0.0f); led.Update(); hw.DelayMs(200);
@@ -147,8 +65,8 @@ IrLoader<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> irLoader;
 volatile bool isLoadingIr = false;
 volatile bool clippingDetected = false;
 
-LedController redLedController(ledRed);
-LedController blueLedController(ledBlue);
+LedController redLedController(ledRed, SAMPLE_RATE, AUDIO_BLOCK_SIZE);
+LedController blueLedController(ledBlue, SAMPLE_RATE, AUDIO_BLOCK_SIZE);
 
 // Audio callback - processes audio samples in blocks
 // Called at audio rate: 48kHz / 8 samples = 6kHz
@@ -263,7 +181,7 @@ int main(void) {
     }
 
     // Blink blue LED to indicate the initial IR position as audio starts
-    blueLedController.Blink(initialPosition + 1, false, 0.5f);
+    blueLedController.Blink(initialPosition + 1, false, 0.5f, 150);
 
     // Start audio processing
     hw.StartAudio(AudioCallback);
@@ -279,7 +197,7 @@ int main(void) {
             int position = irSwitch.Value();
 
             // Blink blue LED to indicate IR position (dimmer blink)
-            blueLedController.Blink(position + 1, false, 0.5f);
+            blueLedController.Blink(position + 1, false, 0.5f, 150);
 
             // Load IR or set bypass for empty slot
             if (position >= 0 && position < (int)ImpulseResponseData::IR_COUNT) {
