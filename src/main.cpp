@@ -153,10 +153,10 @@ int main(void) {
                           2.0f,
                           Parameter::LINEAR);
 
-    // KNOB_5: Bass boost/cut (-3.0 to +3.0, noon = 0.0 = flat)
+    // KNOB_5: Bass boost/cut (-1.0 to +1.0, noon = 0.0 = flat)
     bassParam.Init(hw.knobs[Hothouse::KNOB_5],
-                   -3.0f,
-                   3.0f,
+                   -1.0f,
+                   1.0f,
                    Parameter::LINEAR);
 
     // Initialize bass EQ filter
