@@ -514,7 +514,7 @@ Regardless of your mounting strategy, the connections need to be made as follows
   
 4. Identify the negative (short) legs of the two LEDs, angle them so they touch securely, and solder them together. Make short loops for the positive (long) legs. Solder the LED1 wire to the red LED's positive leg, the LED2 wire to the blue LED's positive leg, and the GND wire to the two negative legs that are soldered together. Use heat shrink or careful positioning to ensure that the positive legs can't touch the metal bezel or any other components, creating a short. The close-up photo above of the front-mounted components shows the wiring of the LEDs.
 
-![Front components](./docs/photos/front-pages.jpeg)
+![Front components](./docs/photos/front-pots.jpeg)
 
 5. Wire the rotary switch to the POT4 pads. Pin 1 (the rightmost pin when viewed from above) is marked on each trio of pot pads, and should connect to pin 1 of the rotary switch.
 
