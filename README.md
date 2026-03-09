@@ -402,7 +402,7 @@ We recommend that you assemble the unit with the lid and box opened like a clams
 
 It can also be useful to fit only three of the four PCB corner mounts to begin with. This makes it easy to take the PCB out so it can float inside the enclosure with the lid open. All the wires to the front of the unit run directly to the PCB.
 
-Here is one feasible layout that aims to minimise cable runs. Note that the wires that attach to the resistors, inductor coil, input jack should be 22AWG (thick, handling the higher current of the amp signal). The ones connecting to the PCB should be thinner, handling only the electronics and line level audio signal.
+Here is one feasible layout that aims to minimise cable runs. Note that the wires that attach to the resistors, inductor coil, input jack should be 22AWG (thicker, handling the higher current of the amp signal). The ones connecting to the PCB should be thinner (handling only the electronics and line level audio signal).
 
 ![Wiring diagram](./docs/layout/wiring.png)
 
@@ -420,9 +420,9 @@ The cooling fan can be one of the most fiddly components to install, because if 
 
 3. Slide the fan onto the bolts, with the direction of air flow towards the outside of the enclosure (there should be a small arrow indicating the direction, but you can also power the fan up and confirm that air is blowing out through the finger grille). Do not use too much force when installing the fan and check for any bending or warping of its plastic housing. If necessary, carefully enlarge either the holes on the fan housing or the enclosure or both, to make it possible to angle the bolts appropriately. You want the fan to be scurely in place so it does not vibrate, but not under any bending tension.
 
-4. Whilst doing this, frequently test that the fan runs, by conencting it to a 9V battery or other power source. If at any point it stops or makes a grinding noise, you have probably bent the housing. Free the fan and confirm that it works still, then attempt to seat it again.
+4. Whilst doing this, frequently test that the fan runs, by connecting it to a 9V battery or temporarily wiring it to the power socket. If at any point it stops or makes a grinding noise, you have probably bent the housing. Free the fan and confirm that it works still, then attempt to seat it again.
 
-5. Run the power wires out of the enclosure slats, and install the lid. Confirm that the fan still runs. If not, check that the inner lip of the enclosure lid has not bent the fan housing.
+5. Install the lid and confirm that the fan still runs (it can be helpful to pull the fan wires out of a slat to connect to a battery). If not, check that the inner lip of the enclosure lid has not bent the fan housing.
 
 6. Fasten the enclosure lid screws and confirm that the fan still runs and that air is flowing freely out of the finger grille at the rear of the unit. If not, again look for signs of bending. It may be necessary to put a thin spacer between the lid and the enclosure before tigthening the screws, to gain half a millimetre of extra headroom.
 
@@ -432,7 +432,7 @@ Later on, be careful that no wires or other components end up pushing or warping
 
 Once you are confident the fan is properly installed, we recommend tackling the bulky resistors and inductor coil, with their thicker wires.
 
-1. Begin by placing the large resistors (1 x 100W, 2 x 25W) as shown in the layout. Smear a very thin layer of thermal paste on the bottom and bolt them securely to the lid, with the nuts on the inside (i.e. the side where the resistors are mounted) and the screws on the outside.
+1. Begin by placing the large resistors (1 x 100W, 2 x 25W) as shown in the layout. Smear a very thin layer of thermal paste on the bottom and bolt them securely to the lid, with the nuts on the inside (i.e. the side where the resistors are mounted) and the screw heads on the outside.
 
 2. Fix the inductor coil in place using zip ties. Be careful that it does not wobble around, and that no part of it touches any metal components, including the enclosure.
 
@@ -440,17 +440,15 @@ Once you are confident the fan is properly installed, we recommend tackling the 
 
 4. Insert the amp-in jack at the right of open (upside-down) enclosure, making sure to use an isolated jack as specified so that no metal part of the jack touches the enclosure.
 
-5. Insert the fan finger grille from the outside, and then run longer M3 bolts through its mounting holes and the screw holes on the enclosure. Then insert the fan with the wires running towards the middle of the enclosure. This might be difficult and require some force and/or careful adaptation of the plastic parts of the fan. If the fan is flush to the enclosure, you may struggle to fit the lid back on. It is worth testing this now before soldering in any wires, and either add a nut for some extra spacing to allow the lip of the lid to slide into place, or gently cut away a small part of the fan casing. Then use nuts on the inside to keep the fan secure.
+5. Mount the 9V power socket, the B5K pot – remember to snap off the key pin that will stop it from sitting flush with the enclosure, and to add the plastic dust seal to the rear – and the two output jack sockets. This completes the rear of the enclosure (which will be lying, upside-down, close to the rear of the lid if you have placed them like an open clamshell).
 
-6. Mount the 9V power socket, the B5K pot (remember to snap off the key pin that will stop it from sitting flush with the enclosure, and to add the plastic dust seal to the rear), and the two output jack sockets in place. This completes the rear of the enclosure (which will be lying, upside-down, close to the rear of the lid if you have placed them like an open clamshell).
+6. Run 22AWG (thick) wires between the large resistors, inductor coil, and rear jack as shown in the wiring diagram. If you have the enclosure open and upside down, realise that the diagram is a bird's eye view onto the inside of the lid, so the rear-mounted components will be upside down! Keep wires as short and neat as possible, and strip enough insulation off to wrap securely into the solder lugs, but no more. Double check your wires, then solder everything to the large resistors and inductor coil (i.e. the components mounted to the lid). Don't solder the input jack socket yet. Use your multimeter to double check continuity where it is expected.
 
-7. Run 22AWG (thick) wires between the large resistors, inductor coil, and rear jack as shown in the wiring diagram. If you have the enclosure open and upside down, realise that the diagram is a bird's eye view onto the inside of the lid, so the rear-mounted components will be upside down! Keep wires as short and neat as possible, and strip enough insulation off to wrap securely into the solder lugs, but no more. Double check your wires, then solder everything to the large resistors and inductor coil (i.e. the components mounted to the lid). Don't solder the input jack socket yet.
+7. Run an extra length of 22AWG wire from the sleeve (ground, closest to the enclosure wall) of the jack socket to the pin of the B5K pot at the rear that is _closest_ to the input jack socket if you mounted the socket with the lugs facing out of the enclosure (i.e. "up" when the enclosure is upside down) – pin 1. You can now solder the ground wire from the large resistors and this new wire to the input jack socket.
 
-8. Run an extra length of 22AWG wire from the sleeve (ground) of the jack socket to the pin of the B5K pot at the rear that is _closest_ to the input jack socket if you mounted the socket with the lugs facing out of the enclosure (i.e. "up" when the enclosure is upside down) – pin 1. You can now solder the ground wire from the large resistors and this new wire to the input jack socket.
+8. Solder one side of the 2W, 3K3 "small" resistor to a wire, and protect the exposed leg with some heatshrink tubing. Do not put heatshrink over the resistor body itself! Make sure the wire is long enough to reach from the tip (hot) of input jack socket to pin 3 of the B5K pot on the rear, which means the pin that is _furthest_ from the input jack socket, without getting in the way of the fan when the lid is closed. Solder the wire end to the tip lug of the input jack socket alongside the wire that runs to the large resistors on the lid.
 
-9. Solder one side of the 2W, 3K3 "small" resistor to a wire, and protect the exposed leg with some heatshrink tubing. Do not put heatshrink over the resistor body itself! Make sure the wire is long enough to reach from the tip (hot) of input jack socket to pin 3 of the B5K pot on the rear, which means the pin that is _furthest_ from the input jack socket. Solder the wire end to the tip lug of the input jack socket alongside the wire that runs to the large resistors on the lid.
-
-10. Place the other "small" resistor, 1K, 1W, between pins 1 and 3 of the B5K pot. Insert the ground wire from the sleeve of the input jack into pin 1 and the loose end of the 2W resistor that connects to the tip of the input jack to pin 3. Solder a further short wire to the same lug as the ground – we will use this later to connect to the "ground bus". Keep the exposed resistor legs as short as possible, and solder both lugs, snipping off any excess. Leave the wiper (middle) lug of the B5K pot unsoldered for now – this is our line out to the Hothouse PCB.
+9. Place the other "small" resistor – 1K, 1W – between pins 1 and 3 of the B5K pot. Insert the ground wire from the sleeve of the input jack into the lug for pin 1, and the loose end of the 2W resistor that connects to the tip of the input jack int the lug for pin 3. Solder a further short wire to the same lug as the ground – we will use this later to connect to the "ground bus". Keep the exposed resistor legs as short as possible, and solder both lugs, snipping off any excess. Leave the wiper (middle) lug of the B5K pot unsoldered for now – this is our line out to the Hothouse PCB.
 
 At this point, you should have all three large resistors, the inductor coil, and three of the PCB standoffs securely mounted to the lid, with thermal paste under the large resistors. The fan will be in place, and the input jack socket will be connected, with two wires running across towards the B5K pot. The wire from the tip of the input jack socket will end in a 3K3 2W resistor. A 1K 1W resistor will be soldered across the outer lugs of the pot, one side shared with the 3K3 2W resistor and the other side shared with the wire to the amp in sleeve (ground).
 
@@ -458,13 +456,15 @@ At this point, you should have all three large resistors, the inductor coil, and
 
 We will soon come to the DSP part of the circuit, with the front and rear-mounted pots and sockets, but first we need to prepare the resistor ladder on the rotary switch, which is much easier to do outside the enclosure.
 
-1. Identify pin 1 and pin 12 on the switch. Insert a short wire and one end of a 1K 1/4W resistor in the lug for pin 1. In lug 2, insert one side of a second 1K resistor alongside the other leg of the resistor connected to pin 1. Continue this up to pin 12, where you should also insert a second wire. The idea is to create a "ladder", where there is a 1k resistor between each adjacent pair of pins, and also a wire at the first and last pins.
+1. Identify pin 1 and pin 12 on the switch. Insert a thin wire and one end of a 1K 1/4W resistor in the lug for pin 1 and solder in place. Insert the other end of this resistor in lug 2, alongside one leg of a second 1K resistor, and solder these too. Continue this up to pin 12, where you should also insert a second thin wire. The idea is to create a "ladder", where there is a 1k resistor between each adjacent pair of pins, and also a wire at the first and last pins. Make sure to cut away any excess resistor legs, and double check each solder joint.
 
 2. The common pin should be in the middle. Solder a third short wire to it.
 
 3. Mount the rotary switch to the front panel of the enclosure.
 
-You can test the rotary switch with a multimeter. It should measure close to zero resistance between the pin 1 wire and common in position 1, 1k between those same wires in position 2, 2k in position 3, and so on. In this regard, it will act like an 11k potentiometer where the measured value between pin 1 and the common moves in steps of 1K as the switch is turned. The value between pin 12 and the common will be 11k in position 1, 10k in position 2, and so on, and 0 in position 12.
+You can test the rotary switch with a multimeter. It should measure close to zero resistance between the pin 1 wire and common in position 1, 1k between those same wires in position 2, 2k in position 3, and so on. In this regard, it will act like an 11k potentiometer where the measured value between pin 1 and the common moves in steps of 1K as the switch is turned. The value between pin 12 and the common will be 11k in position 1, 10k in position 2, and so on, and 0 in position 12. The resistance between pin 1 and pin 12 will always be 11k.
+
+If you get unreliable readings, double-check your solder joints. The rotary switch is not complicated, but it can be tight with 11 resistors laddered, and so there is a possibility of shorts or poor connections.
 
 Here is a close-up of a completed rotary switch with the 1k resistor ladder.
 
@@ -478,15 +478,17 @@ We will start by installing the PCB and mounting to the components on the rear, 
 
 2. Place the PCB into the three installed standoffs. This helps you gauge the length of wires required. You can solder wires to the top of the PCB, though be careful not to touch any other components while you do!
 
-3. At the rear of the PCB, solder a wire from the "LIN" pad to the middle lug (wiper) of the B5K pot on the rear. This is the audio input, and since it's mono, we'll use only the left channel. The "RIN" pad will remain empty.
+3. At the rear of the PCB, solder a wire from the "LIN" (left input) pad to the middle lug (wiper) of the B5K pot on the rear. This is the audio input, and since it's mono, we'll use only the left channel. The "RIN" (right input) pad will remain empty.
 
-4. Solder a wire from the "ROUT" pad to the tip lug of the right output jack socket, and from the "LOUT" pad to the tip of the left output jack socket.
+4. Solder a wire from the "ROUT" (right output) pad to the tip lug of the right output jack socket, and from the "LOUT" (left output) pad to the tip of the left output jack socket.
 
-5. We will now create a ground bus. The goal is to connect the GND pad at the rear of the PCB to the sleeve lug of one of the nearest output jack socket, and then run that to the sleeve lug of the adjacent output jack socket, the ground pin of the B5K socket (which itself is connected to the sleeve of the input jack socket), and eventually to the ground pin of the 9V power socket. There are a few ways you can do this, but one way is to use a short piece of solid core wire that has been fully or partially stripped, placing this through the ground lugs of the jack sockets as a bar that you can then wrap other wires around before soldering them together. You want to avoid ground loops (multiple parallel ground paths), and ensure that any exposed wire cannot come into contact with any other components and accidentally create a short. Do not solder to the 9V socket yet, as we also need to account for the fan.
+5. We will now create a ground bus. The goal is to connect the GND pad at the rear of the PCB to the sleeve lug of one of the nearest output jack socket, and then run that to the sleeve lug of the adjacent output jack socket, the ground pin of the B5K socket (which itself is connected to the sleeve of the input jack socket), and eventually to the ground pin of the 9V power socket. There are a few ways you can do this, but one way is to use a short piece of solid core wire that has been fully or partially stripped, placing this through the ground lugs of the jack sockets as a bar that you can then wrap other wires around before soldering them together. You want to avoid ground loops (multiple parallel ground paths), and ensure that any exposed wire cannot come into contact with any other components and accidentally create a short.
 
 #### The front-mounted components
 
-At this point, the connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connect to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two pots. If you have left the enclosure open like a clamshell along the rear long edge, you have been able to run short wires to the PCB and large resistors that will fold relatively easily into the unit when the enclosure is closed onto the lid. However, with the enclosure opened like this, the components that will be at the front will now be upside down and far to the back. Ideally, we want to avoid very long wires that run almost double the depth of the unit. There are a few different strategies you could employ:
+At this point, the audio connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connect to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two B10K pots (bass and output level knobs). 
+
+If you have left the enclosure open like a clamshell along the rear long edge, you have been able to run short wires to the PCB and large resistors that will fold relatively easily into the unit when the enclosure is closed onto the lid. However, with the enclosure opened like this, the components that will be at the front will now be upside down and far to the back. Ideally, we want to avoid very long wires that run almost double the depth of the unit. There are a few different strategies you could employ:
 
 * Run long, thin wires, and try to fold them in as neatly as possible. This can be messy and increases the risk of the wires disturbing airflow or getting in the way of other components.
 
@@ -494,7 +496,7 @@ At this point, the connections to the rear of the PCB will be in place, and ther
 
 * Solder the wires with the front-mounted components loose, and only install them as you close the box up. This is most tricky with the LEDs, since these need to be pushed into the bezels from the inside.
 
-* Use triple-wire JST connectors. Solder the wires with the female connectors to the PCB and the wires with the male connectors to the pots, switch, and LED, with wires cut to a length where they can be connected with the enclosure only slightly open at the front. This creates neat wiring, but you have to be careful when opening the enclosure not to snap the connectors or wires.
+* Use plastic triple JST connectors crimped to wires. Solder the wires with the female connectors to the PCB and the wires with the male connectors to the pots, switch, and LEDs. Cut them to a length where they can be connected with the enclosure only slightly open at the front. This creates neat wiring, but you have to be careful when opening the enclosure not to snap the connectors or wires.
 
 Some trial and error may be required, and it might be a good idea to do a single pot first as a test.
 
@@ -506,11 +508,13 @@ Regardless of your mounting strategy, the connections need to be made as follows
 
 1. Solder trios of wires to the pads for pots 4, 5, 6 on the Hothouse PCB. The pads are quite large, and it is important that you get the wires to touch the metal edges of the pad while you solder. Do not allow the wires to float in the middle of the pad in a pool of solder, as this can lead to a poor connection. Leave the other pot and switch pads empty - we won't use them.
 
-2. Solder another trio of wires (or three wires on a single triple JST connector) to the LED1, LED2, and GND pads at the front of the PCB, near pots 4, 5, and 6. These will run to the LEDs. Leave the other pads on the front (FSW1, FSW2, PIN1) empty – we will not use them.
+2. Solder another trio of wires (or a trio of wires with triple female JST connector) to the LED1, LED2, and GND pads at the front of the PCB. These will run to the LEDs. Leave the other pads on the front (FSW1, FSW2, PIN1) empty – we will not use them.
 
-3. Install the LED bezels in the enclosure. Temporarily push the two LEDs (red for the top light, which will be at the bottom of the enclosure if opened) into the bezels to help gauge the length of wire required.
+3. Install the LED bezels in the enclosure. Temporarily push the two LEDs (red for the top light, which will be at the bottom of the enclosure if opened, and blue for the bottom light) into the bezels to help gauge the length of wire required.
   
-4. Identify the negative (short) legs of the two LEDs (one red, one blue), angle them so they touch securely, and solder them together. Make short loops for the positive (long) legs. Solder the LED1 wire to the red LED positive leg, the LED2 wire to the blue LED positive leg, and the GND wire to the two negative legs. Use heat shrink or careful positioning to ensure that the positive legs can't touch the metal bezel or any other components, creating a short. The close-up photo above of the front-mounted components shows the wiring of the LEDs.
+4. Identify the negative (short) legs of the two LEDs, angle them so they touch securely, and solder them together. Make short loops for the positive (long) legs. Solder the LED1 wire to the red LED's positive leg, the LED2 wire to the blue LED's positive leg, and the GND wire to the two negative legs that are soldered together. Use heat shrink or careful positioning to ensure that the positive legs can't touch the metal bezel or any other components, creating a short. The close-up photo above of the front-mounted components shows the wiring of the LEDs.
+
+![Front components](./docs/photos/front-pages.jpeg)
 
 5. Wire the rotary switch to the POT4 pads. Pin 1 (the rightmost pin when viewed from above) is marked on each trio of pot pads, and should connect to pin 1 of the rotary switch.
 
@@ -524,13 +528,13 @@ We are almost done! The only installation that remains is the power.
 
 1. Connect the negative (usually black) wire from the fan to the negative (centre pin) lug of the 9V power socket. (If you are unsure which lug is negative, use a multimeter to check continuity with the centre pin of the socket.)
 
-2. Also connect this to the ground bus at the output jacks, and solder in place. All the ground points –the sleeves of all three jacks, the GND pad on the PCB, the ground sides of the large resistors, etc. – should now be connected.
+2. Also connect this to the ground bus at the output jacks, and solder in place. All the ground points – the sleeves of all three jacks, the GND pad on the PCB, the ground sides of the large resistors, etc. – should now be connected.
 
 3. Connect the positive terminal of the 9V socket to the 9V input of the Hothouse PCB, and the positive (usually red) wire from the fan, and solder in place.
 
 #### Final steps
 
-1. Flash the Daisy Seed with the latest firmware if you haven't already done so.
+1. Flash the Daisy Seed with the latest firmware if you haven't already done so (see above).
 2. Carefully insert it into the header pins, so that the USB socket faces to the left side of the unit (i.e. are on the side of the PCB closest to the edge of the lid, furthest away from the large resistors). This may need a bit of pressure, but you should be careful not to bend any of the pins.
 3. Close the lid, connecting the front components or their wires as required.
 4. Insert the lid screws.
@@ -538,25 +542,27 @@ We are almost done! The only installation that remains is the power.
 
 ## Testing
 
-Before connecting the Mulebox to your amplifier, plug in the speaker cable and use a multimeter to measure the DC resistance across the tip and sleeve of the other end (i.e. the end that would go into your amp). It should measure about 8 Ohms, give or take. If you get an "open loop" (no connection) or very low (less than 7?) or high (more than 10?) resistance rating, do not plug your amp in. Open the enclosure and look for incorrect connections.
+Before connecting the Mulebox to your amplifier, plug in the speaker cable and use a multimeter to measure the DC resistance across the tip and sleeve of the other end (i.e. the end that would go into your amp). It should measure about 8 Ohms, give or take. If you get an "open loop" (no connection) or very low (e.g. less than 7) or high (e.g. more than 10) resistance rating, do not plug your amp in. Open the enclosure and look for incorrect connections.
 
-Then, plug in the 9V DC power supply (make sure it is centre-negative – the same type of power commonly used for effects pedals). The fan should start to spin and you should see a small light on the Daisy Seed through the top slats in the enclosure. If not, there is a problem with the power connections.
+Then, plug in the 9V DC power supply – make sure it is centre-negative – the same type of power commonly used for effects pedals. The fan should start to spin and you should see a small light on the Daisy Seed through the top slats in the enclosure. If not, there is a problem with the power connections.
 
-The red and blue LEDs on the front panel should also go on. This means the firmware is running and an IR is loaded correctly. If not, something may be wrong with the software build.
+The red and blue LEDs on the front panel should also go on, initially blinking. This means the firmware is running and an IR is loaded correctly. If not, something may be wrong with the software build.
 
 Connect the stereo outputs of the Mulebox to a mixer or interface that you can monitor with speakers or headphones. Listen for any noise before connecting the amp. If it sounds unduly noisy, look for faulty or dry solder joints or damaged wires.
 
 If all is good, plug the speaker cable into the 8 Ohm speaker output of your amp and turn it on. Keep the volume low on both the amp and the Mulebox (both the trim knob at the rear and the line out knob at the front). Try to play something and turn up the volume knobs slowly.
+
+Look for clipping (the red LED will blink if the input is clipping; the blue LED will blink if the output is) and turn down the trim pot at the rear or the line out pot at the front if required.
 
 ### Hardware Testing Programs
 
 Before jumping straight to the main firmware, you can verify that your LEDs, front-panel knobs, and rotary switch are wired correctly using the included test programs.
 
 1. **Knobs test:**
-   Build and flash the knobs test using `make TEST=knobs program` (or `program-dfu` if using USB). When running, turning the two standard potentiometers (bass and output level) will independently adjust the brightness of the red and blue LEDs. If an LED doesn't light up or the knobs don't smoothly alter the brightness, check your wiring to POT5, POT4, and the LED pads on the PCB.
+   Build and flash the knobs test using `make TEST=knobs program` if using a debug probe, or `make TEST=knobs program-dfu` if using USB. When running, turning the two front knobs (bass and output level) will independently adjust the brightness of the red and blue LEDs. If an LED doesn't light up or the knobs don't smoothly alter the brightness, check your wiring to POT5, POT4, and the LED pads on the PCB.
 
 2. **Rotary switch test:**
-   Build and flash the rotary switch test using `make TEST=rotary program` (or `program-dfu`). In this test, turning the rotary switch will change the brightness of the LEDs. The brightness should jump in distinct steps as you turn the switch. If it acts erratically or only works in some positions, double check the resistor ladder on the rotary switch and its connection to POT6 on the PCB.
+   Build and flash the rotary switch test using `make TEST=rotary program` if using a debug probe, or `make TEST=rotary program-dfu` if using USB. In this test, turning the rotary switch will change the brightness of the LEDs. The brightness should jump in distinct steps as you turn the switch. If it acts erratically or only works in some positions, double check the resistor ladder on the rotary switch and its connection to POT6 on the PCB.
 
 Once you have verified the hardware works as expected, flash the main firmware by simply running `make` and `make program` (or `program-dfu`).
 
