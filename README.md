@@ -270,8 +270,11 @@ Before the Mulebox will work, you need to build flash the firmware from this sou
 
 ```bash
 make                # Build the project
+make update-irs     # Rebuild the IR data header from WAV files in irs/
 make clean          # Clean build files
 make clean-all      # Clean including library builds
+make program        # Flash firmware via debug probe (QSPI direct)
+make program-dfu    # Flash firmware via USB DFU (or use: make flash)
 make help           # Show all available targets
 ```
 
@@ -356,9 +359,9 @@ Steps:
 
 1. Place your IR WAV files in the `irs/` folder.
 
-2. Run the converter tool to regenerate the IR data header:
+2. Run the make target to regenerate the IR data header:
    ```bash
-   python3 tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
+   make update-irs
    ```
 
 3. Rebuild and flash to the Daisy Seed:

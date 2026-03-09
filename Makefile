@@ -91,7 +91,14 @@ desktop-test:
 	$(MAKE) -C tools/desktop_test
 
 # Additional targets for convenience
-.PHONY: clean-all flash help
+.PHONY: clean-all flash help update-irs
+
+PYTHON ?= python3
+
+# Rebuild IR header from WAV files
+update-irs:
+	@echo "Rebuilding IR header from irs/*.wav..."
+	$(PYTHON) tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
 
 # Clean everything including libraries
 clean-all: clean
@@ -127,6 +134,7 @@ help:
 	@echo "  make                  - Build the project"
 	@echo "  make TEST=knobs       - Build the test_knobs program"
 	@echo "  make TEST=rotary      - Build the test_rotary program"
+	@echo "  make update-irs       - Rebuild IR header from WAV files"
 	@echo "  make clean            - Clean build files"
 	@echo "  make clean-all        - Clean including library builds"
 	@echo "  make program-boot     - Flash bootloader via USB DFU (first-time)"
