@@ -50,13 +50,27 @@ The attenuator absorbs all the energy of the audio signal (up to 50W) and turns 
 
 The Daisy Seed needs to be connected to knobs and audio I/O. For that, we use the [Cleveland Music Co Hothouse](https://clevelandmusicco.com/hothouse/). This is a PCB that provides up to six knobs, three switches, two footswitches, two LEDs, and stereo audio input and output, originally intended in a guitar pedal form factor. Mulebox uses the Hothouse PCB, but not the breakout boards for the jacks and footswitches and LEDs. This runs on 9V "pedal power".
 
-Note that the attenuator is entirely passive. This means that if you turn your amp on but leave the Mulebox unpowered (there is no on/off switch), your amp is still safe. However, the cooling fan will not run, so it is advisable to leave it powered on whenever the amp is in use.
+Note that the attenuator is entirely passive. This means that if you accidentally or temporarily turn your amp on but leave the Mulebox unpowered (there is no on/off switch), your amp is still safe. However, the cooling fan will not run, and there will be no audio passing through to the output.
 
 The Mulebox lives inside a "Hammond 1590DD" size enclosure – mainly because this is the largest enclosure one can order from Tayda Electronics and have them paint and drill. It is of course possible to use a different box, so long as it has the required cutouts and enough ventilation, but we provide Tayda drill and UV print templates below, which make it much easier to get a professional-looking enclosure.
 
 Here is the schematic of the full circuit:
 
 ![Mulebox schematic diagram](docs/schematic.png)
+
+### Possible improvements
+
+There are a number of ways the Mulebox could be extended or improved, given more time, budget for components, and – perhaps most importantly – a larger enclosure. Here are some ideas:
+
+* The JohnH attenuator design can be used, with one or several switchable steps, to reduce the output power of an amp whilst still playing through a guitar cabinet with a real speaker. The Mulebox does not support any attenuated "pass-through" and only passes signal to the DSP unit. However, with the addition of some switches and an extra output jack, it would be possible to pass an attenuated (i.e. quieter) signal to a speaker like a normal reactive load box, instead of or in paralell with the simulated speaker output.
+
+* With additional active components, the Mulebox could gain balanced outputs, and/or a headphone output.
+
+* Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three three-way switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed – 12 full-length (170ms) IRs will use up almost all the available storage on the Daisy Seed. Still, a built-in reverb, in particular, might be quite desirable.
+
+* In the same vein, the reason the Mulebox has a "bass" knob is that – to save space and cost – the attenuator circuit does not include JohnH's optional second inductor coil that simulates the bass "hump" found in many real world cabinets. Adding this would free up a knob and arguably be more realistic than a software bass boost.
+
+* Conversely, with more knobs, the Mulebox could gain a two or three-band EQ for additional tone shaping.
 
 ## Hardware components
 
