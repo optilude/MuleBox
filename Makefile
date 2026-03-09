@@ -59,6 +59,9 @@ BOOT_BIN = $(SYSTEM_FILES_DIR)/dsy_bootloader_v6_3-intdfu-2000ms.bin
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
 include $(SYSTEM_FILES_DIR)/Makefile
 
+# Ensure the IR header is generated before compiling any sources
+$(OBJECTS): src/ir_data.h
+
 # Override libDaisy's `program` target (which errors out for BOOT_SRAM)
 # to flash firmware directly to QSPI via the STLINK debug probe.
 # Only the debug probe is needed — no USB, no buttons.
@@ -87,7 +90,7 @@ program-boot-probe:
 
 # Desktop test harness (builds and runs on macOS, not Daisy hardware)
 .PHONY: desktop-test
-desktop-test:
+desktop-test: src/ir_data.h
 	$(MAKE) -C tools/desktop_test
 
 # Additional targets for convenience
@@ -95,8 +98,10 @@ desktop-test:
 
 PYTHON ?= python3
 
-# Rebuild IR header from WAV files
-update-irs:
+# Rebuild IR header from WAV files manually if needed
+update-irs: src/ir_data.h
+
+src/ir_data.h: tools/wav_to_ir_header.py $(wildcard irs/*.wav)
 	@echo "Rebuilding IR header from irs/*.wav..."
 	$(PYTHON) tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
 
