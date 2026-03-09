@@ -1,0 +1,5 @@
+*.wav
+!01_dark_closed.wav
+!02_warm_mid.wav
+!03_balanced.wav
+!04_bright_open.wav
