@@ -1,16 +1,16 @@
-# Mulebox
+# Mulebox - Reactive Load + IR Loader
 
-A hardware guitar processing unit built with the Electrosmith Daisy Seed DSP module and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer. It does not have a headphone amplifier built in.
+The Mulebox is an open source, build-it-yourself hardware guitar processing unit based on the JohnH attenuator, Electrosmith Daisy Seed DSP module, and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer.
 
-This document provides guidance for how to build your own. Both software and hardware are open source. You can build it as described here, or use this as a starting point for your own build of a similar device.
+This document provides guidance for how to build your own. Both software and hardware are open source and contained in this respository. You can build it as described here, or use this as a starting point for your own build of a similar device.
 
 **WARNING #1:** The basic function of this box is to replace the speaker in an amplifier. A tube amplifier, in particular, will be damaged if used without a suitable load. Do not turn the amp on without a speaker or a load (like the one inside the Mulebox). If connections are made incorrectly, become loose, or are poorly soldered inside the Mulebox, the load could be disconnected. In this case, you could damage your amplifier.
 
-**WARNING #2:** The components described here are for an 8 Ohm speaker output. Only plug into an 8 Ohm speaker output from your amplifier. The maximum rated power is 50W. It is safe to use a lower-powered amp, but do not use a higher-powered amplifier.
+**WARNING #2:** The components described here are for an 8 Ohm speaker output of an amp rated 50W or less. Only plug into an 8 Ohm speaker output on your amplifier, and never use it with an amp more powerful than 50W. If you need a different speaker load or power rating, you will need to build it with larger resistors of different values.
 
-**WARNING #3:** This is a very tight build. You need to take care selecting components that can handle the required power, including wires. You need to be familiar with soldering, guitar electronics (e.g. you have built guitar amps or pedals before), and be capable of building the code for this software project using basic development tools.
+**WARNING #3:** In the suggested enclosure, this is a very tight build. You need to take care selecting components that can handle the required power, including wires. You need to be familiar with soldering, guitar electronics (e.g. you have built guitar amps or pedals before), and be capable of building the code for this software project using basic development tools. There are detailed instructions below, but some experience is assumed and probably required to be successful.
 
-You will also need to supply your own IR files, e.g. ones you have bought or recorded yourself.
+You will also need to supply your own IR files, e.g. ones you have sourced or recorded yourself. A few free IRs are included, but they do not sound particularly good. There are plenty of places you can buy good quality IRs, and plenty of free ones available from [Tone 3000](https://www.tone3000.com).
 
 ## Operation
 
@@ -22,37 +22,40 @@ This is the assembled Mulebox:
 
 To use it, connect a 1/4" TS **speaker cable** (not an instrument cable like the one you might use to plug your guitar into an amp or connect two effects pedals) from an 8 Ohm (only!) speaker output on your amplifier, into the amp input on the Mulebox rear.
 
-Connect a pair of 1/4" TS audio cables from the left and right output jacks to a mixer or other recording device. If you want to connect to a pair of speakers, make sure they are either powered or that you use a suitable stereo amplifier. Note that the outputs are not balanced, and there is no headphone output.
+Connect a pair of 1/4" TS audio cables from the left and right output jacks to a mixer or other recording device. If you want to connect to a pair of speakers, make sure they are either powered or that you use a suitable stereo amplifier. Note that the outputs are not balanced, and there is no headphone output, so you will need to plug the Mulebox into something cabable of amplifying a stereo signal to hear its output.
 
 Turn the rotary switch on the front to position 1. Connect a 9V DC, centre-negative (only!) "pedal" power supply to the power socket at the back. Turn the other knobs to noon.
 
-The front knobs can be used to control the output level and cut/boost the bass, which might be helpful for certain types of amplifiers. The trim knob at the rear is used to control the input level between the amp and Hothouse. In general it should be as high as possible without causing clipping.
+The front knobs can be used to control the output level and cut/boost the bass, which can be helpful depending on the characteristics of your amp and IR. It noon, it is a flat bass response.
 
-The red LED will stay on when the device is powered. It will blink off briefly if the **input** signal starts to clip. In this case, turn down the trim knob on the rear.
+The trim knob at the rear is used to control the input level between the amp and Hothouse. In general it should be as high as possible without causing clipping.
 
-At startup, the red LED will blink to indicate the number of IRs that have been installed, up to 12 times.
+When powered on, the red LED will blink several times, indicating the number of IRs currently loaded (up to 12 times), and then stay on whilst the Mulebox is active. The blue LED will then blink to indicate the current position of the rotary knob, i.e. which IR is currently selected.
 
-The blue LED will stay on if an IR is loaded, and blink when it is being changed (by turning the rotary knob). If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off. The blue LED will also quickly invert its state (blink) if the **output** signal starts to clip. In this case, turn down the output level knob on the front.
+The blue LED will stay on if an IR is loaded, and blink when the selected IR is being changed by turning the rotary knob, the number of blinks indicating the selected position. If there are fewer than 12 valid IRs, some of the slots may be empty. In this case, the blue LED will remain off, and the raw sound of the amp will be passed through, which will probably not sound very good.
 
-If all is well, you should hear your amp through a simulated speaker on the stereo output.
+It is important to avoid clipping in use. Clipping is indicated by the LEDs blinking:
+
+- The red LED will blink if the **input** signal starts to clip. In this case, turn down the trim knob on the rear, or reduce the output volume of your amplifier.
+- The blue LED will blink if the **output** signal starts to clip. In this case, turn down the output level knob on the front.
 
 ## Architecture
 
 Think of the Mulebox as two separate devices hardwired together:
 
-1. An attenuator, using a variant of the ["JohnH" Attenuator](https://marshallforum.com/threads/simple-attenuators-design-and-testing.98285/) design. This provides a reactive load that is both safe and provides an impedance curve that is similar to a speaker cabinet, which will make a tube amp "react" more appropriately.
+1. An attenuator, using a variant of the ["JohnH" Attenuator](https://marshallforum.com/threads/simple-attenuators-design-and-testing.98285/) design. This provides a safe 8 Ohm reactive load, and provides an impedance curve that is similar to a speaker cabinet, which will make a tube amp react more realistically.
 
 The JohnH design can be used to build an attenuator box that quietens an amp whilst passing output to a real speaker in a guitar cabinet, with selectable levels of attenuation. The Mulebox does *not* support pass-through to a guitar cabinet. Instead it takes a "line out" signal and sends it to the DSP module.
 
 The attenuator absorbs all the energy of the audio signal (up to 50W) and turns it into heat. Therefore, the attenuator gets hot. An aluminium chassis acts as a heat sink, and is cut with plenty of ventilation. There is also a small fan to provide airflow. This is important not only to ensure the passive attenuator components don't fail, but also since we are running a DSP module in the same box and this has a narrower operating temperature range.
 
-2. A DSP processor that takes the raw amp sound and applies a selectable Impulse Response (IR) to it, emulating a guitar speaker cabinet, before passing the audio out as a stereo signal. This is based on the [Electrosmith Daisy Seed](https://electro-smith.com/products/daisy-seed) module, which can be programmed to perform a variety of audio-related functions (this is the source code repository for the Mulebox firmware, written in C++ for the Daisy platform).
+2. A DSP processor that takes the raw amp sound and applies a selectable Impulse Response (IR) to it, emulating a guitar speaker cabinet, before passing the audio out as a stereo signal (really, dual mono). This is based on the [Electrosmith Daisy Seed](https://electro-smith.com/products/daisy-seed) module, which can be programmed to perform a variety of audio-related functions. The source code in this repository is the Mulebox firmware, written in C++ for the Daisy platform.
 
 The Daisy Seed needs to be connected to knobs and audio I/O. For that, we use the [Cleveland Music Co Hothouse](https://clevelandmusicco.com/hothouse/). This is a PCB that provides up to six knobs, three switches, two footswitches, two LEDs, and stereo audio input and output, originally intended in a guitar pedal form factor. Mulebox uses the Hothouse PCB, but not the breakout boards for the jacks and footswitches and LEDs. This runs on 9V "pedal power".
 
-Note that the attenuator is entirely passive. This means that if you accidentally or temporarily turn your amp on but leave the Mulebox unpowered (there is no on/off switch), your amp is still safe. However, the cooling fan will not run, and there will be no audio passing through to the output.
+Note that the attenuator is entirely passive. This means that if you accidentally or temporarily turn your amp on but leave the Mulebox unpowered (there is no on/off switch), your amp is still safe. However, the cooling fan will not run, and there will be no audio passing through to the output, so you are not recommended to stay in this state for very long.
 
-The Mulebox lives inside a "Hammond 1590DD" size enclosure – mainly because this is the largest enclosure one can order from Tayda Electronics and have them paint and drill. It is of course possible to use a different box, so long as it has the required cutouts and enough ventilation, but we provide Tayda drill and UV print templates below, which make it much easier to get a professional-looking enclosure.
+As described here, the Mulebox lives inside a "Hammond 1590DD" size enclosure – mainly because this is the largest enclosure one can order from Tayda Electronics and have them paint and drill. It is of course possible to use a different box, so long as it has the required cutouts and enough ventilation, but we provide Tayda drill and UV print templates below, which make it much easier to get a professional-looking enclosure.
 
 Here is the schematic of the full circuit:
 
@@ -62,11 +65,13 @@ Here is the schematic of the full circuit:
 
 There are a number of ways the Mulebox could be extended or improved, given more time, budget for components, and – perhaps most importantly – a larger enclosure. Here are some ideas:
 
-* The JohnH attenuator design can be used, with one or several switchable steps, to reduce the output power of an amp whilst still playing through a guitar cabinet with a real speaker. The Mulebox does not support any attenuated "pass-through" and only passes signal to the DSP unit. However, with the addition of some switches and an extra output jack, it would be possible to pass an attenuated (i.e. quieter) signal to a speaker like a normal reactive load box, instead of or in paralell with the simulated speaker output.
+* If you want to use a 4 Ohm or 16 Ohm speaker tap, or a higher-wattage amp, you will need to modify the attenuator part of the circuit. The [Marshall Forum thread](https://marshallforum.com/threads/simple-attenuators-design-and-testing.98285/) where the attenuator is described, contains the information you need to do this, but there is a lot there to unpick. Almost certainly, you'd need to change the large resistors and possibly the inductor coil, which in turn might make it difficult to fit everything in the suggested enclosure. But it is certainly possible to do this. The Hothouse, Daisy Seed, and software parts of the circuit should not need to be changed, so long as the "line out" part of the attenuator that is hardwired to the Hothouse PCB is of a safe level.
 
-* With additional active components, the Mulebox could gain balanced outputs, and/or a headphone output.
+* The JohnH attenuator design can be used, with one or several switchable steps, to reduce the output power of an amp whilst still playing through a guitar cabinet with a real speaker, as an alternative to or in parallel with speaker simulation via IRs. The Mulebox does not support any attenuated "pass-through" and only passes signal to the DSP unit. With more space and the addition of some switches and an extra output jack, it would be possible to pass an attenuated (i.e. quieter) signal to a speaker like a normal reactive load box, instead of or in paralell with the simulated speaker output.
 
-* Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three three-way switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed – 12 full-length (170ms) IRs will use up almost all the available storage on the Daisy Seed. Still, a built-in reverb, in particular, might be quite desirable.
+* With additional active components, the Mulebox could gain balanced outputs, and/or a headphone output (you would need to add a headphone amplifier).
+
+* Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three toggle switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed – 12 full-length (170ms) IRs will use up almost all the available storage on the Daisy Seed. Still, a built-in reverb, in particular, might be desirable.
 
 * In the same vein, the reason the Mulebox has a "bass" knob is that – to save space and cost – the attenuator circuit does not include JohnH's optional second inductor coil that simulates the bass "hump" found in many real world cabinets. Adding this would free up a knob and arguably be more realistic than a software bass boost.
 
