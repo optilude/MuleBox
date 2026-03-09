@@ -79,7 +79,7 @@ There are a number of ways the Mulebox could be extended or improved, given more
 
 ## Hardware components
 
-When selecting hardware components to use, it is important to consider not only their values (e.g. resistance and power rating/wattage for the resistors; inductance for the inductor coil), but also the physical dimensions of each. The Tayda drill template provided will need to be modified for any components with a different footprint from the ones suggested below. This is most important when it comes to the large, high-powered resistors. Since these are clamped to the bottom (technically the "lid") of the enclosure, it might be preferable to drill these manually.
+When selecting hardware components to use, it is important to consider not only their values (e.g. resistance and power rating/wattage for the resistors; inductance for the inductor coil), but also the physical dimensions of each. The Tayda drill template provided will need to be modified for any components with a different footprint from the ones suggested below. This is most important when it comes to the large, high-powered resistors. Since these are clamped to the bottom (technically the "lid") of the enclosure, it might be preferable to drill the mounting holes for these manually.
 
 ### The Daisy Seed
 
@@ -97,7 +97,7 @@ However, the fine folks at Cleveland Music Co have made the PCB available as [op
 
 There are several online tutorials that explain how to do this, but the basic idea is that you upload the Gerber (.zip) and Bill of Materials (.csv) file for the main PCB to the JLCPCB website, and choose their PCB assembly service. It's a very slick process. You will probably have to order at least five boards, but even then it's pretty affordable (plus you now have spares).
 
-If you go this route, you will also need to buy two single-row, 20-pin, 2.54mm pitch female square-pin headers and a 100uF low-ESR electrolytic capacitor, which are otherwise included in the Hothouse kit.
+If you go this route, you will also need to buy two single-row, 20-pin, 2.54mm pitch female square-pin headers and a 100uF low-ESR electrolytic capacitor, which are otherwise included in the Hothouse kit. See the shoppling list below for specific examples.
 
 You will also need pots, jacks, a power socket, and LEDs, but we'll detail those below, as you'll need to get them regardless of whether you buy the Hothouse kit or manufacture your own PCBs. The components that come with the Hothouse are different from what we will mount in the Mulebox.
 
@@ -113,7 +113,7 @@ Next, you need an inductor coil: literally a large coil of thick wire wound into
 
 For an 8 Ohm, 50W build, you want an "air core", 18AWG coil with an inductance of 0.9mH, such as the [Dayton Audio LW18-90](https://www.soundimports.eu/en/dayton-audio-lw18-90.html). These will usually be stocked by specialist audio hardware or repair shops, rather than general purpose electronics retailers.
 
-The coil needs to be mounted in such a way that it does not touch any other metal components, including the enclosure. It is also pretty large, and so a tight fit. The Dayton Audio coil comes with a pair of plastic zip ties to hold the coil together, and you can use the thicker fastener on the zip ties as a spacer, keeping it off the bottom of the enclosure. The suggested layout/drill template has two holes drilled to run additional zip-ties through, for fixing the coil in place.
+The coil needs to be mounted in such a way that it does not touch any other metal components, including the enclosure. It is also pretty large, and so a tight fit. The Dayton Audio coil, at least, comes with a pair of plastic zip ties to hold the coil together, and you can use the thicker fastener on the zip ties as a spacer, keeping it off the bottom of the enclosure. The suggested layout/drill template has two holes drilled to run additional zip-ties through, for fixing the coil in place.
 
 ### The large resistors
 
@@ -125,19 +125,19 @@ The suggested layout/drill template is based on resistors from the TE Connectivi
 
 ### The cooling fan
 
-Speaking of heat dissipation, the design includes a small fan at the rear, intended to pull cool air through slats at the front and sides of the enclosure across the resistors, expelling hot air at the back. A large circular cutout exposes the fan, and is then protected with a metal "finger grille".
+Speaking of heat dissipation, the design includes a small fan at the rear, intended to pull cool air through slats at the front and sides of the enclosure across the resistors, expelling hot air at the back. A large circular cutout exposes the fan, which is protected with a metal finger grille.
 
 The drill template has space for a 30mm square extractor fan with standard hole spacing. This is _very tight_ and might require some creativity when mounting and closing the lid. You may need to add a bit of extra spacing with a nut or small washer on the inside of the enclosure, to allow the lid to close.
 
-The fan needs to run off the 9V power supply. You can get fans that run natively on 9V, or e.g. 12V fans that will just run a bit slower at lower voltages. A lower-voltage fan (e.g. a 5V fan) will require additional components to step the 9V voltage down to 5V.
+The fan needs to run off the 9V power supply. You can get fans that run natively on 9V, or e.g. 12V fans that will just run a bit slower at lower voltages. A lower-voltage fan (e.g. a 5V fan) will require additional components (not described herein) to step the 9V voltage down to 5V.
 
 Cheap fans are noisy. Quiet fans don't move a lot of air. The quality of the fan will make a difference. Look for 'vapo' magnetic bearings, and noise ratings below 20dB, noting that a 12V fan run at 9V, for example, will be slower and thus quieter than the stated rating.
 
-Sunon makes good fans and the Sunon MF30101V2 12V 30mmx30mmx10mm fan is a good, quiet fan that can run at 9V, but there are many other options.
+Sunon makes good fans and the Sunon MF30101V2 12V 30mmx30mmx10mm fan is a good, relatively quiet fan that can run at 9V, but there are many other options.
 
 ### The enclosure
 
-Apart from needing to fit all the components, the most important facet of the enclosure is that it needs to help manage heat effectively. A 50W amplifier at full volume generates enough power to create serious heat, which could cause the Daisy Seed to shut down or impact the performance of the circuit in other unpredictable ways. An aluminium enclosure can act as a heatsink in its own right if the large resistors are clamped securely to it, but we also need to cut ventilation holes.
+Apart from needing to fit all the components, the most important facet of the enclosure is that it needs to help manage heat effectively. A 50W amplifier at full volume generates enough power to create serious heat, which could cause the Daisy Seed to shut down or impact the performance of the circuit in unpredictable ways. An aluminium enclosure can act as a heatsink in its own right if the large resistors are clamped securely to it, but we also need to cut ventilation holes.
 
 Since the components (just!) fit inside a Hammond 1590DD enclosure, we can use [Tayda Electronics](https://www.taydaelectronics.com) to paint, drill, and UV print an enclosure for us. See [this guide](https://martinaspeli.net/posts/tayda-uv-printing/) for more details about that process, including how to set up the UV print templates.
 
@@ -147,7 +147,7 @@ You can use [this drill template](https://drill.taydakits.com/box-designs/new?pu
 
 We will use the "lid" of the enclosure as the base, drilling several mounting holes for the large resistors, induction coil, and the Hothouse PCB standoffs.
 
-**Note** that Tayda drill the lid _from the outside_ but we are mounting from the _inside_, which means the drill holes need to be translated accordingly. The template matches the screw spacing of the components listed in the shopping list below, but these will likely need adjusting if you use other brands. Alternatively, remove these holes from the drill template and drill them manually once you have all your components laid out – the base will not be visible in any case.
+**Note** that Tayda drill the lid _from the outside_ but we are mounting components from the _inside_, which means the drill holes need to be translated accordingly. The template matches the screw spacing of the components listed in the shopping list below, but these will likely need adjusting if you use other brands. Alternatively, remove these holes from the drill template and drill them manually once you have all your components laid out – the base will not be visible in any case.
 
 "Side E" will be used as the front, mounting two LEDs in bezel holders, the rotary switch, and the output level and bass control pots. It also contains crucial slat cutouts that sit in front of the large resistors, directly opposite the fan, allowing it to draw cool air across the top of the resistors. The potentiometer and switch cutouts match the UV print template for the front.
 
@@ -198,7 +198,7 @@ And for the enclosure:
 * 64 x additional hole drilling service ([A-99999-CST-DR-H1](https://www.taydaelectronics.com/drill-service-additional-holes.html)) – adjust this so that the total number of cutouts in the enclosure is covered (40 holes are included in the default drilling service, so 40 + 64 = 104 total holes)
 * 1 x 1590DD side C UV print service ([A-5141-CST-UVC](https://www.taydaelectronics.com/1590dd-side-c-uv-printing-service-1.html))
 * 1 x 1590DD side E UV print service ([A-5141-CST-UVE](https://www.taydaelectronics.com/1590dd-side-e-uv-printing-service-1.html))
-* 1 x gloss layer UV print service ([A-99999-CST-UV-GL](https://www.taydaelectronics.com/custom-uv-gloss-layer-service.html)) – optional, but recommended to protect the printed labels
+* 2 x gloss layer UV print service ([A-99999-CST-UV-GL](https://www.taydaelectronics.com/custom-uv-gloss-layer-service.html)) – optional, but recommended to protect the printed labels
 * 2 x "print twice" white layer UV print service ([A-99999-CST-UV-WH](https://www.taydaelectronics.com/93825-dup-custom-uv-white-layer-service.html)) – optional, but recommended if printing white on black
 
 #### Farnell
@@ -216,12 +216,12 @@ And for the enclosure:
 
 #### Other items
 
-* 1 x medium knob for 6.35mm D-shaft rotary switch, ~19mm, with the pointer towards the _flat_ edge (assuming you are using the Lorlin CK1034 rotary switch). These can be a bit hard to source, but the [Cliff K21 D-shaft 1/4" knobs](https://www.digikey.co.uk/en/products/detail/cliff-electronic-components-ltd/CL178886/26698222) with a suitable cap works.
+* 1 x medium knob for 6.35mm D-shaft rotary switch, ~19mm, with the pointer towards the _flat_ edge (assuming you are using the Lorlin CK1034 rotary switch, which is their imperial-dimensioned one). These can be a bit hard to source, but the [Cliff K21 D-shaft 1/4" knobs](https://www.digikey.co.uk/en/products/detail/cliff-electronic-components-ltd/CL178886/26698222) with a suitable cap works. Note that many D-shaft knobs have a pointer 180 degrees _away_ from the flat edge of the D, which will be wrong. A 6.35mm round shaft knob with a set screw might also work.
 * 1 x [Daisy Seed](https://electro-smith.com/products/daisy-seed) – see above
 * 1 x [Hothouse main PCB](https://clevelandmusicco.com/hothouse-diy-digital-signal-processing-platform-kit/) – see above
 * 22 AWG or similar (i.e. thick) wires, preferably in a few different colours, for wiring the attenuator.
 * Thinner wire in multiple colours for wiring up the Hothouse to the output jacks, LEDs, and potentiometers.
-* Optional: For wiring the front pots, LEDs, and rotary switch, you can use sets of wires with 3-pin JST 1.25mm (or larger) connectors (you'll need both male and female). The advantage of this is that you can easily disconnect the front components when opening the enclosure.
+* Optional: For wiring the front pots, LEDs, and rotary switch, you can use sets of wires with 3-pin JST 1.25mm (or larger) connectors (you'll need both male and female connectors). The advantage of this is that you can easily disconnect the front components when opening the enclosure.
 * Plastic zip ties for mounting the inductor coil
 * Thermal paste (only a tiny amount) for mounting the large resistors
 
@@ -236,7 +236,7 @@ You will need:
 
 ## Building the software
 
-Before the Mulebox will work, you need to build flash the firmware from this source code repository onto the Daisy Seed. This also transfers the prepared IRs (see above) to its QSPI flash memory. For this to work, you need to connect the Daisy Seed to a computer via USB.
+Before the Mulebox will work, you need to build flash the firmware from this source code repository onto the Daisy Seed. This also transfers the prepared IRs (see above) to its QSPI flash memory. For this to work, you need to connect the Daisy Seed to a computer via USB – either directly or using an STM32 debug probe if you have one.
 
 ### Prerequisites
 
@@ -285,9 +285,9 @@ make help           # Show all available targets
 
 ### Flashing to Daisy Seed
 
-There are two ways to flash firmware: via **USB** or via an **STLINK debug probe**. The debug probe method is simpler (no buttons or timing required) but needs an STLINK-V3MINIE or similar SWD debug probe.
+There are two ways to flash firmware: via **USB** or via an **STLINK debug probe**. The debug probe method is simpler (no buttons or timing required) but you need an STLINK-V3MINIE or similar SWD debug probe, and to have separate power running to the Hothouse/Daisy Seed.
 
-Both methods require a one-time bootloader installation step, then firmware can be updated as often as needed.
+Both methods require a one-time bootloader installation step, after which the firmware can be updated as often as needed.
 
 #### First-time setup: install the Daisy bootloader
 
@@ -319,17 +319,6 @@ After flashing, the Daisy Seed will restart. Its onboard LED should pulse for ab
 
 After the bootloader is installed, use one of these methods for all firmware updates.
 
-**With STLINK debug probe (recommended — no buttons or timing needed):**
-
-1. Connect the STLINK debug probe to the Daisy Seed. Power the Daisy via 9V or USB.
-2. Build and flash:
-   ```bash
-   make
-   make program
-   ```
-
-The firmware is written directly to QSPI flash via the debug probe and begins running automatically. No USB data connection is needed.
-
 **With USB only:**
 
 1. Connect the Daisy Seed to your computer via USB.
@@ -348,15 +337,27 @@ The firmware loads and begins running automatically after flashing.
 
 See the [Daisy Seed C++ SDK documentation](https://daisy.audio/tutorials/cpp-dev-env/) for more details.
 
+**With STLINK debug probe:**
+
+1. Connect the STLINK debug probe to the Daisy Seed. Power the Daisy via 9V or USB.
+2. Build and flash:
+   ```bash
+   make
+   make program
+   ```
+
+The firmware is written directly to QSPI flash via the debug probe and begins running automatically.
+
 ## Loading your own Impulse Response files
 
-This project ships with four free IRs from [Djammincabs](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either bought or recorded yourself.
+This project ships with four free IRs from [Djammincabs](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either sourced or recorded yourself. One free source of IRs is the [Tone 3000](https://www.tone3000.com) website, though there are many others.
 
 Requirements:
 
 - WAV format, 48kHz sample rate, mono or stereo
 - Up to 12 files – if fewer, some positions on the rotary switch will be blank
 - Each IR should be up to ~170ms – longer IRs will be truncated, but you can still use them
+- You need Python 3 installed and available via the `python3` command
 
 Note that files are assigned to rotary switch positions 1–12 in alphabetical order, so name them accordingly (e.g. `01_dark.wav`, `02_bright.wav`) to minimise confusion.
 
@@ -376,6 +377,10 @@ Steps:
    # or
    make program-dfu    # with USB (press RESET first)
    ```
+
+Note that the `update-irs` step is run automatically before each new build of the software, so if you perform a clean build (`make clean all`) then it will probably work without the explicit `make update-irs` step.
+
+**Tip**: If you have a debug probe, it connects to the Daisy Seed via a 14-pin connector cable. While testing, you can leave this connected and feed it out through the top slats on the left side of the Mulebox, which are cut slightly taller than the others for this very reason. If you lave the Mulebox powered on and connect the probe, you can quickly load new IRs by putting them in the relevant directory and re-running the build per the above instructions. _However_, if the debug probe is left connected to your computer via USB while playing, it will likely introduce additional noise – a whine or buzz that will be audible through your speakers.
 
 ## Assembling the hardware
 
