@@ -2,7 +2,7 @@
 
 The Mulebox is an open source, build-it-yourself hardware guitar processing unit based on the JohnH attenuator, Electrosmith Daisy Seed DSP module, and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer.
 
-This document provides guidance for how to build your own. Both software and hardware are open source and contained in this respository. You can build it as described here, or use this as a starting point for your own build of a similar device.
+This document provides guidance for how to build your own. Both software and hardware are open source and contained in this repository. You can build it as described here, or use this as a starting point for your own build of a similar device.
 
 **WARNING #1:** The basic function of this box is to replace the speaker in an amplifier. A tube amplifier, in particular, will be damaged if used without a suitable load. Do not turn the amp on without a speaker or a load (like the one inside the Mulebox). If connections are made incorrectly, become loose, or are poorly soldered inside the Mulebox, the load could be disconnected. In this case, you could damage your amplifier.
 
@@ -380,7 +380,7 @@ Steps:
 
 Note that the `update-irs` step is run automatically before each new build of the software, so if you perform a clean build (`make clean all`) then it will probably work without the explicit `make update-irs` step.
 
-**Tip**: If you have a debug probe, it connects to the Daisy Seed via a 14-pin connector cable. While testing, you can leave this connected and feed it out through the top slats on the left side of the Mulebox, which are cut slightly taller than the others for this very reason. If you lave the Mulebox powered on and connect the probe, you can quickly load new IRs by putting them in the relevant directory and re-running the build per the above instructions. _However_, if the debug probe is left connected to your computer via USB while playing, it will likely introduce additional noise – a whine or buzz that will be audible through your speakers.
+**Tip**: If you have a debug probe, it connects to the Daisy Seed via a 14-pin connector cable. While testing, you can leave this connected and feed it out through the top slats on the left side of the Mulebox, which are cut slightly taller than the others for this very reason. If you leave the Mulebox powered on and connect the probe, you can quickly load new IRs by putting them in the relevant directory and re-running the build per the above instructions. _However_, if the debug probe is left connected to your computer via USB while playing, it will likely introduce additional noise – a whine or buzz that will be audible through your speakers.
 
 ## Assembling the hardware
 
@@ -424,7 +424,7 @@ The cooling fan can be one of the most fiddly components to install, because if 
 
 5. Install the lid and confirm that the fan still runs (it can be helpful to pull the fan wires out of a slat to connect to a battery). If not, check that the inner lip of the enclosure lid has not bent the fan housing.
 
-6. Fasten the enclosure lid screws and confirm that the fan still runs and that air is flowing freely out of the finger grille at the rear of the unit. If not, again look for signs of bending. It may be necessary to put a thin spacer between the lid and the enclosure before tigthening the screws, to gain half a millimetre of extra headroom.
+6. Fasten the enclosure lid screws and confirm that the fan still runs and that air is flowing freely out of the finger grille at the rear of the unit. If not, again look for signs of bending. It may be necessary to put a thin spacer between the lid and the enclosure before tightening the screws, to gain half a millimetre of extra headroom.
 
 Later on, be careful that no wires or other components end up pushing or warping the fan housing.
 
