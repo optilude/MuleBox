@@ -43,7 +43,7 @@ It is important to avoid clipping in use. Clipping is indicated by the LEDs blin
 
 Think of the Mulebox as two separate devices hardwired together:
 
-1. An attenuator, using a variant of the ["JohnH" Attenuator](https://marshallforum.com/threads/simple-attenuators-design-and-testing.98285/) design. This provides a safe 8 Ohm reactive load, and provides an impedance curve that is similar to a speaker cabinet, which will make a tube amp react more realistically.
+1. An attenuator, using a variant of the ["JohnH" Attenuator](https://marshallforum.com/threads/simple-attenuators-design-and-testing.98285/) design. This provides a safe 8 Ohm reactive load with an impedance curve that is similar to a speaker cabinet, which will make a tube amp react more realistically.
 
 The JohnH design can be used to build an attenuator box that quietens an amp whilst passing output to a real speaker in a guitar cabinet, with selectable levels of attenuation. The Mulebox does *not* support pass-through to a guitar cabinet. Instead it takes a "line out" signal and sends it to the DSP module.
 
