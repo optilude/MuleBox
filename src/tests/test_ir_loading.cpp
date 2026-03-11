@@ -10,6 +10,8 @@
 #include "ir_data.h"
 #include "stlink_print.h"
 
+#include "dev/sdram.h"
+
 using clevelandmusicco::Hothouse;
 using daisy::AudioHandle;
 using daisy::Led;
@@ -23,7 +25,12 @@ DebouncedAnalogSwitch irSwitch;
 
 constexpr size_t MAX_IR_LENGTH = 8192;
 constexpr size_t AUDIO_BLOCK_SIZE = 8;
-IrLoader<MAX_IR_LENGTH, AUDIO_BLOCK_SIZE> irLoader;
+constexpr size_t MAX_PARTITIONS = MAX_IR_LENGTH / AUDIO_BLOCK_SIZE;
+
+float DSY_SDRAM_BSS irFreqBuf[MAX_PARTITIONS * 2 * AUDIO_BLOCK_SIZE];
+float DSY_SDRAM_BSS fdlBuf[MAX_PARTITIONS * 2 * AUDIO_BLOCK_SIZE];
+
+IrLoader irLoader;
 
 constexpr int MAX_IR_POSITIONS = 12;
 constexpr int DEBOUNCE_MS = 500;
@@ -65,6 +72,8 @@ int main() {
     hw.Init(true);
     hw.SetAudioBlockSize(AUDIO_BLOCK_SIZE);
     hw.SetAudioSampleRate(SaiHandle::Config::SampleRate::SAI_48KHZ);
+
+    irLoader.Init(MAX_PARTITIONS, irFreqBuf, fdlBuf);
 
     irSwitch.Init(hw.knobs[Hothouse::KNOB_6], MAX_IR_POSITIONS, DEBOUNCE_MS);
 
