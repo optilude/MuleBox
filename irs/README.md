@@ -45,6 +45,7 @@ python3 tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
 ```
 
 Requirements:
+- **Filenames must not contain spaces** (use underscores or hyphens instead)
 - WAV files must be **48kHz** (the tool warns but does **not** resample)
 - Mono or stereo are both accepted (stereo: left channel is used)
 - Maximum length: 170ms (8160 samples at 48kHz); longer files are trimmed
