@@ -62,16 +62,28 @@ include $(SYSTEM_FILES_DIR)/Makefile
 # Ensure the IR header is generated before compiling any sources
 $(OBJECTS): src/ir_data.h
 
+src/ir_data.h: tools/wav_to_ir_header.py $(wildcard irs/*.wav)
+	@echo "Rebuilding IR header and binary from irs/*.wav..."
+	@mkdir -p build
+	$(PYTHON) tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h --bin build/ir_data.bin
+
 # Override libDaisy's `program` target (which errors out for BOOT_SRAM)
 # to flash firmware directly to QSPI via the STLINK debug probe.
 # Only the debug probe is needed — no USB, no buttons.
 #
 # Uses openocd_daisy_qspi.cfg to initialize the QUADSPI peripheral
 # and IS25LP064A flash chip, then writes the binary to 0x90040000.
+#
+# Also flashes the IR data binary to 0x90080000.
 .PHONY: program program-boot-probe
 
-program:
-	@echo "Flashing firmware to QSPI via debug probe..."
+program: src/ir_data.h
+	@echo "Creating combined binary..."
+	cp $(BUILD_DIR)/$(TARGET_BIN) build/combined.bin
+	@# Pad to 512KB (524288 bytes) to match IR_DATA_START_OFFSET in python script
+	$(PYTHON) -c "import os; f=open('build/combined.bin','ab'); size=os.path.getsize('build/combined.bin'); pad=524288-size; f.write(b'\0'*pad) if pad>0 else None"
+	cat build/ir_data.bin >> build/combined.bin
+	@echo "Flashing combined firmware (APP + IRs) to QSPI..."
 	$(OCD) -s $(OCD_DIR) \
 		-f $(PGM_DEVICE) \
 		-c "set QUADSPI 1" \
@@ -79,7 +91,7 @@ program:
 		-f openocd_daisy_qspi.cfg \
 		-c "init" \
 		-c "reset init" \
-		-c "program $(BUILD_DIR)/$(TARGET_BIN) verify reset exit $(QSPI_ADDRESS)"
+		-c "program build/combined.bin verify reset exit 0x90040000"
 
 # Flash the Daisy bootloader to internal flash via debug probe.
 # No buttons required — just connect STLINK and run this target.
@@ -103,12 +115,17 @@ update-irs: src/ir_data.h
 
 src/ir_data.h: tools/wav_to_ir_header.py $(wildcard irs/*.wav)
 	@echo "Rebuilding IR header from irs/*.wav..."
-	$(PYTHON) tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h
+	@mkdir -p build
+	$(PYTHON) tools/wav_to_ir_header.py irs/*.wav -o src/ir_data.h --bin build/ir_data.bin
 
 # Clean everything including libraries
 clean-all: clean
 	$(MAKE) -C $(LIBDAISY_DIR) clean
 	$(MAKE) -C $(DAISYSP_DIR) clean
+
+# Additional clean step
+clean:
+	rm -f src/ir_data.h
 
 # Alias for program-dfu
 flash: program-dfu
