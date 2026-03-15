@@ -18,6 +18,8 @@ This is the assembled Mulebox:
 
 ![Front view](./docs/photos/front.jpeg)
 
+(**Note**: This image shows a "Bass" knob. The current version of the Mulebox has repurposed that knob to be the "Reverb" mix.)
+
 ![Rear view](./docs/photos/back.jpeg)
 
 To use it, connect a 1/4" TS **speaker cable** (not an instrument cable like the one you might use to plug your guitar into an amp or connect two effects pedals) from an 8 Ohm (only!) speaker output on your amplifier, into the amp input on the Mulebox rear.
@@ -26,7 +28,7 @@ Connect a pair of 1/4" TS audio cables from the left and right output jacks to a
 
 Turn the rotary switch on the front to position 1. Connect a 9V DC, centre-negative (only!) "pedal" power supply to the power socket at the back. Turn the other knobs to noon.
 
-The front knobs can be used to control the output level and the reverb mix. The reverb is a lush Dattorro plate algorithm. Fully counter-clockwise is 100% dry signal. Fully clockwise is 100% wet signal.
+The front knobs can be used to control the output level and the reverb mix. The reverb is a lush Dattorro plate algorithm.
 
 The trim knob at the rear is used to control the input level between the amp and Hothouse. In general it should be as high as possible without causing clipping.
 
@@ -39,7 +41,7 @@ It is important to avoid clipping in use. Clipping is indicated by the LEDs blin
 - The red LED will blink if the **input** signal starts to clip. In this case, turn down the trim knob on the rear, or reduce the output volume of your amplifier.
 - The blue LED will blink if the **output** signal starts to clip. In this case, turn down the output level knob on the front.
 
-By default, the Mulebox includes the following basic, royalty-free IRs. You will definitely be able to get better sounds if you buy and load more professional IRs, though.
+By default, the Mulebox includes the following basic, royalty-free IRs. They sound pretty good, but you will definitely be able to get even better sounds if you buy and load more professional IRs.
 
 1. Blackpanel 1x12
 2. Greenback 4x12
@@ -80,7 +82,7 @@ There are a number of ways the Mulebox could be extended or improved, given more
 
 * With additional active components, the Mulebox could gain balanced outputs, and/or a headphone output (you would need to add a headphone amplifier).
 
-* Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three toggle switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed – adding reverb forces us to restrict max IR lengths to 85ms to avoid overwhelming the CPU.
+* Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three toggle switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed. Already, adding reverb has forced us to restrict max IR lengths to 85ms (down from 170ms without the reverb – still fine for cabinet IRs, but not suitable for reverbs).
 
 * To save space and cost – the attenuator circuit does not include JohnH's optional second inductor coil that simulates the bass "hump" found in many real world cabinets. The Mulebox firmware applies a slight, hardcoded DSP low-end boost to roughly emulate this resonance. With more knobs or toggle switches, the Mulebox could gain an adjustable two or three-band EQ for additional tone shaping.
 
