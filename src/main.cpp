@@ -46,14 +46,14 @@ static const float BASS_Q = 0.7f;
 constexpr int MAX_IR_POSITIONS = 12;
 constexpr size_t MAX_IR_LENGTH = 8192;
 constexpr uint32_t SAMPLE_RATE = 48000;
-constexpr size_t AUDIO_BLOCK_SIZE = 128;
+constexpr size_t AUDIO_BLOCK_SIZE = 256;
 constexpr float CLIPPING_THRESHOLD = 0.95f;
 constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (SAMPLE_RATE / AUDIO_BLOCK_SIZE) / 1000;
 constexpr int DEBOUNCE_MS = 500;
 
 // Convolution engine constants
-constexpr size_t PARTITION_SIZE = ConvolutionEngine::L;  // 128
-constexpr size_t FFT_SIZE = ConvolutionEngine::N;        // 256
+constexpr size_t PARTITION_SIZE = 256;  // Match AUDIO_BLOCK_SIZE
+constexpr size_t FFT_SIZE = 512;        // 2 * PARTITION_SIZE
 constexpr size_t MAX_PARTITIONS = (MAX_IR_LENGTH + PARTITION_SIZE - 1) / PARTITION_SIZE;
 
 // Large convolution buffers in SDRAM (64KB each)
@@ -120,42 +120,27 @@ void AudioCallback(AudioHandle::InputBuffer in,
         firIn[i] = mono + (bassFilter.Peak() * bassAmount);
     }
 
-    // Post-processing variable to hand over to Reverb
-    float revIn[AUDIO_BLOCK_SIZE];
-
     // IR convolution (FFT-based partitioned overlap-save)
     float firOut[AUDIO_BLOCK_SIZE];
     irLoader.ProcessBlock(firIn, firOut, size);
-    
-    // Copy IR output into reverb input (or substitute firIn if bypassing IR)
-    for (size_t i = 0; i < size; i++) {
-        revIn[i] = firOut[i];
-    }
 
-    // Apply reverb processing
-    float revOutL[AUDIO_BLOCK_SIZE];
-    float revOutR[AUDIO_BLOCK_SIZE];
-    
+    // Apply reverb processing, mix, and output scaling directly in one loop
     for (size_t i = 0; i < size; i++) {
-        // Process handles L and R simultaneously and saves state internally
-        reverb.process(revIn[i], revIn[i]);
+        float rIn = firOut[i];
         
-        // 50% wet/dry mix
-        revOutL[i] = (revIn[i] * 0.5f) + (reverb.getLeftOutput() * 0.5f);
-        revOutR[i] = (revIn[i] * 0.5f) + (reverb.getRightOutput() * 0.5f);
-    }
+        // Process handles L and R simultaneously and saves state internally
+        reverb.process(rIn, rIn);
+        
+        // 50% wet/dry mix, combined with output level scaling
+        float sampleL = ((rIn * 0.5f) + (reverb.getLeftOutput() * 0.5f)) * outputLevel;
+        float sampleR = ((rIn * 0.5f) + (reverb.getRightOutput() * 0.5f)) * outputLevel;
 
-    // Apply output level, check output clipping, write stereo output
-    for (size_t i = 0; i < size; i++) {
-        float sampleL = revOutL[i] * outputLevel;
-        float sampleR = revOutR[i] * outputLevel;
-
-        // Output clipping detection (checking left channel mostly)
+        // Output clipping detection
         if (fabsf(sampleL) > CLIPPING_THRESHOLD) {
             outputClippingDetected = true;
         }
 
-        // Stereo output
+        // Stereo output (dual mono if Reverb processing changes)
         out[0][i] = sampleL;
         out[1][i] = sampleR;
     }
