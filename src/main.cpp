@@ -52,6 +52,21 @@ constexpr float CLIPPING_THRESHOLD = 0.95f;
 constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (SAMPLE_RATE / AUDIO_BLOCK_SIZE) / 1000;
 constexpr int DEBOUNCE_MS = 500;
 
+// Reverb constants (Dattorro Plate defaults)
+static const float REV_TIME_SCALE = 1.007500f;
+static const float REV_MAX_LFO_DEPTH = 16.0f;
+static const float REV_MAX_TIME_SCALE = 4.0f;
+static const float REV_INPUT_LOW_CUT_PITCH = 2.87f;
+static const float REV_TANK_LOW_CUT_FREQ = 2.87f;
+static const float REV_INPUT_HIGH_CUT_PITCH = 7.25f;
+static const float REV_MOD_SHAPE = 0.25f;
+static const float REV_DECAY = 0.8f;
+static const float REV_TANK_DIFFUSION = 0.85f;
+static const float REV_PRE_DELAY = 0.0f;
+static const float REV_TANK_HIGH_CUT_FREQ = 0.725f * 10.0f; // Tone parameter (0-1) * Plate damp scale (10.0f)
+static const float REV_MOD_SPEED = 0.1f * 8.0f;             // Speed parameter (0.1-0.5) * Mod speed scale (8.0f)
+static const float REV_MOD_DEPTH = 0.1f * 15.0f;            // Depth parameter (0.1-0.5) * Mod depth scale (15.0f)
+
 // Convolution engine constants
 constexpr size_t PARTITION_SIZE = 128;  // Match AUDIO_BLOCK_SIZE
 constexpr size_t FFT_SIZE = 256;        // 2 * PARTITION_SIZE
@@ -64,7 +79,7 @@ float DSY_SDRAM_BSS convFdlBuf[MAX_PARTITIONS * FFT_SIZE];
 // DSP
 Svf bassFilter;
 IrLoader irLoader;
-Dattorro reverb(SAMPLE_RATE, 16, 4.0f);
+Dattorro reverb(SAMPLE_RATE, REV_MAX_LFO_DEPTH, REV_MAX_TIME_SCALE);
 
 // State
 volatile bool isLoadingIr = false;
@@ -189,24 +204,24 @@ int main(void) {
     hold = 1.0f;
 
     reverb.setSampleRate(hw.AudioSampleRate());
-    reverb.setTimeScale(1.007500f);
+    reverb.setTimeScale(REV_TIME_SCALE);
     reverb.enableInputDiffusion(true);
 
     // Set low-cut filters
-    reverb.setInputFilterLowCutoffPitch(2.87f);
-    reverb.setTankFilterLowCutFrequency(2.87f);
+    reverb.setInputFilterLowCutoffPitch(REV_INPUT_LOW_CUT_PITCH);
+    reverb.setTankFilterLowCutFrequency(REV_TANK_LOW_CUT_FREQ);
 
     // Hardcoded parameters
-    reverb.setInputFilterHighCutoffPitch(7.25f);
-    reverb.setTankModShape(0.25f);
+    reverb.setInputFilterHighCutoffPitch(REV_INPUT_HIGH_CUT_PITCH);
+    reverb.setTankModShape(REV_MOD_SHAPE);
 
     // Default "plate" preset parameters
-    reverb.setDecay(0.8f);
-    reverb.setTankDiffusion(0.85f);
-    reverb.setPreDelay(0.0f);
-    reverb.setTankFilterHighCutFrequency(0.725f * 10.0f);
-    reverb.setTankModSpeed(0.1f * 8.0f);
-    reverb.setTankModDepth(0.1f * 15.0f);
+    reverb.setDecay(REV_DECAY);
+    reverb.setTankDiffusion(REV_TANK_DIFFUSION);
+    reverb.setPreDelay(REV_PRE_DELAY);
+    reverb.setTankFilterHighCutFrequency(REV_TANK_HIGH_CUT_FREQ);
+    reverb.setTankModSpeed(REV_MOD_SPEED);
+    reverb.setTankModDepth(REV_MOD_DEPTH);
 
     // Start ADC so we can read knobs before audio starts
     hw.StartAdc();
