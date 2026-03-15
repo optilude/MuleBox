@@ -1,4 +1,4 @@
-# Mulebox - Reactive Load + IR Loader
+# Mulebox - Reactive Load + IR Loader with Reverb
 
 The Mulebox is an open source, build-it-yourself hardware guitar processing unit based on the JohnH attenuator, Electrosmith Daisy Seed DSP module, and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer.
 
@@ -17,8 +17,6 @@ You will also need to supply your own IR files, e.g. ones you have sourced or re
 This is the assembled Mulebox:
 
 ![Front view](./docs/photos/front.jpeg)
-
-(**Note**: This image shows a "Bass" knob. The current version of the Mulebox has repurposed that knob to be the "Reverb" mix.)
 
 ![Rear view](./docs/photos/back.jpeg)
 
