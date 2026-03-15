@@ -22,7 +22,11 @@ endif
 
 # Sources
 CPP_SOURCES = $(APP_SRC) \
-              src/hothouse.cpp
+              src/hothouse.cpp \
+              src/PlateauNEVersio/Dattorro.cpp \
+              src/PlateauNEVersio/dsp/delays/InterpDelay.cpp \
+              src/PlateauNEVersio/dsp/filters/OnePoleFilters.cpp \
+              src/PlateauNEVersio/utilities/Utilities.cpp
 
 # CMSIS-DSP FFT-based convolution (partitioned overlap-save for IR processing)
 C_SOURCES = $(LIBDAISY_DIR)/Drivers/CMSIS-DSP/Source/TransformFunctions/arm_rfft_fast_f32.c \
