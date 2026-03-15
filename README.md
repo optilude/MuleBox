@@ -80,7 +80,7 @@ There are a number of ways the Mulebox could be extended or improved, given more
 
 * With additional active components, the Mulebox could gain balanced outputs, and/or a headphone output (you would need to add a headphone amplifier).
 
-* Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three toggle switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed – 12 full-length (170ms) IRs will use up almost all the available storage on the Daisy Seed. Still, a built-in reverb, in particular, might be desirable.
+* Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three toggle switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed – adding reverb forces us to restrict max IR lengths to 85ms to avoid overwhelming the CPU.
 
 * In the same vein, the reason the Mulebox has a "bass" knob is that – to save space and cost – the attenuator circuit does not include JohnH's optional second inductor coil that simulates the bass "hump" found in many real world cabinets. Adding this would free up a knob and arguably be more realistic than a software bass boost.
 
@@ -365,7 +365,7 @@ Requirements:
 
 - WAV format, 48kHz sample rate, mono or stereo
 - Up to 12 files – if fewer, some positions on the rotary switch will be blank
-- Each IR should be up to ~170ms – longer IRs will be truncated, but you can still use them
+- Each IR should be up to ~85.3ms (4096 samples) – longer IRs will be truncated, but you can still use them
 - You need Python 3 installed and available via the `python3` command
 
 Note that files are assigned to rotary switch positions 1–12 in alphabetical order, so name them accordingly (e.g. `01_dark.wav`, `02_bright.wav`) to minimise confusion about which one is which.

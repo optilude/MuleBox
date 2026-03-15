@@ -35,7 +35,7 @@ Requirements:
 - **Filenames must not contain spaces** (use underscores or hyphens instead)
 - WAV files must be **48kHz** (the tool warns but does **not** resample)
 - Mono or stereo are both accepted (stereo: left channel is used)
-- Maximum length: 170ms (8160 samples at 48kHz); longer files are trimmed
+- Maximum length: 85.3ms (4096 samples at 48kHz); longer files are automatically truncated
 - Maximum 12 files; extras are ignored with a warning
 
 Commit both the new WAV file(s) and the regenerated `src/ir_data.h`.
