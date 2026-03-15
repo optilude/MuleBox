@@ -120,22 +120,44 @@ void AudioCallback(AudioHandle::InputBuffer in,
         firIn[i] = mono + (bassFilter.Peak() * bassAmount);
     }
 
+    // Post-processing variable to hand over to Reverb
+    float revIn[AUDIO_BLOCK_SIZE];
+
     // IR convolution (FFT-based partitioned overlap-save)
     float firOut[AUDIO_BLOCK_SIZE];
     irLoader.ProcessBlock(firIn, firOut, size);
+    
+    // Copy IR output into reverb input (or substitute firIn if bypassing IR)
+    for (size_t i = 0; i < size; i++) {
+        revIn[i] = firOut[i];
+    }
+
+    // Apply reverb processing
+    float revOutL[AUDIO_BLOCK_SIZE];
+    float revOutR[AUDIO_BLOCK_SIZE];
+    
+    for (size_t i = 0; i < size; i++) {
+        // Process handles L and R simultaneously and saves state internally
+        reverb.process(revIn[i], revIn[i]);
+        
+        // 50% wet/dry mix
+        revOutL[i] = (revIn[i] * 0.5f) + (reverb.getLeftOutput() * 0.5f);
+        revOutR[i] = (revIn[i] * 0.5f) + (reverb.getRightOutput() * 0.5f);
+    }
 
     // Apply output level, check output clipping, write stereo output
     for (size_t i = 0; i < size; i++) {
-        float sample = firOut[i] * outputLevel;
+        float sampleL = revOutL[i] * outputLevel;
+        float sampleR = revOutR[i] * outputLevel;
 
-        // Output clipping detection
-        if (fabsf(sample) > CLIPPING_THRESHOLD) {
+        // Output clipping detection (checking left channel mostly)
+        if (fabsf(sampleL) > CLIPPING_THRESHOLD) {
             outputClippingDetected = true;
         }
 
-        // Stereo output (dual mono)
-        out[0][i] = sample;
-        out[1][i] = sample;
+        // Stereo output
+        out[0][i] = sampleL;
+        out[1][i] = sampleR;
     }
 }
 
