@@ -24,8 +24,8 @@ from pathlib import Path
 
 # Constants
 SAMPLE_RATE = 48000
-MAX_IR_LENGTH_MS = 170  # Maximum IR length in milliseconds
-MAX_IR_SAMPLES = int((MAX_IR_LENGTH_MS / 1000.0) * SAMPLE_RATE)  # 8,160 samples
+MAX_IR_LENGTH_MS = 85  # Maximum IR length in milliseconds (~4096 samples at 48kHz)
+MAX_IR_SAMPLES = 4096  # Hardcode to power of 2 for optimal partition size matching
 MAX_IR_COUNT = 12
 
 # QSPI Flash Layout

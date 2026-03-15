@@ -44,16 +44,16 @@ DebouncedAnalogSwitch irSwitch;
 static const float BASS_FREQ = 110.0f;
 static const float BASS_Q = 0.7f;
 constexpr int MAX_IR_POSITIONS = 12;
-constexpr size_t MAX_IR_LENGTH = 8192;
+constexpr size_t MAX_IR_LENGTH = 4096;
 constexpr uint32_t SAMPLE_RATE = 48000;
-constexpr size_t AUDIO_BLOCK_SIZE = 256;
+constexpr size_t AUDIO_BLOCK_SIZE = 128;
 constexpr float CLIPPING_THRESHOLD = 0.95f;
 constexpr uint32_t CLIPPING_BLINK_DURATION_TICKS = 100 * (SAMPLE_RATE / AUDIO_BLOCK_SIZE) / 1000;
 constexpr int DEBOUNCE_MS = 500;
 
 // Convolution engine constants
-constexpr size_t PARTITION_SIZE = 256;  // Match AUDIO_BLOCK_SIZE
-constexpr size_t FFT_SIZE = 512;        // 2 * PARTITION_SIZE
+constexpr size_t PARTITION_SIZE = 128;  // Match AUDIO_BLOCK_SIZE
+constexpr size_t FFT_SIZE = 256;        // 2 * PARTITION_SIZE
 constexpr size_t MAX_PARTITIONS = (MAX_IR_LENGTH + PARTITION_SIZE - 1) / PARTITION_SIZE;
 
 // Large convolution buffers in SDRAM (64KB each)

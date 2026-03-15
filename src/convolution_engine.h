@@ -20,8 +20,8 @@
 
 // Partition size L and FFT size N are compile-time constants.
 // L must be a power of 2 (required by arm_rfft_fast).
-static constexpr size_t CONV_PARTITION_SIZE = 256;
-static constexpr size_t CONV_FFT_SIZE = 2 * CONV_PARTITION_SIZE;  // 512
+static constexpr size_t CONV_PARTITION_SIZE = 128;
+static constexpr size_t CONV_FFT_SIZE = 2 * CONV_PARTITION_SIZE;  // 256
 
 class ConvolutionEngine {
 public:
