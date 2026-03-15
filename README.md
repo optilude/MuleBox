@@ -26,7 +26,7 @@ Connect a pair of 1/4" TS audio cables from the left and right output jacks to a
 
 Turn the rotary switch on the front to position 1. Connect a 9V DC, centre-negative (only!) "pedal" power supply to the power socket at the back. Turn the other knobs to noon.
 
-The front knobs can be used to control the output level and cut/boost the bass, which can be helpful depending on the characteristics of your amp and IR. It noon, it is a flat bass response.
+The front knobs can be used to control the output level and the reverb mix. The reverb is a lush Dattorro plate algorithm. Fully counter-clockwise is 100% dry signal. Fully clockwise is 100% wet signal.
 
 The trim knob at the rear is used to control the input level between the amp and Hothouse. In general it should be as high as possible without causing clipping.
 
@@ -82,9 +82,7 @@ There are a number of ways the Mulebox could be extended or improved, given more
 
 * Commercial units like the UA Ox Box or Two Notes Torpedo Captor X provide not just cabinet simulation, but other digital effects. The Daisy Seed could be programmed with additional effects, though this might also necessitate the installation of further knobs (the Hothouse has support for three further knobs and three toggle switches that are not used in the Mulebox). Note that there would likely be some tradeoffs in both storage space and processing power on the Daisy Seed – adding reverb forces us to restrict max IR lengths to 85ms to avoid overwhelming the CPU.
 
-* In the same vein, the reason the Mulebox has a "bass" knob is that – to save space and cost – the attenuator circuit does not include JohnH's optional second inductor coil that simulates the bass "hump" found in many real world cabinets. Adding this would free up a knob and arguably be more realistic than a software bass boost.
-
-* Conversely, with more knobs, the Mulebox could gain a two or three-band EQ for additional tone shaping.
+* To save space and cost – the attenuator circuit does not include JohnH's optional second inductor coil that simulates the bass "hump" found in many real world cabinets. The Mulebox firmware applies a slight, hardcoded DSP low-end boost to roughly emulate this resonance. With more knobs or toggle switches, the Mulebox could gain an adjustable two or three-band EQ for additional tone shaping.
 
 ## Hardware components
 
@@ -158,7 +156,7 @@ We will use the "lid" of the enclosure as the base, drilling several mounting ho
 
 **Note** that Tayda drill the lid _from the outside_ but we are mounting components from the _inside_, which means the drill holes need to be translated accordingly. The template matches the screw spacing of the components listed in the shopping list below, but these will likely need adjusting if you use other brands. Alternatively, remove these holes from the drill template and drill them manually once you have all your components laid out – the base will not be visible in any case.
 
-"Side E" will be used as the front, mounting two LEDs in bezel holders, the rotary switch, and the output level and bass control pots. It also contains crucial slat cutouts that sit in front of the large resistors, directly opposite the fan, allowing it to draw cool air across the top of the resistors. The potentiometer and switch cutouts match the UV print template for the front.
+"Side E" will be used as the front, mounting two LEDs in bezel holders, the rotary switch, and the output level and reverb mix control pots. It also contains crucial slat cutouts that sit in front of the large resistors, directly opposite the fan, allowing it to draw cool air across the top of the resistors. The potentiometer and switch cutouts match the UV print template for the front.
 
 "Side C" will be used as the back. It contains cutouts for the jack sockets, the "trim" knob that is used to adjust the volume of the attenuated signal going into the Hothouse, and a large cutout for the fan. Again, the position of these holes match the UV print template for the back.
 
@@ -495,7 +493,7 @@ We will start by installing the PCB and mounting to the components on the rear, 
 
 #### The front-mounted components
 
-At this point, the audio connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connect to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two B10K pots (bass and output level knobs). 
+At this point, the audio connections to the rear of the PCB will be in place, and there will be four trios of wires that need to connect to the front of the enclosure – three for the LEDs, three for the rotary switch, and three for each of the two B10K pots (reverb mix and output level knobs). 
 
 If you have left the enclosure open like a clamshell along the rear long edge, you have been able to run short wires to the PCB and large resistors that will fold relatively easily into the unit when the enclosure is closed onto the lid. However, with the enclosure opened like this, the components that will be at the front will now be upside down and far to the back. Ideally, we want to avoid very long wires that run almost double the depth of the unit. There are a few different strategies you could employ:
 
@@ -568,7 +566,7 @@ Look for clipping (the red LED will blink if the input is clipping; the blue LED
 Before jumping straight to the main firmware, you can verify that your LEDs, front-panel knobs, and rotary switch are wired correctly using the included test programs.
 
 1. **Knobs test:**
-   Build and flash the knobs test using `make TEST=knobs program` if using a debug probe, or `make TEST=knobs program-dfu` if using USB. When running, turning the two front knobs (bass and output level) will independently adjust the brightness of the red and blue LEDs. If an LED doesn't light up or the knobs don't smoothly alter the brightness, check your wiring to POT5, POT4, and the LED pads on the PCB.
+   Build and flash the knobs test using `make TEST=knobs program` if using a debug probe, or `make TEST=knobs program-dfu` if using USB. When running, turning the two front knobs (reverb mix and output level) will independently adjust the brightness of the red and blue LEDs. If an LED doesn't light up or the knobs don't smoothly alter the brightness, check your wiring to POT5, POT4, and the LED pads on the PCB.
 
 2. **Rotary switch test:**
    Build and flash the rotary switch test using `make TEST=rotary program` if using a debug probe, or `make TEST=rotary program-dfu` if using USB. In this test, turning the rotary switch will change the brightness of the LEDs. The brightness should jump in distinct steps as you turn the switch. If it acts erratically or only works in some positions, double check the resistor ladder on the rotary switch and its connection to POT6 on the PCB.

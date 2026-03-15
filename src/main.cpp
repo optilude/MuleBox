@@ -5,7 +5,7 @@
 //
 // Controls:
 //   KNOB_4: Output level (noon = unity, CCW = cut, CW = boost)
-//   KNOB_5: Bass boost/cut (noon = flat, CCW = cut, CW = boost)
+//   KNOB_5: Reverb mix (0% to 100%)
 //   KNOB_6: IR selector (12-position rotary switch via resistor ladder)
 //
 // LEDs:
@@ -37,10 +37,11 @@ using daisysp::Svf;
 Hothouse hw;
 Led ledRed, ledBlue;
 Parameter outputLevelParam;   // KNOB_4: output level
-Parameter bassParam;          // KNOB_5: bass boost/cut
+Parameter reverbMixParam;     // KNOB_5: reverb mix
 DebouncedAnalogSwitch irSwitch;
 
 // Constants
+static const float BASS_BOOST_AMOUNT = 0.2f; // Slight bump (~1 o'clock position on old pot mapping)
 static const float BASS_FREQ = 110.0f;
 static const float BASS_Q = 0.7f;
 constexpr int MAX_IR_POSITIONS = 12;
@@ -101,10 +102,10 @@ void AudioCallback(AudioHandle::InputBuffer in,
     blueLedController.ProcessAudioRate();
 
     // Read control parameters (smoothed)
-    float bassAmount = bassParam.Process();
+    float reverbMix = reverbMixParam.Process();
     float outputLevel = outputLevelParam.Process();
 
-    // Pre-process: read mono input, apply bass boost/cut, check input clipping
+    // Pre-process: read mono input, apply bass boost, check input clipping
     float firIn[AUDIO_BLOCK_SIZE];
     for (size_t i = 0; i < size; i++) {
         float mono = in[0][i];
@@ -114,10 +115,9 @@ void AudioCallback(AudioHandle::InputBuffer in,
             inputClippingDetected = true;
         }
 
-        // Bass boost/cut via SVF peak filter
-        // bassAmount: -3.0 (max cut) to +3.0 (max boost), 0.0 = flat
+        // Hardcoded slight bass boost via SVF peak filter
         bassFilter.Process(mono);
-        firIn[i] = mono + (bassFilter.Peak() * bassAmount);
+        firIn[i] = mono + (bassFilter.Peak() * BASS_BOOST_AMOUNT);
     }
 
     // IR convolution (FFT-based partitioned overlap-save)
@@ -131,9 +131,11 @@ void AudioCallback(AudioHandle::InputBuffer in,
         // Process handles L and R simultaneously and saves state internally
         reverb.process(rIn, rIn);
         
-        // 50% wet/dry mix, combined with output level scaling
-        float sampleL = ((rIn * 0.5f) + (reverb.getLeftOutput() * 0.5f)) * outputLevel;
-        float sampleR = ((rIn * 0.5f) + (reverb.getRightOutput() * 0.5f)) * outputLevel;
+        // Linear dry/wet mix from reverbMix knob (0.0 to 1.0), combined with output level scaling
+        float dryMix = 1.0f - reverbMix;
+        float wetMix = reverbMix;
+        float sampleL = ((rIn * dryMix) + (reverb.getLeftOutput() * wetMix)) * outputLevel;
+        float sampleR = ((rIn * dryMix) + (reverb.getRightOutput() * wetMix)) * outputLevel;
 
         // Output clipping detection
         if (fabsf(sampleL) > CLIPPING_THRESHOLD) {
@@ -164,11 +166,12 @@ int main(void) {
                           2.0f,
                           Parameter::LINEAR);
 
-    // KNOB_5: Bass boost/cut (-1.0 to +1.0, noon = 0.0 = flat)
-    bassParam.Init(hw.knobs[Hothouse::KNOB_5],
-                   -1.0f,
+    // KNOB_5: Reverb mix (0.0 = 100% dry, 1.0 = 100% wet)
+    // Using an EXPONENTIAL curve to emulate a traditional "logarithmic / audio taper" pot response
+    reverbMixParam.Init(hw.knobs[Hothouse::KNOB_5],
+                   0.0f,
                    1.0f,
-                   Parameter::LINEAR);
+                   Parameter::EXPONENTIAL);
 
     // Initialize bass EQ filter
     bassFilter.Init(hw.AudioSampleRate());
