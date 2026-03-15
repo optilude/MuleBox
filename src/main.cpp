@@ -21,6 +21,9 @@
 #include "led_controller.h"
 #include "dev/sdram.h"
 
+#include "PlateauNEVersio/Dattorro.hpp"
+#include "PlateauNEVersio/dsp/delays/InterpDelay.hpp"
+
 using clevelandmusicco::Hothouse;
 
 using daisy::Parameter;
@@ -60,6 +63,7 @@ float DSY_SDRAM_BSS convFdlBuf[MAX_PARTITIONS * FFT_SIZE];
 // DSP
 Svf bassFilter;
 IrLoader irLoader;
+Dattorro reverb(SAMPLE_RATE, 16, 4.0f);
 
 // State
 volatile bool isLoadingIr = false;
@@ -163,6 +167,36 @@ int main(void) {
     bassFilter.Init(hw.AudioSampleRate());
     bassFilter.SetFreq(BASS_FREQ);
     bassFilter.SetRes(BASS_Q);
+
+    // Initialise the Dattorro Reverb with Flick default parameters
+    // Zero out the InterpDelay buffers used by the plate reverb (Dattorro SDRAM)
+    for(int i = 0; i < 50; i++) {
+        for(int j = 0; j < 144000; j++) {
+            sdramData[i][j] = 0.0f;
+        }
+    }
+    // Set hold to 1.0 or plate reverb won't work (defined in InterpDelay.hpp)
+    hold = 1.0f;
+
+    reverb.setSampleRate(hw.AudioSampleRate());
+    reverb.setTimeScale(1.007500f);
+    reverb.enableInputDiffusion(true);
+
+    // Set low-cut filters
+    reverb.setInputFilterLowCutoffPitch(2.87f);
+    reverb.setTankFilterLowCutFrequency(2.87f);
+
+    // Hardcoded parameters
+    reverb.setInputFilterHighCutoffPitch(7.25f);
+    reverb.setTankModShape(0.25f);
+
+    // Default "plate" preset parameters
+    reverb.setDecay(0.8f);
+    reverb.setTankDiffusion(0.85f);
+    reverb.setPreDelay(0.0f);
+    reverb.setTankFilterHighCutFrequency(0.725f * 10.0f);
+    reverb.setTankModSpeed(0.1f * 8.0f);
+    reverb.setTankModDepth(0.1f * 15.0f);
 
     // Start ADC so we can read knobs before audio starts
     hw.StartAdc();
