@@ -10,7 +10,7 @@ This document provides guidance for how to build your own. Both software and har
 
 **WARNING #3:** In the suggested enclosure, this is a very tight build. You need to take care selecting components that can handle the required power, including wires. You need to be familiar with soldering, guitar electronics (e.g. you have built guitar amps or pedals before), and be capable of building the code for this software project using basic development tools. There are detailed instructions below, but some experience is assumed and probably required to be successful.
 
-You will also need to supply your own IR files, e.g. ones you have sourced or recorded yourself. A few free IRs are included, but they do not sound particularly good. There are plenty of places you can buy good quality IRs, and plenty of free ones available from [Tone 3000](https://www.tone3000.com).
+You will also need to supply your own IR files, e.g. ones you have sourced or recorded yourself. A few free IRs are included, and they sound decent, but professionally recorded ones will be even better. There are plenty of places you can buy good quality IRs, and plenty of free ones available from [Tone 3000](https://www.tone3000.com).
 
 ## Operation
 
