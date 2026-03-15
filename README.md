@@ -39,6 +39,15 @@ It is important to avoid clipping in use. Clipping is indicated by the LEDs blin
 - The red LED will blink if the **input** signal starts to clip. In this case, turn down the trim knob on the rear, or reduce the output volume of your amplifier.
 - The blue LED will blink if the **output** signal starts to clip. In this case, turn down the output level knob on the front.
 
+By default, the Mulebox includes the following basic, royalty-free IRs. You will definitely be able to get better sounds if you buy and load more professional IRs, though.
+
+1. Blackpanel 1x12
+2. Greenback 4x12
+3. V30 4x12
+4. Chime 2x12
+5. Tweed 1x12
+6. Boutique 2x12
+
 ## Architecture
 
 Think of the Mulebox as two separate devices hardwired together:
@@ -350,7 +359,7 @@ The firmware is written directly to QSPI flash via the debug probe and begins ru
 
 ## Loading your own Impulse Response files
 
-This project ships with four free IRs from [Djammincabs](https://zystrix.com/djammincabs.htm) as a starting point, but you should load your own IRs that you have either sourced or recorded yourself. One free source of IRs is the [Tone 3000](https://www.tone3000.com) website, though there are many others.
+This project ships with six royalty-free IRs as a starting point, but you should load your own IRs that you have either sourced or recorded yourself. One free source of IRs is the [Tone 3000](https://www.tone3000.com) website, though there are many others.
 
 Requirements:
 
@@ -359,7 +368,7 @@ Requirements:
 - Each IR should be up to ~170ms – longer IRs will be truncated, but you can still use them
 - You need Python 3 installed and available via the `python3` command
 
-Note that files are assigned to rotary switch positions 1–12 in alphabetical order, so name them accordingly (e.g. `01_dark.wav`, `02_bright.wav`) to minimise confusion.
+Note that files are assigned to rotary switch positions 1–12 in alphabetical order, so name them accordingly (e.g. `01_dark.wav`, `02_bright.wav`) to minimise confusion about which one is which.
 
 Steps:
 
