@@ -2,6 +2,8 @@
 
 The Mulebox is an open source, build-it-yourself hardware guitar processing unit based on the JohnH attenuator, Electrosmith Daisy Seed DSP module, and Cleveland Audio Hothouse platform. It works as a reactive load box for silent playing, with cabinet simulation via Impulse Response files providing a line level, stereo output to e.g. speakers or a mixer.
 
+> Check out [this video](https://www.youtube.com/watch?v=RQHTY69k00g) for a full description and audio examples, including a brief comparison with the UA Ox Box.
+
 This document provides guidance for how to build your own. Both software and hardware are open source and contained in this repository. You can build it as described here, or use this as a starting point for your own build of a similar device.
 
 **WARNING #1:** The basic function of this box is to replace the speaker in an amplifier. A tube amplifier, in particular, will be damaged if used without a suitable load. Do not turn the amp on without a speaker or a load (like the one inside the Mulebox). If connections are made incorrectly, become loose, or are poorly soldered inside the Mulebox, the load could be disconnected. In this case, you could damage your amplifier.
