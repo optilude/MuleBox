@@ -411,7 +411,7 @@ We recommend that you assemble the unit with the lid and box opened like a clams
 
 It can also be useful to fit only three of the four PCB corner mounts to begin with. This makes it easy to take the PCB out so it can float inside the enclosure with the lid open. All the wires to the front of the unit run directly to the PCB.
 
-Here is one feasible layout that aims to minimise cable runs. Note that the wires that attach to the resistors, inductor coil, input jack should be 22AWG (thicker, handling the higher current of the amp signal). The ones connecting to the PCB should be thinner (handling only the electronics and line level audio signal).
+Here is one feasible layout that aims to minimise cable runs. Note that the wires that attach to the resistors, inductor coil, input jack should be 18AWG or 16AWG (thicker, handling the higher current of the amp signal). The ones connecting to the PCB should be thinner (handling only the electronics and line level audio signal).
 
 ![Wiring diagram](./docs/layout/wiring.png)
 
